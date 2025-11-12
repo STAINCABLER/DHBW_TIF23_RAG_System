@@ -1,0 +1,101 @@
+services:
+
+  # Datenbanken
+  db-redis:
+    image: redis:7-alpine
+    container_name: db-redis
+    networks:
+      - datenbanken
+      - debug-tools
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Debug Tools
+  debug-redisinsight:
+    image: redis/redisinsight:latest
+    container_name: debug-redisinsight
+    networks:
+      - debug-tools
+      - proxy
+    ports:
+      - "8001:8001"
+    depends_on:
+      db-redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:5540/api/health/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Anwendungen
+  rag-frontend:
+    image: ghcr.io/multimodalai/rag-frontend:latest
+    container_name: rag-frontend
+    networks:
+      - application
+      - proxy
+    ports:
+      - "3000:3000"
+    environment:
+      - REDIS_HOST=db-redis
+      - REDIS_PORT=6379
+    depends_on:
+      db-redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:3000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  rag-backend:
+    image: ghcr.io/multimodalai/rag-backend:latest
+    container_name: rag-backend
+    networks:
+      - application
+      - internet
+      - datenbanken
+    ports:
+      - "4000:4000"
+    environment:
+      - REDIS_HOST=db-redis
+      - REDIS_PORT=6379
+    depends_on:
+      db-redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:4000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  internet:
+    driver: bridge
+    internal: false
+    attachable: false
+    name: internet_rag-system
+  proxy:
+    external: true
+    name: proxy-network
+  application:
+    driver: bridge
+    internal: true
+    attachable: false
+    name: internal_application
+  datenbanken:
+    driver: bridge
+    internal: true
+    attachable: false
+    name: internal_datenbanken
+  debug-tools:
+    driver: bridge
+    internal: true
+    attachable: false
+    name: internal_debug-tools
