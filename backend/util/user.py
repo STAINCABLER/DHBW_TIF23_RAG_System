@@ -22,7 +22,7 @@ class User(object):
 
     def get_chats_as_dict(self) -> list[dict[str, any]]:
         return [
-            chat.to_json()
+            chat.to_dict()
             for chat in self.chats
         ]
     
@@ -47,15 +47,24 @@ class User(object):
 
         return matched_chats[0]
 
-users: list[User] = [
-    User("test", "test")
-]
+    def create_chat(self) -> chat.Chat:
+        new_chat: chat.Chat = chat.Chat()
 
-users[0].chats.append(chat.Chat())
+        self.chats.append(new_chat)
+        return new_chat
+
+    def add_entry_to_chat(self, chat_id: str, entry: chat.Entry) -> None:
+        ref_chat: chat.Chat = self.get_chat_from_chat_id(chat_id)
+
+        if not ref_chat:
+            return
+        
+
+        ref_chat.entries.append(entry)
 
 def match_user(username: str, password: str) -> User | None:
     matching_users: list[User] = [user
-                                  for user in users
+                                  for user in User.users
                                   if user.username == username
                                   and user.password == password]
     if not matching_users:
@@ -65,7 +74,7 @@ def match_user(username: str, password: str) -> User | None:
 
 def does_user_already_exist(username: str) -> bool:
     matching_users: list[User] = [user
-                                  for user in users
+                                  for user in User.users
                                   if user.username == username]
     if not matching_users:
         return False
@@ -79,15 +88,18 @@ def create_user(username: str, password: str) -> User | None:
         return None
 
     user: User = User(username, password)
-    users.append(user)
+    User.users.append(user)
 
     return user
 
 def get_user_from_user_id(user_id: str) -> User | None:
     matching_users: list[User] = [user
-                                  for user in users
+                                  for user in User.users
                                   if str(user.user_id) == user_id]
     if not matching_users:
         return None
 
     return matching_users[0]
+
+
+create_user("test", "test")

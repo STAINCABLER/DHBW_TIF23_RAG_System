@@ -1,16 +1,28 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import uuid
+import enum
+
+class EntryRole(enum.Enum):
+    USER = ("user")
+    ASSISTENT = ("assistent")
+
+    def __init__(self, role_name: str):
+        super().__init__()
+        self.role_name: str = role_name
+
 
 @dataclass
 class Entry():
-    question: str
-    response: str
+    role: EntryRole
+    text: str
+    files: list = field(default_factory=list)
 
 
-    def to_json(self) -> dict[str, any]:
+    def to_dict(self) -> dict[str, any]:
         return {
-            "question": self.question,
-            "response": self.response,
+            "type": self.role.role_name,
+            "text": self.text,
+            "files": str(self.files)
         }
 
 class Chat():
@@ -19,10 +31,10 @@ class Chat():
         self.title: str = ""
         self.entries: list[Entry] = []
 
-    def to_json(self) -> dict[str, any]:
+    def to_dict(self) -> dict[str, any]:
         return {
             "chat_id": str(self.chat_id),
             "title": self.title,
-            "entries": [entry.to_json()
+            "entries": [entry.to_dict()
                         for entry in self.entries],
         }

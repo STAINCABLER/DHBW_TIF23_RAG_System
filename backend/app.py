@@ -33,5 +33,9 @@ def get_all_endpoints() -> list[dict[str, any]]:
 
 app.register_blueprint(api_blueprint)
 
+@app.get("/health")
+def get_health() -> tuple[str, int]:
+    return "", 200
+
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port="5000")
+    app.run(debug=True, host="0.0.0.0", port="4000")

@@ -1,5 +1,5 @@
 FROM python:3.12
-EXPOSE 80
+EXPOSE 4000
 WORKDIR /python-docker
 
 COPY requirements.txt requirements.txt
