@@ -35,7 +35,7 @@ services:
 
   # Anwendungen
   rag-frontend:
-    image: ghcr.io/multimodalai/rag-frontend:latest
+    image: ghcr.io/staincabler/dhbw_tif23_rag-frontend:latest
     container_name: rag-frontend
     networks:
       - application
@@ -55,7 +55,7 @@ services:
       retries: 3
 
   rag-backend:
-    image: ghcr.io/multimodalai/rag-backend:latest
+    image: ghcr.io/staincabler/dhbw_tif23_rag-backend:latest
     container_name: rag-backend
     networks:
       - application
