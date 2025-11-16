@@ -1,0 +1,26 @@
+id: green-06
+name: Fresh Microgreens
+
+light:
+  colorScheme: light
+  bg: "#F8FFF4"
+  surface: "#FFFFFF"
+  surfaceAlt: "#E9F9DD"
+  border: "#CCE8B7"
+  text: "#243416"
+  muted: "#708361"
+  primary: "#63C132"
+  primarySoft: "rgba(99, 193, 50, 0.2)"
+  shadowSoft: "0 20px 40px rgba(24, 45, 10, 0.06)"
+
+dark:
+  colorScheme: dark
+  bg: "#050C04"
+  surface: "#081307"
+  surfaceAlt: "#0C1A09"
+  border: "#173013"
+  text: "#EAF8DF"
+  muted: "#99B48B"
+  primary: "#9AE86D"
+  primarySoft: "rgba(154, 232, 109, 0.25)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.85)"

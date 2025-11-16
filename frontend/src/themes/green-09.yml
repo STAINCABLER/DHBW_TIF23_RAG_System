@@ -1,0 +1,26 @@
+id: green-09
+name: Lime Creative
+
+light:
+  colorScheme: light
+  bg: "#F8FFE8"
+  surface: "#FFFFFF"
+  surfaceAlt: "#EBFFC4"
+  border: "#D2F59A"
+  text: "#1A2308"
+  muted: "#6D7456"
+  primary: "#7EDB00"
+  primarySoft: "rgba(126, 219, 0, 0.2)"
+  shadowSoft: "0 20px 40px rgba(22, 30, 4, 0.08)"
+
+dark:
+  colorScheme: dark
+  bg: "#050808"
+  surface: "#070B07"
+  surfaceAlt: "#0A110A"
+  border: "#151F10"
+  text: "#F4FFE4"
+  muted: "#A6C28D"
+  primary: "#A5FF00"
+  primarySoft: "rgba(165, 255, 0, 0.28)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.9)"

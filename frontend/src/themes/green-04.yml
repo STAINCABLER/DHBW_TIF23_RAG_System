@@ -1,0 +1,26 @@
+id: green-04
+name: Alpine Sage
+
+light:
+  colorScheme: light
+  bg: "#F7FBF6"
+  surface: "#FFFFFF"
+  surfaceAlt: "#E7F1E4"
+  border: "#CCD9CA"
+  text: "#253322"
+  muted: "#6B7767"
+  primary: "#5B8A4C"
+  primarySoft: "rgba(91, 138, 76, 0.16)"
+  shadowSoft: "0 20px 40px rgba(15, 23, 42, 0.06)"
+
+dark:
+  colorScheme: dark
+  bg: "#070D07"
+  surface: "#0C170E"
+  surfaceAlt: "#132114"
+  border: "#203226"
+  text: "#E6F2E4"
+  muted: "#9CAF9B"
+  primary: "#83AF73"
+  primarySoft: "rgba(131, 175, 115, 0.25)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.7)"

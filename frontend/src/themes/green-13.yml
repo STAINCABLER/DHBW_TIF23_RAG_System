@@ -1,0 +1,26 @@
+id: green-13
+name: Money Green
+
+light:
+  colorScheme: light
+  bg: "#F3FFF7"
+  surface: "#FFFFFF"
+  surfaceAlt: "#E2F9EA"
+  border: "#C2ECD3"
+  text: "#102616"
+  muted: "#667C6C"
+  primary: "#00C853"
+  primarySoft: "rgba(0, 200, 83, 0.18)"
+  shadowSoft: "0 20px 40px rgba(16, 38, 22, 0.06)"
+
+dark:
+  colorScheme: dark
+  bg: "#041008"
+  surface: "#07170D"
+  surfaceAlt: "#0A2113"
+  border: "#143824"
+  text: "#E9FFE9"
+  muted: "#9EC4A0"
+  primary: "#4ADE80"
+  primarySoft: "rgba(74, 222, 128, 0.3)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.85)"

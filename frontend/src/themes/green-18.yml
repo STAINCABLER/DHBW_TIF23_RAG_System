@@ -1,0 +1,26 @@
+id: green-18
+name: Ultra Minimal Mint
+
+light:
+  colorScheme: light
+  bg: "#FAFFFA"
+  surface: "#FFFFFF"
+  surfaceAlt: "#EAF7EA"
+  border: "#D0E5D0"
+  text: "#1F2A1F"
+  muted: "#6B776B"
+  primary: "#66BB6A"
+  primarySoft: "rgba(102, 187, 106, 0.2)"
+  shadowSoft: "0 20px 40px rgba(20, 35, 20, 0.05)"
+
+dark:
+  colorScheme: dark
+  bg: "#070D07"
+  surface: "#0B130B"
+  surfaceAlt: "#111B11"
+  border: "#1F2D1F"
+  text: "#E8F5E9"
+  muted: "#9FB5A1"
+  primary: "#A5D6A7"
+  primarySoft: "rgba(165, 214, 167, 0.3)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.85)"

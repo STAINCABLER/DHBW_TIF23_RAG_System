@@ -1,0 +1,26 @@
+id: green-10
+name: Eco Dashboard
+
+light:
+  colorScheme: light
+  bg: "#F2FBF3"
+  surface: "#FFFFFF"
+  surfaceAlt: "#E3F4E6"
+  border: "#C7E3CB"
+  text: "#17321C"
+  muted: "#647A69"
+  primary: "#2E7D32"
+  primarySoft: "rgba(46, 125, 50, 0.18)"
+  shadowSoft: "0 20px 40px rgba(18, 50, 28, 0.06)"
+
+dark:
+  colorScheme: dark
+  bg: "#041008"
+  surface: "#07170C"
+  surfaceAlt: "#0B2012"
+  border: "#163522"
+  text: "#E5F6E9"
+  muted: "#95AE9B"
+  primary: "#66BB6A"
+  primarySoft: "rgba(102, 187, 106, 0.28)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.8)"

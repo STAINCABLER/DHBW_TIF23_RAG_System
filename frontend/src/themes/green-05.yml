@@ -1,0 +1,26 @@
+id: green-05
+name: Dark Botanical
+
+light:
+  colorScheme: light
+  bg: "#F3F7F5"
+  surface: "#FFFFFF"
+  surfaceAlt: "#E0E7E4"
+  border: "#C3CFCA"
+  text: "#111C18"
+  muted: "#65736E"
+  primary: "#184C3A"
+  primarySoft: "rgba(24, 76, 58, 0.18)"
+  shadowSoft: "0 20px 40px rgba(8, 16, 14, 0.08)"
+
+dark:
+  colorScheme: dark
+  bg: "#020605"
+  surface: "#050B09"
+  surfaceAlt: "#07110E"
+  border: "#10201A"
+  text: "#DDEAE5"
+  muted: "#8FA29B"
+  primary: "#3B7D63"
+  primarySoft: "rgba(59, 125, 99, 0.28)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.85)"

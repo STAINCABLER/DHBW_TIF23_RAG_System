@@ -1,0 +1,26 @@
+id: green-08
+name: Minimal Evergreen
+
+light:
+  colorScheme: light
+  bg: "#F5FAF7"
+  surface: "#FFFFFF"
+  surfaceAlt: "#E2EFE7"
+  border: "#C5D9CC"
+  text: "#132018"
+  muted: "#647568"
+  primary: "#2D6A4F"
+  primarySoft: "rgba(45, 106, 79, 0.18)"
+  shadowSoft: "0 20px 40px rgba(15, 23, 42, 0.06)"
+
+dark:
+  colorScheme: dark
+  bg: "#040A07"
+  surface: "#07110C"
+  surfaceAlt: "#0B1912"
+  border: "#12251C"
+  text: "#E9F5ED"
+  muted: "#96AB9E"
+  primary: "#52B788"
+  primarySoft: "rgba(82, 183, 136, 0.3)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.8)"

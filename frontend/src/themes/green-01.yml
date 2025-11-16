@@ -1,0 +1,26 @@
+id: green-01
+name: Deep Forest Mint
+
+light:
+  colorScheme: light
+  bg: "#F3FBF8"
+  surface: "#FFFFFF"
+  surfaceAlt: "#E0F2EB"
+  border: "#C6DED4"
+  text: "#0F241C"
+  muted: "#6A7F75"
+  primary: "#0F4F3C"
+  primarySoft: "rgba(15, 79, 60, 0.15)"
+  shadowSoft: "0 20px 40px rgba(15, 23, 42, 0.08)"
+
+dark:
+  colorScheme: dark
+  bg: "#050D0A"
+  surface: "#0B1713"
+  surfaceAlt: "#11221C"
+  border: "#1D3530"
+  text: "#E5F3EF"
+  muted: "#9EB8AE"
+  primary: "#3A7C63"
+  primarySoft: "rgba(58, 124, 99, 0.25)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.7)"

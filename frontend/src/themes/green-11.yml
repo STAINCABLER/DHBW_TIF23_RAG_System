@@ -1,0 +1,26 @@
+id: green-11
+name: Pastel Matcha
+
+light:
+  colorScheme: light
+  bg: "#FDFEF9"
+  surface: "#FFFFFF"
+  surfaceAlt: "#F3F8EE"
+  border: "#D9E5CB"
+  text: "#273122"
+  muted: "#74806F"
+  primary: "#9BCB96"
+  primarySoft: "rgba(155, 203, 150, 0.25)"
+  shadowSoft: "0 20px 40px rgba(25, 35, 20, 0.05)"
+
+dark:
+  colorScheme: dark
+  bg: "#070B06"
+  surface: "#0B120A"
+  surfaceAlt: "#111A10"
+  border: "#1F2A1E"
+  text: "#EAF4E6"
+  muted: "#A2B19B"
+  primary: "#CDEBC8"
+  primarySoft: "rgba(205, 235, 200, 0.3)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.85)"

@@ -1,0 +1,26 @@
+id: green-17
+name: Desert Green
+
+light:
+  colorScheme: light
+  bg: "#FFF8F1"
+  surface: "#FFFFFF"
+  surfaceAlt: "#F5E9DE"
+  border: "#E3D0C0"
+  text: "#2F2720"
+  muted: "#8A7768"
+  primary: "#355D57"
+  primarySoft: "rgba(53, 93, 87, 0.2)"
+  shadowSoft: "0 20px 40px rgba(60, 45, 30, 0.06)"
+
+dark:
+  colorScheme: dark
+  bg: "#18110C"
+  surface: "#201710"
+  surfaceAlt: "#281F17"
+  border: "#3A3025"
+  text: "#F5E9DE"
+  muted: "#C7AFA0"
+  primary: "#5E8A82"
+  primarySoft: "rgba(94, 138, 130, 0.3)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.85)"

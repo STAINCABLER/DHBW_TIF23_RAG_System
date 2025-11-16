@@ -1,0 +1,26 @@
+id: green-03
+name: Neon Tech Green
+
+light:
+  colorScheme: light
+  bg: "#F4FFF9"
+  surface: "#FFFFFF"
+  surfaceAlt: "#E1FDF0"
+  border: "#C5EEDC"
+  text: "#041812"
+  muted: "#607973"
+  primary: "#00C06A"
+  primarySoft: "rgba(0, 192, 106, 0.18)"
+  shadowSoft: "0 20px 40px rgba(10, 35, 25, 0.08)"
+
+dark:
+  colorScheme: dark
+  bg: "#02060A"
+  surface: "#030C10"
+  surfaceAlt: "#051518"
+  border: "#0C2625"
+  text: "#E6FFF4"
+  muted: "#8ED8BF"
+  primary: "#00FF7F"
+  primarySoft: "rgba(0, 255, 127, 0.25)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.9)"

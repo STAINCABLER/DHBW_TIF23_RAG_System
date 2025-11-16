@@ -2,45 +2,318 @@
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   line-height: 1.5;
   font-weight: 400;
+}
+
+:root[data-theme='green-01-light'] {
   color-scheme: light;
-  --color-bg: #f5f7fb;
-  --color-surface: #ffffff;
-  --color-surface-alt: #eef2ff;
-  --color-border: #dce3f0;
-  --color-text: #0f172a;
-  --color-muted: #5f6b7c;
-  --color-primary: #2563eb;
-  --color-primary-soft: rgba(37, 99, 235, 0.12);
+
+  /* Deep Forest Mint – Light: Forest Morning */
+  --color-bg: #F3FBF8;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #E0F2EB;
+  --color-border: #C6DED4;
+  --color-text: #0F241C;
+  --color-muted: #6A7F75;
+  --color-primary: #0F4F3C;
+  --color-primary-soft: rgba(15, 79, 60, 0.15);
   --shadow-soft: 0 20px 40px rgba(15, 23, 42, 0.08);
 }
 
-[data-theme='dark'] {
+:root[data-theme='green-01-dark'] {
   color-scheme: dark;
-  --color-bg: #050b16;
-  --color-surface: #0f172a;
-  --color-surface-alt: #1e293b;
-  --color-border: #1f2a3c;
-  --color-text: #f8fafc;
-  --color-muted: #9ca7bc;
-  --color-primary: #60a5fa;
-  --color-primary-soft: rgba(96, 165, 250, 0.15);
-  --shadow-soft: 0 20px 40px rgba(2, 6, 23, 0.6);
+
+  /* Deep Forest Mint – Dark: Forest Night */
+  --color-bg: #050D0A;
+  --color-surface: #0B1713;
+  --color-surface-alt: #11221C;
+  --color-border: #1D3530;
+  --color-text: #E5F3EF;
+  --color-muted: #9EB8AE;
+  --color-primary: #3A7C63;
+  --color-primary-soft: rgba(58, 124, 99, 0.25);
+  --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.7);
 }
 
-* {
-  box-sizing: border-box;
+:root[data-theme='green-02-light'] {
+  color-scheme: light;
+
+  /* Emerald Finance – Light: Emerald Day */
+  --color-bg: #F1FBF7;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #E1F3EC;
+  --color-border: #C5E3D7;
+  --color-text: #10342A;
+  --color-muted: #6B8279;
+  --color-primary: #00896A;
+  --color-primary-soft: rgba(0, 137, 106, 0.16);
+  --shadow-soft: 0 20px 40px rgba(9, 33, 26, 0.08);
 }
 
+:root[data-theme='green-02-dark'] {
+  color-scheme: dark;
+
+  /* Emerald Finance – Dark: Emerald Midnight */
+  --color-bg: #051410;
+  --color-surface: #091E18;
+  --color-surface-alt: #0D2A21;
+  --color-border: #174237;
+  --color-text: #E4F7F0;
+  --color-muted: #92B5A8;
+  --color-primary: #4ABFA2;
+  --color-primary-soft: rgba(74, 191, 162, 0.28);
+  --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.75);
+}
+
+:root[data-theme='green-03-light'] {
+  color-scheme: light;
+
+  /* Neon Tech Green – Light: Neon Lab */
+  --color-bg: #F4FFF9;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #E1FDF0;
+  --color-border: #C5EEDC;
+  --color-text: #041812;
+  --color-muted: #607973;
+  --color-primary: #00C06A;
+  --color-primary-soft: rgba(0, 192, 106, 0.18);
+  --shadow-soft: 0 20px 40px rgba(10, 35, 25, 0.08);
+}
+
+:root[data-theme='green-03-dark'] {
+  color-scheme: dark;
+
+  /* Neon Tech Green – Dark: Neon Terminal */
+  --color-bg: #02060A;
+  --color-surface: #030C10;
+  --color-surface-alt: #051518;
+  --color-border: #0C2625;
+  --color-text: #E6FFF4;
+  --color-muted: #8ED8BF;
+  --color-primary: #00FF7F;
+  --color-primary-soft: rgba(0, 255, 127, 0.25);
+  --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.9);
+}
+
+:root[data-theme='green-04-light'] {
+  color-scheme: light;
+
+  /* Alpine Sage – Light: Alpine Meadow */
+  --color-bg: #F7FBF6;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #E7F1E4;
+  --color-border: #CCD9CA;
+  --color-text: #253322;
+  --color-muted: #6B7767;
+  --color-primary: #5B8A4C;
+  --color-primary-soft: rgba(91, 138, 76, 0.16);
+  --shadow-soft: 0 20px 40px rgba(15, 23, 42, 0.06);
+}
+
+:root[data-theme='green-04-dark'] {
+  color-scheme: dark;
+
+  /* Alpine Sage – Dark: Alpine Dusk */
+  --color-bg: #070D07;
+  --color-surface: #0C170E;
+  --color-surface-alt: #132114;
+  --color-border: #203226;
+  --color-text: #E6F2E4;
+  --color-muted: #9CAF9B;
+  --color-primary: #83AF73;
+  --color-primary-soft: rgba(131, 175, 115, 0.25);
+  --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.7);
+}
+
+:root[data-theme='green-05-light'] {
+  color-scheme: light;
+
+  /* Dark Botanical – Light: Botanical Studio */
+  --color-bg: #F3F7F5;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #E0E7E4;
+  --color-border: #C3CFCA;
+  --color-text: #111C18;
+  --color-muted: #65736E;
+  --color-primary: #184C3A;
+  --color-primary-soft: rgba(24, 76, 58, 0.18);
+  --shadow-soft: 0 20px 40px rgba(8, 16, 14, 0.08);
+}
+
+:root[data-theme='green-05-dark'] {
+  color-scheme: dark;
+
+  /* Dark Botanical – Dark: Botanical Noir */
+  --color-bg: #020605;
+  --color-surface: #050B09;
+  --color-surface-alt: #07110E;
+  --color-border: #10201A;
+  --color-text: #DDEAE5;
+  --color-muted: #8FA29B;
+  --color-primary: #3B7D63;
+  --color-primary-soft: rgba(59, 125, 99, 0.28);
+  --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.85);
+}
+
+:root[data-theme='green-06-light'] {
+  color-scheme: light;
+
+  /* Fresh Microgreens – Light: Microgreen Day */
+  --color-bg: #F8FFF4;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #E9F9DD;
+  --color-border: #CCE8B7;
+  --color-text: #243416;
+  --color-muted: #708361;
+  --color-primary: #63C132;
+  --color-primary-soft: rgba(99, 193, 50, 0.2);
+  --shadow-soft: 0 20px 40px rgba(24, 45, 10, 0.06);
+}
+
+:root[data-theme='green-06-dark'] {
+  color-scheme: dark;
+
+  /* Fresh Microgreens – Dark: Microgreen Night */
+  --color-bg: #050C04;
+  --color-surface: #081307;
+  --color-surface-alt: #0C1A09;
+  --color-border: #173013;
+  --color-text: #EAF8DF;
+  --color-muted: #99B48B;
+  --color-primary: #9AE86D;
+  --color-primary-soft: rgba(154, 232, 109, 0.25);
+  --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.85);
+}
+
+:root[data-theme='green-07-light'] {
+  color-scheme: light;
+
+  /* Teal SaaS – Light: Teal Cloud */
+  --color-bg: #F1FAF9;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #E0F2F1;
+  --color-border: #C4E0DE;
+  --color-text: #123231;
+  --color-muted: #6A7D7D;
+  --color-primary: #00897B;
+  --color-primary-soft: rgba(0, 137, 123, 0.18);
+  --shadow-soft: 0 20px 40px rgba(18, 50, 49, 0.08);
+}
+
+:root[data-theme='green-07-dark'] {
+  color-scheme: dark;
+
+  /* Teal SaaS – Dark: Teal Console */
+  --color-bg: #021010;
+  --color-surface: #041616;
+  --color-surface-alt: #072020;
+  --color-border: #113232;
+  --color-text: #E3F4F3;
+  --color-muted: #90B0AE;
+  --color-primary: #4DB6AC;
+  --color-primary-soft: rgba(77, 182, 172, 0.28);
+  --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.8);
+}
+
+:root[data-theme='green-08-light'] {
+  color-scheme: light;
+
+  /* Minimal Evergreen – Light: Evergreen Paper */
+  --color-bg: #F5FAF7;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #E2EFE7;
+  --color-border: #C5D9CC;
+  --color-text: #132018;
+  --color-muted: #647568;
+  --color-primary: #2D6A4F;
+  --color-primary-soft: rgba(45, 106, 79, 0.18);
+  --shadow-soft: 0 20px 40px rgba(15, 23, 42, 0.06);
+}
+
+:root[data-theme='green-08-dark'] {
+  color-scheme: dark;
+
+  /* Minimal Evergreen – Dark: Evergreen Ledger */
+  --color-bg: #040A07;
+  --color-surface: #07110C;
+  --color-surface-alt: #0B1912;
+  --color-border: #12251C;
+  --color-text: #E9F5ED;
+  --color-muted: #96AB9E;
+  --color-primary: #52B788;
+  --color-primary-soft: rgba(82, 183, 136, 0.3);
+  --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.8);
+}
+
+:root[data-theme='green-09-light'] {
+  color-scheme: light;
+
+  /* Lime Creative – Light: Lime Studio */
+  --color-bg: #F8FFE8;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #EBFFC4;
+  --color-border: #D2F59A;
+  --color-text: #1A2308;
+  --color-muted: #6D7456;
+  --color-primary: #7EDB00;
+  --color-primary-soft: rgba(126, 219, 0, 0.2);
+  --shadow-soft: 0 20px 40px rgba(22, 30, 4, 0.08);
+}
+
+:root[data-theme='green-09-dark'] {
+  color-scheme: dark;
+
+  /* Lime Creative – Dark: Lime Void */
+  --color-bg: #050808;
+  --color-surface: #070B07;
+  --color-surface-alt: #0A110A;
+  --color-border: #151F10;
+  --color-text: #F4FFE4;
+  --color-muted: #A6C28D;
+  --color-primary: #A5FF00;
+  --color-primary-soft: rgba(165, 255, 0, 0.28);
+  --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.9);
+}
+
+:root[data-theme='green-10-light'] {
+  color-scheme: light;
+
+  /* Eco Dashboard – Light */
+  --color-bg: #F2FBF3;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #E3F4E6;
+  --color-border: #C7E3CB;
+  --color-text: #17321C;
+  --color-muted: #647A69;
+  --color-primary: #2E7D32;
+  --color-primary-soft: rgba(46, 125, 50, 0.18);
+  --shadow-soft: 0 20px 40px rgba(18, 50, 28, 0.06);
+}
+
+:root[data-theme='green-10-dark'] {
+  color-scheme: dark;
+
+  /* Eco Dashboard – Dark */
+  --color-bg: #041008;
+  --color-surface: #07170C;
+  --color-surface-alt: #0B2012;
+  --color-border: #163522;
+  --color-text: #E5F6E9;
+  --color-muted: #95AE9B;
+  --color-primary: #66BB6A;
+  --color-primary-soft: rgba(102, 187, 106, 0.28);
+  --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.8);
+}
+
+/* Global text & background still hängen an den bestehenden Tokens */
 body {
   margin: 0;
-  min-height: 100vh;
-  background-color: var(--color-bg);
   color: var(--color-text);
-  font-size: 16px;
-}
-
-#root {
-  min-height: 100vh;
+  background-color: var(--color-bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
 }
 
 a {
@@ -92,15 +365,23 @@ label {
   gap: 1rem;
 }
 
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
 .app-shell {
-  min-height: 100vh;
+  height: 100vh;
   display: grid;
   grid-template-columns: 280px 1fr;
   background: var(--color-bg);
 }
 
 .app-shell__main {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   background: var(--color-bg);
@@ -115,11 +396,14 @@ label {
 .sidebar {
   position: sticky;
   top: 0;
-  align-self: start;
+  align-self: flex-start;
   display: flex;
   flex-direction: column;
   gap: 1.75rem;
-  min-height: 100vh;
+  align-self: stretch;
+  max-height: 100%;
+  min-height: 60%;
+  overflow-y: auto;
   padding: 2rem 1.8rem;
   background: var(--color-surface);
   border-right: 1px solid var(--color-border);

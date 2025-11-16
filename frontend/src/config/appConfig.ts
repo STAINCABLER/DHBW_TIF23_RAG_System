@@ -23,4 +23,5 @@ export const appConfig = {
   searchPlaceholder: 'Search databases, documents & chats',
   defaultTheme: resolveThemePreference(import.meta.env.VITE_DEFAULT_THEME),
   mockModeEnabled: resolveBooleanFlag(import.meta.env.VITE_USE_MOCK),
+  defaultPalette: sanitize(import.meta.env.VITE_DEFAULT_PALETTE, 'green-07'),
 } as const

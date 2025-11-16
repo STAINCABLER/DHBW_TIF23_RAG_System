@@ -5,6 +5,24 @@ import { appConfig } from '../config/appConfig'
 import { ThemeContext } from './context'
 import type { ThemeContextValue } from './context'
 import type { ThemePreference } from './types'
+import { themes } from './themes.generated'
+
+type ThemeMode = 'light' | 'dark'
+
+type ThemeDefinition = {
+  colorScheme: ThemeMode
+  bg: string
+  surface: string
+  surfaceAlt: string
+  border: string
+  text: string
+  muted: string
+  primary: string
+  primarySoft: string
+  shadowSoft: string
+}
+
+type GeneratedThemes = Record<string, Record<ThemeMode, ThemeDefinition>>
 
 const STORAGE_KEY = 'dhbw_rag_theme'
 
@@ -23,7 +41,29 @@ export function ThemeProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     if (typeof document === 'undefined') return
-    document.documentElement.dataset.theme = theme
+
+    const mode: ThemeMode = theme === 'dark' ? 'dark' : 'light'
+    const paletteId = appConfig.defaultPalette
+    const themeDef = (themes as GeneratedThemes)[paletteId]?.[mode]
+    if (!themeDef) return
+
+    const root = document.documentElement
+
+    root.style.setProperty('--color-bg', themeDef.bg)
+    root.style.setProperty('--color-surface', themeDef.surface)
+    root.style.setProperty('--color-surface-alt', themeDef.surfaceAlt)
+    root.style.setProperty('--color-border', themeDef.border)
+    root.style.setProperty('--color-text', themeDef.text)
+    root.style.setProperty('--color-muted', themeDef.muted)
+    root.style.setProperty('--color-primary', themeDef.primary)
+    root.style.setProperty('--color-primary-soft', themeDef.primarySoft)
+    root.style.setProperty('--shadow-soft', themeDef.shadowSoft)
+
+    if (themeDef.colorScheme === 'dark') {
+      root.style.colorScheme = 'dark'
+    } else if (themeDef.colorScheme === 'light') {
+      root.style.colorScheme = 'light'
+    }
   }, [theme])
 
   useEffect(() => {

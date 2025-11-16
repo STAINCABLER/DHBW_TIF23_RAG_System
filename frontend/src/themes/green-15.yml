@@ -1,0 +1,26 @@
+id: green-15
+name: Soft Eco Cream
+
+light:
+  colorScheme: light
+  bg: "#FFFDF7"
+  surface: "#FFFFFF"
+  surfaceAlt: "#FFF6E7"
+  border: "#F0E0C4"
+  text: "#302B20"
+  muted: "#867B6A"
+  primary: "#7CB342"
+  primarySoft: "rgba(124, 179, 66, 0.25)"
+  shadowSoft: "0 20px 40px rgba(63, 51, 27, 0.05)"
+
+dark:
+  colorScheme: dark
+  bg: "#17120C"
+  surface: "#1E1810"
+  surfaceAlt: "#262016"
+  border: "#3A301E"
+  text: "#FFF6E7"
+  muted: "#C8B392"
+  primary: "#AED581"
+  primarySoft: "rgba(174, 213, 129, 0.3)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.85)"

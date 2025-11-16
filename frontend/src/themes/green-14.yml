@@ -1,0 +1,26 @@
+id: green-14
+name: Blue-Green Data
+
+light:
+  colorScheme: light
+  bg: "#F2FAFB"
+  surface: "#FFFFFF"
+  surfaceAlt: "#E1F2F4"
+  border: "#C4E0E4"
+  text: "#10272A"
+  muted: "#637880"
+  primary: "#00796B"
+  primarySoft: "rgba(0, 121, 107, 0.2)"
+  shadowSoft: "0 20px 40px rgba(16, 39, 42, 0.06)"
+
+dark:
+  colorScheme: dark
+  bg: "#031013"
+  surface: "#05181B"
+  surfaceAlt: "#082328"
+  border: "#12363D"
+  text: "#E4F6F7"
+  muted: "#93AEB4"
+  primary: "#26A69A"
+  primarySoft: "rgba(38, 166, 154, 0.3)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.85)"

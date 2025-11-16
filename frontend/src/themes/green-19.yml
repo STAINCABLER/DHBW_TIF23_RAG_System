@@ -1,0 +1,26 @@
+id: green-19
+name: Industrial Mint
+
+light:
+  colorScheme: light
+  bg: "#F4F7F6"
+  surface: "#FFFFFF"
+  surfaceAlt: "#E3EBEA"
+  border: "#CBD6D5"
+  text: "#141C1B"
+  muted: "#6A7574"
+  primary: "#3C6E47"
+  primarySoft: "rgba(60, 110, 71, 0.2)"
+  shadowSoft: "0 20px 40px rgba(15, 23, 30, 0.06)"
+
+dark:
+  colorScheme: dark
+  bg: "#070C0B"
+  surface: "#0B1210"
+  surfaceAlt: "#111B19"
+  border: "#1D2A27"
+  text: "#E4EFED"
+  muted: "#94A3A0"
+  primary: "#6FA676"
+  primarySoft: "rgba(111, 166, 118, 0.3)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.9)"

@@ -1,0 +1,26 @@
+id: green-12
+name: Urban Mobility
+
+light:
+  colorScheme: light
+  bg: "#F4FFF6"
+  surface: "#FFFFFF"
+  surfaceAlt: "#E6FBEF"
+  border: "#C7EFDA"
+  text: "#0E2217"
+  muted: "#678072"
+  primary: "#00C853"
+  primarySoft: "rgba(0, 200, 83, 0.2)"
+  shadowSoft: "0 20px 40px rgba(7, 40, 18, 0.06)"
+
+dark:
+  colorScheme: dark
+  bg: "#031009"
+  surface: "#05170D"
+  surfaceAlt: "#082112"
+  border: "#123824"
+  text: "#E5FBEF"
+  muted: "#92B89F"
+  primary: "#5CF18D"
+  primarySoft: "rgba(92, 241, 141, 0.3)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.85)"

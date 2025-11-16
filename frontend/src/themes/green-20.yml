@@ -1,0 +1,26 @@
+id: green-20
+name: Noir Terminal Green
+
+light:
+  colorScheme: light
+  bg: "#F7FAFC"
+  surface: "#FFFFFF"
+  surfaceAlt: "#E5EDF2"
+  border: "#CCD7E0"
+  text: "#101622"
+  muted: "#6A7485"
+  primary: "#00C06A"
+  primarySoft: "rgba(0, 192, 106, 0.2)"
+  shadowSoft: "0 20px 40px rgba(16, 22, 32, 0.06)"
+
+dark:
+  colorScheme: dark
+  bg: "#020408"
+  surface: "#050810"
+  surfaceAlt: "#070C18"
+  border: "#111C2A"
+  text: "#E6ECF5"
+  muted: "#919AB0"
+  primary: "#00FF7F"
+  primarySoft: "rgba(0, 255, 127, 0.35)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.95)"

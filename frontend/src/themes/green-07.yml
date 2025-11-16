@@ -1,0 +1,26 @@
+id: green-07
+name: Teal SaaS
+
+light:
+  colorScheme: light
+  bg: "#F1FAF9"
+  surface: "#FFFFFF"
+  surfaceAlt: "#E0F2F1"
+  border: "#C4E0DE"
+  text: "#123231"
+  muted: "#6A7D7D"
+  primary: "#00897B"
+  primarySoft: "rgba(0, 137, 123, 0.18)"
+  shadowSoft: "0 20px 40px rgba(18, 50, 49, 0.08)"
+
+dark:
+  colorScheme: dark
+  bg: "#021010"
+  surface: "#041616"
+  surfaceAlt: "#072020"
+  border: "#113232"
+  text: "#E3F4F3"
+  muted: "#90B0AE"
+  primary: "#4DB6AC"
+  primarySoft: "rgba(77, 182, 172, 0.28)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.8)"

@@ -1,0 +1,26 @@
+id: green-16
+name: Deep Teal Pro
+
+light:
+  colorScheme: light
+  bg: "#F2F9FA"
+  surface: "#FFFFFF"
+  surfaceAlt: "#E0F1F3"
+  border: "#C1DEE3"
+  text: "#102327"
+  muted: "#60767B"
+  primary: "#005B4F"
+  primarySoft: "rgba(0, 91, 79, 0.22)"
+  shadowSoft: "0 20px 40px rgba(16, 35, 38, 0.06)"
+
+dark:
+  colorScheme: dark
+  bg: "#020D0F"
+  surface: "#031518"
+  surfaceAlt: "#052024"
+  border: "#0D353A"
+  text: "#E1F4F6"
+  muted: "#8CA7AC"
+  primary: "#00897B"
+  primarySoft: "rgba(0, 137, 123, 0.3)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.9)"

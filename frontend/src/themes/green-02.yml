@@ -1,0 +1,26 @@
+id: green-02
+name: Emerald Finance
+
+light:
+  colorScheme: light
+  bg: "#F1FBF7"
+  surface: "#FFFFFF"
+  surfaceAlt: "#E1F3EC"
+  border: "#C5E3D7"
+  text: "#10342A"
+  muted: "#6B8279"
+  primary: "#00896A"
+  primarySoft: "rgba(0, 137, 106, 0.16)"
+  shadowSoft: "0 20px 40px rgba(9, 33, 26, 0.08)"
+
+dark:
+  colorScheme: dark
+  bg: "#051410"
+  surface: "#091E18"
+  surfaceAlt: "#0D2A21"
+  border: "#174237"
+  text: "#E4F7F0"
+  muted: "#92B5A8"
+  primary: "#4ABFA2"
+  primarySoft: "rgba(74, 191, 162, 0.28)"
+  shadowSoft: "0 20px 40px rgba(0, 0, 0, 0.75)"

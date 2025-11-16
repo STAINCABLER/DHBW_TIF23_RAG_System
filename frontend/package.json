@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "npm run generate-themes && vite build",
+    "preview": "vite preview",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "generate-themes": "node scripts/generate-themes.cjs",
+    "full-check-and-dev": "npm run generate-themes && npm run build && npm run lint && npm run dev"
   },
   "dependencies": {
     "lucide-react": "^0.553.0",
@@ -27,8 +29,10 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "ts-node": "^10.9.2",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.3",
-    "vite": "^7.2.2"
+    "vite": "^7.2.2",
+    "yaml": "^2.8.1"
   }
 }
