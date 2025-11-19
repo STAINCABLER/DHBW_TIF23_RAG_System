@@ -11,6 +11,9 @@ export type Account = {
   email: string
   displayName: string
   createdAt: string
+  displayNameUpdatedAt?: string
+  emailUpdatedAt?: string
+  passwordUpdatedAt?: string
 }
 
 export type DocumentMeta = {

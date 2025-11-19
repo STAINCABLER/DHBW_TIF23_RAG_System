@@ -8,7 +8,7 @@ import Logo from '../../assets/ltm-logo.svg'
 const RELEASE_REPO_URL = 'https://github.com/STAINCABLER/DHBW_TIF23_RAG_System/tree/main/frontend'
 
 const navItems = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/dash', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/chat', label: 'Chat', icon: MessageSquare },
   { to: '/history', label: 'History', icon: HistoryIcon },
   { to: '/docs', label: 'Documents', icon: FileText },
@@ -16,7 +16,7 @@ const navItems = [
 
 export function Sidebar() {
   const navigate = useNavigate()
-  const { isAdmin } = useAuth()
+  const { isAdmin, user } = useAuth()
 
   const handleNewChat = () => {
     navigate('/chat')
@@ -26,6 +26,10 @@ export function Sidebar() {
   const handleAdminNavigate = () => {
     if (!isAdmin) return
     navigate('/administrative')
+  }
+
+  if (!user) {
+    return null
   }
 
   return (

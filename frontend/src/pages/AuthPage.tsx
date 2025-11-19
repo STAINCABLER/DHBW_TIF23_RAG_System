@@ -46,7 +46,7 @@ export function AuthPage({ mode }: Props) {
               return
             }
             setError(null)
-            navigate('/')
+            navigate('/dash')
           }}
         >
           {!isLogin && (
@@ -94,7 +94,7 @@ export function AuthPage({ mode }: Props) {
           <Link to={isLogin ? '/register' : '/login'}>{isLogin ? 'Register' : 'Go to login'}</Link>
         </p>
         <Link to="/" className="link link--subtle">
-          Back to dashboard
+          Back to landing
         </Link>
       </div>
     </div>

@@ -40,7 +40,8 @@ Schutzmassnahmen und sichere Defaults.
 
 Geplante Seitenstruktur und modale Aktionen.
 
-- `/` Dashboard / Landing overview
+- `/` Öffentliche Landing mit Marketing-Blöcken
+- `/dash` Authentifizierter Dashboard-Startpunkt (innerhalb AppLayout)
 - `/login`, `/register`
 - `/account` profile & session info
 - `/chat` main chat interface with history sidebar
@@ -82,3 +83,22 @@ Evaluations fuer externe Bibliotheken und wofuer wir sie heranziehen.
 - Topbar greeter folgt HeroUI/MUI Layout: dreiteilige Struktur mit zentralem Welcome-Text, Icon-only Actions.
 - Cards & Tables erhielten Ant Design / MUI inspirierte Shadows, Typografie (Uppercase Header, Hover States) fuer einheitlichen Admin-Look.
 - Document-Tabelle nutzt React-Admin-like Link-Badges zur Navigation, History-Aktionen spiegeln Ant Buttons.
+
+## Landing Page Research (Nov 16)
+
+- **Superside – "20 Best Landing Page Design Examples to Perform in 2025" (Sep 1, 2024)**
+  - Betonung auf *einem* klaren, überzeugenden Titel, weil laut Studie bis zu 80 % der Besucher nur die Headline lesen.
+  - Hero-Visuals sollen wie ein „digitales Billboard“ wirken; starke Bilder oder Videos steigern Erinnerung (80 % visuell vs. 20 % Text) und konvertieren bis zu 86 % besser.
+  - Copy muss knapp bleiben und ein Angebot je Seite fokussieren (mehrere Offerten senken Leads um 266 %). Gliederung über Bullets/Subheads.
+  - CTAs brauchen hohe Sichtbarkeit, Kontraste sowie Personalisierung (bis zu +202 % Performance). Idealerweise nur ein primäres Ziel.
+  - Trust-Signale (Testimonials, Kontaktinfos) steigern Conversions um bis zu 9 %; Mobile-First + schnelle Ladezeiten (jede Sekunde = −4.42 % Conversion) sind Pflicht.
+- **Landingfolio – Inspiration Hub (laufend aktualisiert, Feb 2025 Snapshot)**
+  - Zeigt, dass moderne Landingpages über modulare Komponenten (Hero, Feature Cards, Steps, Testimonials) aufgebaut werden; dadurch bleibt das Layout konsistent und wiederverwendbar.
+  - Filter nach Industrie, Device und Farbschemata verdeutlichen, wie stark Personalisierung pro Zielgruppe wirkt.
+  - Claim „Make beautiful websites, without designing them“ erinnert daran, Design-System-Bausteine zu nutzen (hundreds of components) statt jedes Mal neu zu beginnen ⇒ wir spiegeln das mit klar abgegrenzten Landing-Blöcken.
+- **MyCodelessWebsite – Landing Page Website (mycodelesswebsite.com/landing-page-website/)**
+  - Seite ist aktuell nur über eine WPX-Fehlerseite bzw. Bot-Verifikation erreichbar; ohne CAPTCHA-Lösung keine Inhalte abrufbar. Sobald der Betreiber wieder ein öffentliches Listing liefert, Insights nachtragen.
+
+- **Umsetzung**
+  - Landing-Ansicht auf `/` wurde mit klarer Hero-Story, fokussiertem CTA, Social Proof, Nutzen-Säulen, Workflow-Steps, Metriken und Testimonial neu aufgebaut.
+  - Komponenten bleiben modular (Hero, Trust-Logos, Metrics, Feature Cards, Steps, Testimonial, CTA) und folgen den oben genannten Parametern.

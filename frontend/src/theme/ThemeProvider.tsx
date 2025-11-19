@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { PropsWithChildren } from 'react'
 import { usePrefersColorScheme } from '../hooks/usePrefersColorScheme'
 import { appConfig } from '../config/appConfig'
@@ -24,17 +24,39 @@ type ThemeDefinition = {
 
 type GeneratedThemes = Record<string, Record<ThemeMode, ThemeDefinition>>
 
-const STORAGE_KEY = 'dhbw_rag_theme'
+const PREFERENCE_STORAGE_KEY = 'dhbw_rag_theme_v2'
+const MANUAL_STORAGE_KEY = 'dhbw_rag_theme_manual_v2'
+
+const isThemeMode = (value: string | null): value is ThemeMode => value === 'light' || value === 'dark'
+const isThemePreference = (value: string | null): value is ThemePreference =>
+  value === 'light' || value === 'dark' || value === 'system'
 
 export function ThemeProvider({ children }: PropsWithChildren) {
   const systemScheme = usePrefersColorScheme()
   const defaultPreference: ThemePreference = appConfig.defaultTheme
-  const [preference, setPreference] = useState<ThemePreference>(() => {
+  const [preference, setPreferenceState] = useState<ThemePreference>(() => {
     if (typeof window === 'undefined') {
       return defaultPreference
     }
-    const stored = window.localStorage.getItem(STORAGE_KEY) as ThemePreference | null
-    return stored ?? defaultPreference
+    const stored = window.localStorage.getItem(PREFERENCE_STORAGE_KEY)
+    if (isThemePreference(stored)) {
+      return stored
+    }
+    return defaultPreference
+  })
+  const [manualPreference, setManualPreference] = useState<ThemeMode>(() => {
+    if (typeof window === 'undefined') {
+      return defaultPreference === 'dark' || defaultPreference === 'light' ? defaultPreference : 'light'
+    }
+    const storedManual = window.localStorage.getItem(MANUAL_STORAGE_KEY)
+    if (isThemeMode(storedManual)) {
+      return storedManual
+    }
+    const storedPreference = window.localStorage.getItem(PREFERENCE_STORAGE_KEY)
+    if (isThemeMode(storedPreference)) {
+      return storedPreference
+    }
+    return defaultPreference === 'dark' || defaultPreference === 'light' ? defaultPreference : 'light'
   })
 
   const theme = preference === 'system' ? systemScheme : preference
@@ -68,27 +90,54 @@ export function ThemeProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     if (typeof window === 'undefined') return
-    if (preference === 'system') {
-      window.localStorage.removeItem(STORAGE_KEY)
-    } else {
-      window.localStorage.setItem(STORAGE_KEY, preference)
-    }
+    window.localStorage.setItem(PREFERENCE_STORAGE_KEY, preference)
   }, [preference])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    window.localStorage.setItem(MANUAL_STORAGE_KEY, manualPreference)
+  }, [manualPreference])
+
+  const setPreference = useCallback((next: ThemePreference) => {
+    setPreferenceState(next)
+    if (next === 'light' || next === 'dark') {
+      setManualPreference(next)
+    }
+  }, [])
+
+  const setAutoTheme = useCallback(
+    (enabled: boolean) => {
+      setPreferenceState((current) => {
+        if (enabled) {
+          return 'system'
+        }
+        if (current === 'system') {
+          return manualPreference
+        }
+        return current
+      })
+    },
+    [manualPreference],
+  )
+
+  const toggleManualTheme = useCallback(() => {
+    setManualPreference((prev) => {
+      const next = prev === 'dark' ? 'light' : 'dark'
+      setPreferenceState(next)
+      return next
+    })
+  }, [])
 
   const value = useMemo<ThemeContextValue>(
     () => ({
       theme,
       preference,
+      manualPreference,
       setPreference,
-      cyclePreference: () => {
-        setPreference((current) => {
-          if (current === 'system') return 'light'
-          if (current === 'light') return 'dark'
-          return 'system'
-        })
-      },
+      setAutoTheme,
+      toggleManualTheme,
     }),
-    [preference, theme],
+    [manualPreference, preference, setAutoTheme, setPreference, theme, toggleManualTheme],
   )
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>

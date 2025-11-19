@@ -25,7 +25,7 @@ export function Topbar() {
   const handleLogin = () => navigate('/login')
   const handleLogout = () => {
     logout()
-    navigate('/login')
+    navigate('/')
   }
 
   return (
@@ -46,25 +46,30 @@ export function Topbar() {
 
       <div className="topbar__actions">
         {user ? (
-          <button type="button" className="btn btn--ghost" onClick={handleLogout}>
-            <LogOut size={16} aria-hidden />
-            Logout
-          </button>
+          <>
+            <button type="button" className="btn btn--ghost" onClick={handleLogout}>
+              <LogOut size={16} aria-hidden />
+              Logout
+            </button>
+            <ThemeToggle />
+            <button
+              type="button"
+              className="btn btn--ghost btn--icon"
+              aria-label="Open account settings"
+              onClick={() => navigate('/account')}
+            >
+              <Settings size={18} aria-hidden />
+            </button>
+          </>
         ) : (
-          <button type="button" className="btn btn--ghost" onClick={handleLogin}>
-            <LogIn size={16} aria-hidden />
-            Login
-          </button>
+          <>
+            <button type="button" className="btn btn--ghost" onClick={handleLogin}>
+              <LogIn size={16} aria-hidden />
+              Login
+            </button>
+            <ThemeToggle />
+          </>
         )}
-        <ThemeToggle />
-        <button
-          type="button"
-          className="btn btn--ghost btn--icon"
-          aria-label="Open account settings"
-          onClick={() => navigate('/account')}
-        >
-          <Settings size={18} aria-hidden />
-        </button>
       </div>
     </header>
   )

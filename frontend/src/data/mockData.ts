@@ -12,6 +12,9 @@ export const mockAccount: Account = {
   email: 'rag-admin@example.com',
   displayName: 'RAG Admin',
   createdAt: '2025-10-04T09:10:23Z',
+  displayNameUpdatedAt: '2025-11-15T07:45:00Z',
+  emailUpdatedAt: '2025-11-10T12:30:00Z',
+  passwordUpdatedAt: '2025-11-12T06:15:00Z',
 }
 
 export const mockSessions: SessionToken[] = [

@@ -3,15 +3,36 @@ import { Link } from 'react-router-dom'
 import { apiClient } from '../api/client'
 import type { ChatSummary, DocumentMeta } from '../api/types'
 import { formatBytes, formatDate } from '../utils/formatters'
+import { useAuth } from '../auth/useAuth'
 
 export function DashboardPage() {
+  const { user } = useAuth()
   const [documents, setDocuments] = useState<DocumentMeta[]>([])
   const [chatSummaries, setChatSummaries] = useState<ChatSummary[]>([])
 
   useEffect(() => {
-    apiClient.getDocuments().then(setDocuments).catch(console.error)
-    apiClient.getChatSummaries().then(setChatSummaries).catch(console.error)
-  }, [])
+    if (!user) return
+    let cancelled = false
+
+    const load = async () => {
+      try {
+        const [docs, chats] = await Promise.all([apiClient.getDocuments(), apiClient.getChatSummaries()])
+        if (!cancelled) {
+          setDocuments(docs)
+          setChatSummaries(chats)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    load()
+    return () => {
+      cancelled = true
+    }
+  }, [user])
+
+  if (!user) return null
 
   return (
     <div className="page page--dashboard">
