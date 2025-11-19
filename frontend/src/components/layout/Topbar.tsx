@@ -1,6 +1,6 @@
 import type { FormEvent } from 'react'
 import { useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { LogIn, LogOut, Settings } from 'lucide-react'
 import { ThemeToggle } from '../ThemeToggle'
 import { appConfig } from '../../config/appConfig'
@@ -8,11 +8,16 @@ import { useAuth } from '../../auth/useAuth'
 
 export function Topbar() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { user, logout } = useAuth()
   const greeting = useMemo(
     () => (user ? `Willkommen zurück, ${user.displayName}!` : 'Bitte melde dich an, um fortzufahren.'),
     [user],
   )
+  const searchVisible = useMemo(() => {
+    const allowedPrefixes = ['/history', '/docs']
+    return allowedPrefixes.some((path) => location.pathname.startsWith(path))
+  }, [location.pathname])
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
@@ -29,16 +34,18 @@ export function Topbar() {
   }
 
   return (
-    <header className="topbar">
-      <form className="topbar__search" role="search" onSubmit={handleSearch}>
-        <input
-          type="search"
-          name="query"
-          placeholder={appConfig.searchPlaceholder}
-          aria-label="Search knowledge base"
-          autoComplete="off"
-        />
-      </form>
+    <header className={`topbar ${searchVisible ? '' : 'topbar--compact'}`}>
+      {searchVisible && (
+        <form className="topbar__search" role="search" onSubmit={handleSearch}>
+          <input
+            type="search"
+            name="query"
+            placeholder={appConfig.searchPlaceholder}
+            aria-label="Search knowledge base"
+            autoComplete="off"
+          />
+        </form>
+      )}
 
       <p className="topbar__greeting u-no-select" aria-live="polite">
         {greeting}

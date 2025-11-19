@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
+import { BookText, FileText, Github } from 'lucide-react'
 import { useAuth } from '../auth/useAuth'
 import { appConfig } from '../config/appConfig'
 import { ThemeToggle } from '../components/ThemeToggle'
@@ -80,12 +81,26 @@ const testimonial = {
 const documentationUrl = 'https://github.com/STAINCABLER/DHBW_TIF23_RAG_System'
 const licenseUrl = `${documentationUrl}/blob/main/LICENSE`
 const operationsUrl = `${documentationUrl}/tree/main/documentation`
+const apiDocsUrl = `${documentationUrl}/tree/main/documentation/backend/api`
+const frontendNotesUrl = `${documentationUrl}/blob/main/frontend/FRONTEND_NOTES.md`
+
+const footerResourceLinks = [
+  { label: 'GitHub Repository', href: documentationUrl, icon: Github },
+  { label: 'API & Contracts', href: apiDocsUrl, icon: BookText },
+  { label: 'Frontend Notes', href: frontendNotesUrl, icon: FileText },
+]
+
+const footerOpsLinks = [
+  { label: 'Lizenzhinweise', href: licenseUrl, icon: FileText },
+  { label: 'Betriebsanleitungen', href: operationsUrl, icon: BookText },
+]
 
 export function LandingPage() {
   const { user } = useAuth()
   const showLandingCta = appConfig.mockModeEnabled
   const topbarRef = useRef<HTMLElement>(null)
   const [topbarStuck, setTopbarStuck] = useState(false)
+  const currentYear = new Date().getFullYear()
 
   useEffect(() => {
     const node = topbarRef.current
@@ -245,23 +260,61 @@ export function LandingPage() {
         )}
 
         <footer className="landing__footer card" aria-label="Projektinformationen">
-          <div className="landing__footer-meta">
-            <span className="landing__footer-version u-no-select">{appConfig.releaseVersion}</span>
-            <a href={documentationUrl} target="_blank" rel="noreferrer" className="landing__footer-link">
-              GitHub Repository
-            </a>
+          <div className="landing__footer-head">
+            <div className="landing__footer-brand">
+              <p className="landing__pill u-no-select">Alpha Build</p>
+              <h3>{appConfig.appName}</h3>
+              <p>
+                Struktur-Assistent für Datenbank-Teams – kuratierte Empfehlungen, validierte Quellen und sichere Hand-offs zwischen
+                Engineering und Architektur.
+              </p>
+            </div>
+            <div className="landing__footer-badge">
+              <span className="landing__footer-version">{appConfig.releaseVersion}</span>
+              <small className="u-no-select">Mock Mode · Preview</small>
+            </div>
           </div>
-          <p className="landing__footer-disclaimer">
-            Studentenprojekt in der Alpha-Phase – Ergebnisse dienen Demonstrationszwecken, nicht für produktive Entscheidungen.
-          </p>
-          <div className="landing__footer-extra">
-            <span className="u-no-select">by Tobias Maimone</span>
-            <a href={licenseUrl} target="_blank" rel="noreferrer" className="landing__footer-link">
-              Lizenzhinweise (in Arbeit)
-            </a>
-            <a href={operationsUrl} target="_blank" rel="noreferrer" className="landing__footer-link">
-              Betriebsanleitungen (in Arbeit)
-            </a>
+
+          <div className="landing__footer-grid" role="navigation" aria-label="Footer Navigation">
+            <div>
+              <p className="landing__footer-label">Ressourcen</p>
+              <ul className="landing__footer-links">
+                {footerResourceLinks.map((link) => (
+                  <li key={link.label}>
+                    <a href={link.href} target="_blank" rel="noreferrer" className="landing__footer-link landing__footer-link--external">
+                      <span className="landing__footer-icon" aria-hidden="true">
+                        <link.icon size={16} />
+                      </span>
+                      <span>{link.label}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="landing__footer-label">Ops & Compliance</p>
+              <ul className="landing__footer-links">
+                {footerOpsLinks.map((link) => (
+                  <li key={link.label}>
+                    <a href={link.href} target="_blank" rel="noreferrer" className="landing__footer-link landing__footer-link--external">
+                      <span className="landing__footer-icon" aria-hidden="true">
+                        <link.icon size={16} />
+                      </span>
+                      <span>{link.label}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="landing__footer-bottom">
+            <p className="landing__footer-disclaimer">
+              Studentenprojekt in der Alpha-Phase – Ergebnisse dienen Demonstrationszwecken, nicht für produktive Entscheidungen.
+            </p>
+            <div className="landing__footer-meta">
+              <span className="u-no-select">© {currentYear} Tobias Maimone · DHBW TIF23 RAG</span>
+            </div>
           </div>
         </footer>
       </div>
