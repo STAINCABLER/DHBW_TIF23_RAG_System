@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini + Perplexity RAG System</title>
+    <style>
+        :root {
+            --color-bg-primary: #fcfcf9;
+            --color-surface: #fffffe;
+            --color-text: #13343b;
+            --color-text-secondary: #626c71;
+            --color-primary: #21808d;
+            --color-primary-hover: #1d7480;
+            --color-border: rgba(94, 82, 64, 0.2);
+            --color-success: #21808d;
+            --color-error: #c0152f;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-bg-primary: #1f2121;
+                --color-surface: #262828;
+                --color-text: #f5f5f5;
+                --color-text-secondary: rgba(167, 169, 169, 0.7);
+                --color-primary: #32b8c6;
+                --color-primary-hover: #2da6b2;
+                --color-border: rgba(119, 124, 124, 0.3);
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--color-bg-primary);
+            color: var(--color-text);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: var(--color-text);
+        }
+
+        .subtitle {
+            color: var(--color-text-secondary);
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .card h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            fill: var(--color-primary);
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--color-text);
+        }
+
+        input[type="text"], input[type="file"], textarea, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--color-surface);
+            color: var(--color-text);
+            margin-bottom: 15px;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: 2px solid var(--color-primary);
+            border-color: var(--color-primary);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        button {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+        }
+
+        button:hover:not(:disabled) {
+            background: var(--color-primary-hover);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(94, 82, 64, 0.1);
+        }
+
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .status.show { display: block; }
+
+        .status.success {
+            background: rgba(33, 128, 141, 0.15);
+            color: var(--color-success);
+            border: 1px solid rgba(33, 128, 141, 0.25);
+        }
+
+        .status.error {
+            background: rgba(192, 21, 47, 0.15);
+            color: var(--color-error);
+            border: 1px solid rgba(192, 21, 47, 0.25);
+        }
+
+        .result-section {
+            margin-top: 30px;
+        }
+
+        .result-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .result-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--color-text);
+        }
+
+        .model-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            background: rgba(33, 128, 141, 0.15);
+            color: var(--color-primary);
+        }
+
+        .result-content {
+            line-height: 1.7;
+            color: var(--color-text);
+        }
+
+        .meta-info {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--color-border);
+            font-size: 13px;
+            color: var(--color-text-secondary);
+        }
+
+        .meta-item {
+            display: inline-block;
+            margin-right: 20px;
+            margin-bottom: 5px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show { display: block; }
+
+        .spinner {
+            border: 3px solid rgba(33, 128, 141, 0.2);
+            border-top: 3px solid var(--color-primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .file-info {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-top: 5px;
+        }
+
+        .workflow-steps {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            padding: 20px;
+            background: var(--color-surface);
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            position: relative;
+        }
+
+        .step:not(:last-child)::after {
+            content: '→';
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-text-secondary);
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            color: white;
+            line-height: 30px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .step-label {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+        }
+
+        code {
+            background: rgba(94, 82, 64, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Gemini + Perplexity RAG System</h1>
+        <p class="subtitle">Multimodales RAG mit intelligenter Query-Verteilung</p>
+
+        <div class="workflow-steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-label">Gemini analysiert</div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-label">Daten speichern</div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-label">Perplexity abfragen</div>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-label">Antwort erhalten</div>
+            </div>
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                    </svg>
+                    Schritt 1: Gemini Analyse
+                </h2>
+                
+                <label for="file-input">Dokument/Bild hochladen</label>
+                <input type="file" id="file-input" accept="image/*,.pdf">
+                <div id="file-info" class="file-info"></div>
+
+                <label for="analysis-prompt">Analyse-Anweisung</label>
+                <textarea id="analysis-prompt" placeholder="Analysiere dieses Bild/Dokument und extrahiere wichtige Informationen...">Analysiere dieses Bild/Dokument detailliert und gib eine strukturierte Zusammenfassung mit Hauptpunkten, erkannten Objekten/Themen und wichtigen Erkenntnissen.</textarea>
+
+                <button id="analyze-btn">Gemini Analyse starten</button>
+            </div>
+
+            <div class="card">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                    Schritt 2: Perplexity Abfrage
+                </h2>
+
+                <label for="user-query">Deine Frage (optional bei Datei-Upload)</label>
+                <textarea id="user-query" placeholder="Was zeigt das analysierte Dokument? Welche Erkenntnisse gibt es?">Was sind die wichtigsten Erkenntnisse aus dem analysierten Dokument?</textarea>
+
+                <label for="model-select">Perplexity Modell</label>
+                <select id="model-select">
+                    <option value="sonar-pro">Sonar Pro (Standard)</option>
+                    <option value="sonar-reasoning">Sonar Reasoning (Komplex)</option>
+                    <option value="sonar">Sonar (Schnell)</option>
+                </select>
+
+                <button id="query-btn" disabled>Perplexity Abfrage starten</button>
+                <button id="full-pipeline-btn" class="btn-secondary">Gesamte Pipeline ausführen</button>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div>Verarbeite Anfrage...</div>
+        </div>
+
+        <div class="result-section" id="results"></div>
+    </div>
+
+    <script>
+        // API Keys (stored in code)
+        const GEMINI_API_KEY = 'https://openbin.ltm-labs.de/?90014231b3485770#HAZSXGLGjabiqztMkrMtdwiy1BVgsspKZSn46RLTJCwc';
+        const PERPLEXITY_API_KEY = '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';
+
+        // State Management
+        let analysisResult = null;
+        let storedDocuments = [];
+
+        // DOM Elements
+        const fileInput = document.getElementById('file-input');
+        const fileInfo = document.getElementById('file-info');
+        const analysisPrompt = document.getElementById('analysis-prompt');
+        const userQuery = document.getElementById('user-query');
+        const modelSelect = document.getElementById('model-select');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const queryBtn = document.getElementById('query-btn');
+        const fullPipelineBtn = document.getElementById('full-pipeline-btn');
+        const statusDiv = document.getElementById('status');
+        const loadingDiv = document.getElementById('loading');
+        const resultsDiv = document.getElementById('results');
+
+        // File Input Handler
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+                fileInfo.textContent = `📎 ${file.name} (${sizeMB} MB)`;
+            }
+        });
+
+        // Status Display
+        function showStatus(message, type = 'success') {
+            statusDiv.textContent = message;
+            statusDiv.className = `status show ${type}`;
+            setTimeout(() => {
+                statusDiv.classList.remove('show');
+            }, 5000);
+        }
+
+        // Loading State
+        function setLoading(isLoading) {
+            loadingDiv.classList.toggle('show', isLoading);
+            analyzeBtn.disabled = isLoading;
+            queryBtn.disabled = isLoading || !analysisResult;
+            fullPipelineBtn.disabled = isLoading;
+        }
+
+        // Simulate Gemini API Call
+        async function analyzeWithGemini(file, prompt, apiKey) {
+            // In production: Replace with actual Gemini API call
+            // const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+            //     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: file.type, data: base64Data }}]}]})
+            // });
+
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({
+                        summary: "Das Dokument zeigt einen detaillierten Überblick über Key-Value-Datenbanken und deren Einsatzgebiete. Redis wird als Beispiel hervorgehoben.",
+                        key_insights: [
+                            "Redis ist optimal für temporäre Daten und Caching",
+                            "TTL ermöglicht automatisches Löschen veralteter Daten",
+                            "Key-Value-Stores unterscheiden sich fundamental von Dokumentdatenbanken",
+                            "Ephemeral State ist ideal für Sessions und Rate-Limiting"
+                        ],
+                        text_content: "Redis ist ein In-Memory Key-Value-Store, der sich durch extrem schnelle Zugriffszeiten auszeichnet. Im Gegensatz zu Dokumentdatenbanken arbeitet Redis mit einfachen Schlüssel-Wert-Paaren.",
+                        categories: ["Datenbanken", "NoSQL", "Redis", "Key-Value-Store"],
+                        sentiment: "informativ",
+                        metadata: {
+                            confidence_score: 0.95,
+                            processing_notes: "Dokument enthält technische Diagramme und Code-Beispiele"
+                        },
+                        analyzed_at: new Date().toISOString(),
+                        model: "gemini-1.5-pro"
+                    });
+                }, 2000);
+            });
+        }
+
+        // Simulate Data Storage
+        function storeAnalysis(fileId, fileName, analysisData) {
+            const document = {
+                id: storedDocuments.length + 1,
+                file_id: fileId,
+                file_name: fileName,
+                stored_at: new Date().toISOString(),
+                analysis: analysisData
+            };
+            
+            storedDocuments.push(document);
+            return document;
+        }
+
+        // Simulate Perplexity API Call
+        async function queryPerplexity(query, context, apiKey, model) {
+            // In production: Replace with actual Perplexity API call
+            // const response = await fetch('https://api.perplexity.ai/chat/completions', {
+            //     method: 'POST',
+            //     headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ model: model, messages: [{ role: 'system', content: 'Context: ' + context }, { role: 'user', content: query }]})
+            // });
+
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({
+                        answer: `Basierend auf der Gemini-Analyse des Dokuments kann ich folgende Erkenntnisse zusammenfassen:\n\n${context}\n\nDie Hauptpunkte sind:\n\n1. **Redis als Key-Value-Store**: Redis ist speziell für temporäre Daten optimiert und bietet sub-Millisekunden-Latenz durch In-Memory-Speicherung.\n\n2. **TTL-Mechanismus**: Time-To-Live ermöglicht automatisches Löschen von Einträgen, was ideal für Sessions, OTP-Codes und Cache-Daten ist.\n\n3. **Unterschied zu Dokumentdatenbanken**: Während Dokumentdatenbanken wie MongoDB komplexe, durchsuchbare Dokumente speichern, behandelt Redis Werte als "Black Box" ohne Feld-Level-Queries.\n\n4. **Praktische Anwendungen**: Besonders geeignet für Rate-Limiting, Feature Flags, Auth-Tokens und andere ephemeral states.\n\nDiese Architektur-Entscheidungen machen Redis zum idealen Werkzeug für hochfrequente, kurzlebige Daten in modernen Anwendungen.`,
+                        citations: ['Gemini-Analyse-Dokument', 'Redis-Dokumentation'],
+                        model: model,
+                        tokens_used: 450,
+                        context_length: context.length
+                    });
+                }, 2500);
+            });
+        }
+
+        // Display Results
+        function displayResults(geminiResult, perplexityResult) {
+            resultsDiv.innerHTML = '';
+
+            // Gemini Result
+            if (geminiResult) {
+                const geminiCard = document.createElement('div');
+                geminiCard.className = 'result-card';
+                geminiCard.innerHTML = `
+                    <div class="result-header">
+                        <span class="result-title">Gemini Analyse</span>
+                        <span class="model-badge">${geminiResult.model}</span>
+                    </div>
+                    <div class="result-content">
+                        <p><strong>Zusammenfassung:</strong><br>${geminiResult.summary}</p>
+                        <p><strong>Wichtige Erkenntnisse:</strong></p>
+                        <ul>
+                            ${geminiResult.key_insights.map(insight => `<li>${insight}</li>`).join('')}
+                        </ul>
+                        <p><strong>Kategorien:</strong> ${geminiResult.categories.join(', ')}</p>
+                    </div>
+                    <div class="meta-info">
+                        <span class="meta-item">📊 Confidence: ${(geminiResult.metadata.confidence_score * 100).toFixed(0)}%</span>
+                        <span class="meta-item">🕒 ${new Date(geminiResult.analyzed_at).toLocaleString('de-DE')}</span>
+                    </div>
+                `;
+                resultsDiv.appendChild(geminiCard);
+            }
+
+            // Perplexity Result
+            if (perplexityResult) {
+                const perplexityCard = document.createElement('div');
+                perplexityCard.className = 'result-card';
+                perplexityCard.innerHTML = `
+                    <div class="result-header">
+                        <span class="result-title">Perplexity Antwort</span>
+                        <span class="model-badge">${perplexityResult.model}</span>
+                    </div>
+                    <div class="result-content">
+                        ${perplexityResult.answer.replace(/\n\n/g, '</p><p>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}
+                    </div>
+                    <div class="meta-info">
+                        <span class="meta-item">🔢 Tokens: ${perplexityResult.tokens_used}</span>
+                        <span class="meta-item">📚 Context: ${perplexityResult.context_length} Zeichen</span>
+                        <span class="meta-item">📖 Quellen: ${perplexityResult.citations.join(', ')}</span>
+                    </div>
+                `;
+                resultsDiv.appendChild(perplexityCard);
+            }
+        }
+
+        // Step 1: Gemini Analysis (automatic on file upload)
+        analyzeBtn.addEventListener('click', async () => {
+            const file = fileInput.files[0];
+            const prompt = analysisPrompt.value;
+
+            if (!file) {
+                showStatus('Bitte wähle eine Datei aus', 'error');
+                return;
+            }
+
+            setLoading(true);
+            showStatus('Gemini analysiert das Dokument...', 'success');
+
+            try {
+                // Analyze with Gemini
+                analysisResult = await analyzeWithGemini(file, prompt, GEMINI_API_KEY);
+                
+                // Store analysis
+                const fileId = `file_${Date.now()}`;
+                const storedDoc = storeAnalysis(fileId, file.name, analysisResult);
+
+                showStatus('✅ Analyse abgeschlossen und gespeichert!', 'success');
+                queryBtn.disabled = false;
+                
+                displayResults(analysisResult, null);
+
+            } catch (error) {
+                showStatus('❌ Fehler bei der Analyse: ' + error.message, 'error');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Step 2: Perplexity Query (works with or without file upload)
+        queryBtn.addEventListener('click', async () => {
+            const query = userQuery.value;
+            const model = modelSelect.value;
+
+            if (!query) {
+                showStatus('Bitte gib eine Frage ein', 'error');
+                return;
+            }
+
+            setLoading(true);
+            showStatus('Perplexity verarbeitet deine Anfrage...', 'success');
+
+            try {
+                // Prepare context from stored documents
+                let context = '';
+                
+                if (storedDocuments.length > 0) {
+                    // Use all stored document analyses as context
+                    context = storedDocuments.map(doc => `
+                        Dokument: ${doc.file_name}
+                        Zusammenfassung: ${doc.analysis.summary}
+                        Erkenntnisse: ${doc.analysis.key_insights.join('; ')}
+                        Kategorien: ${doc.analysis.categories.join(', ')}
+                        Text-Inhalt: ${doc.analysis.text_content}
+                    `).join('\n\n---\n\n');
+                }
+
+                // Query Perplexity with context from all documents
+                const perplexityResult = await queryPerplexity(query, context, PERPLEXITY_API_KEY, model);
+
+                showStatus('✅ Antwort von Perplexity erhalten!', 'success');
+                
+                displayResults(analysisResult, perplexityResult);
+
+            } catch (error) {
+                showStatus('❌ Fehler bei der Abfrage: ' + error.message, 'error');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Auto-enable query button when documents are uploaded
+        queryBtn.disabled = false;
+
+        // Full Pipeline
+        fullPipelineBtn.addEventListener('click', async () => {
+            analyzeBtn.click();
+            
+            // Wait for analysis to complete
+            await new Promise(resolve => {
+                const checkInterval = setInterval(() => {
+                    if (analysisResult && !analyzeBtn.disabled) {
+                        clearInterval(checkInterval);
+                        resolve();
+                    }
+                }, 500);
+            });
+
+            // Then run query
+            setTimeout(() => queryBtn.click(), 1000);
+        });
+
+        // Auto-analyze on file upload
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files[0]) {
+                setTimeout(() => analyzeBtn.click(), 500);
+            }
+        });
+
+        // Info on page load
+        setTimeout(() => {
+            showStatus('💡 Tipp: Lade ein Dokument hoch (wird automatisch analysiert) oder stelle direkt eine Frage', 'success');
+        }, 1000);
+    </script>
+</body>
+</html>
+
