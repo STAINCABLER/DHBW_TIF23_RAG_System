@@ -8,8 +8,8 @@ Hierfür muss der Nutzer angemeldet sein.
 ```json
 [
     {
-        "chat_id": "552cd66f-52af-473a-9f9d-55771d6126fa",
-        "title": "Testtitel"
+        "chatId": "eadf51c4-b531-43e9-96b9-310f6c903251",
+        "chatTitle": "New Chat"
     }
 ]
 ```
@@ -29,12 +29,20 @@ Hierfür muss der Nutzer angemeldet sein.
 ### Response 200
 ```json
 {
-    "chat_id": "552cd66f-52af-473a-9f9d-55771d6126fa",
-    "title": "Testtitel",
-    "entries": [
+    "accountId": "838b4559-bacf-494a-8d35-2cb4af29dcb4",
+    "chatId": "eadf51c4-b531-43e9-96b9-310f6c903251",
+    "chatTitle": "New Chat",
+    "createdAt": "Mon, 24 Nov 2025 14:32:27 GMT",
+    "messages": [
         {
-            "question": "Frage",
-            "response": "Response"
+            "files": [],
+            "role": "user",
+            "text": "Meine Nachricht"
+        },
+        {
+            "files": [],
+            "role": "assistent",
+            "text": "Meine Nachricht"
         }
     ]
 }

@@ -1,7 +1,88 @@
 import uuid
 from util import chat
+from util.clients import postgres_db_client, mongo_db_client
+from dataclasses import dataclass, fields, asdict
+from datetime import datetime, timezone
 
-class User(object):
+
+@dataclass(kw_only=True)
+class User():
+    accountId: str
+    email: str
+    displayName: str
+    createdAt: str
+    displayNameUpdatedAt: str
+    emailUpdatedAt: str
+    passwordUpdatedAt: str
+    password: str = ""
+
+
+    def get_chats(self) -> list[chat.Chat]:
+        raw_chats: list[dict[str, any]] = []
+
+        with mongo_db_client.create_connection() as client:
+            database = client["rag"]
+            collection = database["chats"]
+
+            res = collection.find({"accountId": self.accountId})
+            for i in res:
+                raw_chats.append(i)
+        
+        chats: list[chat.Chat] = [
+            chat.Chat.from_dict(raw_chat)
+            for raw_chat in raw_chats
+        ]
+
+        return chats
+
+    def get_chat_with_id(self, chat_id: str) -> chat.Chat | None:
+        raw_chat: dict[str, any] = {}
+
+        with mongo_db_client.create_connection() as client:
+            database = client["rag"]
+            collection = database["chats"]
+
+            raw_chat = collection.find_one({"accountId": self.accountId, "chatId": chat_id})
+        
+        if not raw_chat:
+            return None
+
+        return chat.Chat.from_dict(raw_chat)
+
+    def create_chat(self) -> chat.Chat:
+        new_chat: chat.Chat = chat.Chat(
+            str(uuid.uuid4()),
+            "New Chat",
+            datetime.now(timezone.utc),
+            self.accountId,
+            []
+            )
+        
+
+        with mongo_db_client.create_connection() as client:
+            database = client["rag"]
+            collection = database["chats"]
+
+            collection.insert_one(asdict(new_chat))
+
+
+
+        return new_chat
+
+    @classmethod
+    def from_dict(cls, data) -> "User":
+        filtered_data = {
+            f.name: data[f.name.lower()] if f.name.lower() in data else data[f.name]
+            for f in fields(cls)
+            if f.name.lower() in data
+            or f.name in data
+        }
+        return cls(**filtered_data)
+    
+    def to_dict(self) -> dict[str, any]:
+        return asdict(self)
+
+class UserOld(object):
     users: list["User"] = []
     def __init__(
             self,
@@ -63,20 +144,28 @@ class User(object):
         ref_chat.entries.append(entry)
 
 def match_user(username: str, password: str) -> User | None:
-    matching_users: list[User] = [user
-                                  for user in User.users
-                                  if user.username == username
-                                  and user.password == password]
-    if not matching_users:
+    
+    # I don't care about SQL-Injection...
+    matched_user_data: dict[str, any] = postgres_db_client.fetch_one(
+        "SELECT accountId, email, displayName, createdAt, displayNameUpdatedAt, emailUpdatedAt, passwordUpdatedAt "
+        "FROM userData "
+        f"WHERE email = '{username}' "
+        f"AND password = '{password}'"
+    )
+
+    if not matched_user_data:
         return None
 
-    return matching_users[0]
+    return User.from_dict(matched_user_data)
 
 def does_user_already_exist(username: str) -> bool:
-    matching_users: list[User] = [user
-                                  for user in User.users
-                                  if user.username == username]
-    if not matching_users:
+    # I don't care about SQL-Injection...
+    matched_user_data: dict[str, any] = postgres_db_client.fetch_one(
+        "SELECT accountId "
+        "FROM userData "
+        f"WHERE email = '{username}'"
+    )
+    if not matched_user_data:
         return False
 
     return True
@@ -87,19 +176,48 @@ def create_user(username: str, password: str) -> User | None:
     if username_already_used:
         return None
 
-    user: User = User(username, password)
-    User.users.append(user)
+    timestamp_now = datetime.now(timezone.utc)
+
+    user: User = User(
+        accountId=str(uuid.uuid4()),
+        email=username,
+        displayName=username,
+        createdAt=timestamp_now,
+        displayNameUpdatedAt=timestamp_now,
+        emailUpdatedAt=timestamp_now,
+        passwordUpdatedAt=timestamp_now,
+        password=password
+    )
+
+    postgres_db_client.execute(
+        "INSERT INTO userData "
+        "(accountId, email, displayName, createdAt, displayNameUpdatedAt, emailUpdatedAt, passwordUpdatedAt, password) " \
+        "VALUES ("
+            f"'{user.accountId}',"
+            f"'{user.displayName}',"
+            f"'{user.email}',"
+            f"TIMESTAMP '{user.createdAt}',"
+            f"TIMESTAMP '{user.displayNameUpdatedAt}',"
+            f"TIMESTAMP '{user.emailUpdatedAt}',"
+            f"TIMESTAMP '{user.passwordUpdatedAt}',"
+            f"'{user.password}'"
+        ") "
+    )
+
 
     return user
 
 def get_user_from_user_id(user_id: str) -> User | None:
-    matching_users: list[User] = [user
-                                  for user in User.users
-                                  if str(user.user_id) == user_id]
-    if not matching_users:
+    matched_user_data: dict[str, any] = postgres_db_client.fetch_one(
+        "SELECT accountId, email, displayName, createdAt, displayNameUpdatedAt, emailUpdatedAt, passwordUpdatedAt "
+        "FROM userData "
+        f"WHERE accountId = '{user_id}' "
+    )
+
+    if not matched_user_data:
         return None
 
-    return matching_users[0]
+    return User.from_dict(matched_user_data)
 
 
-create_user("test", "test")
+#create_user("test", "test")

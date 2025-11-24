@@ -19,7 +19,7 @@ def login() -> tuple[str, int]:
         if not matched_user:
             return "Invalid credentials", 400
 
-        session["user_id"] = str(matched_user.user_id)
+        session["accountId"] = str(matched_user.accountId)
 
         return "Valid credentials", 200
 

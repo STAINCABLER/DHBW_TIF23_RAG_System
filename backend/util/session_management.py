@@ -5,10 +5,10 @@ from util import user
 
 
 def is_user_logged_in() -> bool:
-    if "user_id" not in session.keys():
+    if "accountId" not in session.keys():
         return False
 
-    user_id: str = session["user_id"]
+    user_id: str = session["accountId"]
 
     current_user: user.User = user.get_user_from_user_id(user_id)
 
@@ -19,9 +19,9 @@ def is_user_logged_in() -> bool:
 
 
 def get_user_from_session() -> user.User:
-    if "user_id" not in session:
+    if "accountId" not in session:
         return None
-    user_id: str = session["user_id"]
+    user_id: str = session["accountId"]
 
     current_user: user.User = user.get_user_from_user_id(user_id)
 

@@ -7,8 +7,13 @@ Hierfür wird eine aktive Session benötigt!
 ### Response 200
 ```json
 {
-    "user_id": "b6f90488-cbda-487d-8d60-e3f05f323aa0",
-    "username": "test"
+    "accountId": "838b4559-bacf-494a-8d35-2cb4af29dcb4",
+    "createdAt": "Mon, 24 Nov 2025 14:31:59 GMT",
+    "displayName": "test@test.com",
+    "displayNameUpdatedAt": "Mon, 24 Nov 2025 14:31:59 GMT",
+    "email": "test@test.com",
+    "emailUpdatedAt": "Mon, 24 Nov 2025 14:31:59 GMT",
+    "passwordUpdatedAt": "Mon, 24 Nov 2025 14:31:59 GMT"
 }
 ```
 
@@ -75,8 +80,13 @@ Ein Session-Token wird nicht vergeben.
 ### Response 200
 ```
 {
-    "user_id": "b6f90488-cbda-487d-8d60-e3f05f323aa0",
-    "username": "test"
+    "accountId": "838b4559-bacf-494a-8d35-2cb4af29dcb4",
+    "createdAt": "Mon, 24 Nov 2025 14:31:59 GMT",
+    "displayName": "test@test.com",
+    "displayNameUpdatedAt": "Mon, 24 Nov 2025 14:31:59 GMT",
+    "email": "test@test.com",
+    "emailUpdatedAt": "Mon, 24 Nov 2025 14:31:59 GMT",
+    "passwordUpdatedAt": "Mon, 24 Nov 2025 14:31:59 GMT"
 }
 ```
 

@@ -13,7 +13,14 @@ def get_all_chats() -> list[dict[str, any]]:
 
     current_user: user.User = session_management.get_user_from_session()
 
-    return current_user.get_raw_chats_as_list(), 200
+    chats = current_user.get_chats()
+
+    result_data: list[dict[str, any]] = [
+        chat.to_chat_overview()
+        for chat in chats
+    ]
+
+    return result_data, 200
 
 @chat_blueprint.post("/")
 def create_chat() -> dict[str, any]:
@@ -38,7 +45,7 @@ def get_chat(chat_id: str) -> dict[str, any]:
 
     current_user: user.User = session_management.get_user_from_session()
 
-    current_chat: chat.Chat = current_user.get_chat_from_chat_id(chat_id)
+    current_chat: chat.Chat = current_user.get_chat_with_id(chat_id)
 
     if not current_chat:
         return f"Chat with chat_id '{chat_id}' not found!", 404
@@ -53,7 +60,7 @@ def post_to_chat(chat_id: str) -> dict[str, any]:
 
     current_user: user.User = session_management.get_user_from_session()
 
-    current_chat: chat.Chat = current_user.get_chat_from_chat_id(chat_id)
+    current_chat: chat.Chat = current_user.get_chat_with_id(chat_id)
 
     if not current_chat:
         return f"Chat with chat_id '{chat_id}' not found!", 404
@@ -63,16 +70,18 @@ def post_to_chat(chat_id: str) -> dict[str, any]:
     if not user_input:
         return "Field user_input is required!", 400
     
-    user_chat_entry: chat.Entry = chat.Entry(chat.EntryRole.USER, user_input, [])
+    user_chat_entry: chat.ChatMessage = chat.ChatMessage(chat.EntryRole.USER.role_name, user_input, [])
 
-    current_user.add_entry_to_chat(chat_id, user_chat_entry)
+    current_chat.messages.append(user_chat_entry)
     
     #TODO Do magic here
 
     question: str = "PLACEHOLDER"
-    assitent_chat_entry: chat.Entry = chat.Entry(chat.EntryRole.ASSISTENT, question, [])
+    assitent_chat_entry: chat.ChatMessage = chat.ChatMessage(chat.EntryRole.ASSISTENT.role_name, question, [])
 
 
-    current_user.add_entry_to_chat(chat_id, assitent_chat_entry)
+    current_chat.messages.append(assitent_chat_entry)
+
+    current_chat.update_messages()
 
     return assitent_chat_entry.to_dict(), 200
