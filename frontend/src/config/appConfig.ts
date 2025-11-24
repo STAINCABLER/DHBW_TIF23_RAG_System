@@ -24,4 +24,5 @@ export const appConfig = {
   defaultTheme: resolveThemePreference(import.meta.env.VITE_DEFAULT_THEME),
   mockModeEnabled: resolveBooleanFlag(import.meta.env.VITE_USE_MOCK),
   defaultPalette: sanitize(import.meta.env.VITE_DEFAULT_PALETTE, 'green-07'),
+  apiBaseUrl: sanitize(import.meta.env.VITE_API_BASE_URL, '/api'),
 } as const

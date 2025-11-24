@@ -24,6 +24,7 @@ type LoginResult = {
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api'
+const BACKEND_BASE_URL = API_BASE_URL.replace(/\/(?:api)\/?$/, '') || API_BASE_URL
 const USE_MOCK = appConfig.mockModeEnabled
 
 async function request<T>({ path, ...options }: RequestOptions): Promise<T> {
@@ -44,6 +45,15 @@ async function request<T>({ path, ...options }: RequestOptions): Promise<T> {
 }
 
 export const apiClient = {
+  async checkBackendHealth(): Promise<boolean> {
+    if (USE_MOCK) return true
+    try {
+      const response = await fetch(`${BACKEND_BASE_URL}/health`, { method: 'GET' })
+      return response.ok
+    } catch {
+      return false
+    }
+  },
   async login(email: string, password: string): Promise<LoginResult> {
     const response = await fetch(`${API_BASE_URL}/accounts/login`, {
       method: 'POST',
