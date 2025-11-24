@@ -222,9 +222,9 @@ Deployment:
   - Netzwerk: rag-network (interne Kommunikation)
   
 Sprachen/Frameworks:
-  - Backend: Python/FastAPI oder Node.js
-  - Embeddings: OpenAI API oder lokales Modell (z.B. sentence-transformers)
-  - LLM: OpenAI GPT-4 oder lokales Llama-Modell
+  - Backend: Python
+  - Embeddings: Gemini
+  - LLM: Gemini und Perplexity
 ```
 
 ---
@@ -280,17 +280,3 @@ volumes:
 networks:
   rag-network:
     driver: bridge
-```
-
----
-
-## Quellen
-
-- Fraunhofer IESE RAG Architecture
-- AWS RAG Documentation
-- MongoDB Vector Search Guide
-- PostgreSQL pgvector Documentation
-- ZenML Vector Database Comparison
-- IBM RAG Pattern Guide
-- Hugging Face RAG Tutorial
-- Microsoft Azure RAG Best Practices
