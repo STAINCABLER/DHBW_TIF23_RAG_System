@@ -17,6 +17,11 @@ import {
 import { appConfig } from '../config/appConfig'
 
 type RequestOptions = RequestInit & { path: string }
+type LoginResult = {
+  status: number
+  ok: boolean
+  message?: string
+}
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api'
 const USE_MOCK = appConfig.mockModeEnabled
@@ -39,6 +44,35 @@ async function request<T>({ path, ...options }: RequestOptions): Promise<T> {
 }
 
 export const apiClient = {
+  async login(email: string, password: string): Promise<LoginResult> {
+    const response = await fetch(`${API_BASE_URL}/accounts/login`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+
+    let message: string | undefined
+    const contentType = response.headers.get('content-type') ?? ''
+    if (contentType.includes('application/json')) {
+      try {
+        const payload = await response.json()
+        if (typeof payload?.message === 'string') {
+          message = payload.message
+        }
+      } catch {
+        // ignore body parse errors; fallback message below
+      }
+    }
+
+    if (!response.ok && !message) {
+      message = `Login fehlgeschlagen (Status ${response.status})`
+    }
+
+    return { status: response.status, ok: response.ok, message }
+  },
   async getAccount(): Promise<Account> {
     if (USE_MOCK) return mockAccount
     return request<Account>({ path: '/accounts/me', method: 'GET' })
