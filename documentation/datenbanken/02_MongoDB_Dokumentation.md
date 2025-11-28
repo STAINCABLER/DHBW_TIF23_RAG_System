@@ -169,3 +169,73 @@ db.case_studies.find({
 - Text-Indizes für Volltextsuche aktivieren
 - Compound-Indizes für häufig kombinierte Filterungen
 - Document-Kompression aktivieren für großvolumige Collections
+
+## Chunking-Integration in RAG-Datenbank-Strukturen
+
+### Datenfluss mit Chunking
+
+```
+
+Eingabe-Dokument
+↓
+[CHUNKING-SCHICHT] ← **05_Chunking_Strategie.md**
+├─ Document Splitting (512 Tokens, 50 Token Overlap)
+├─ Metadaten-Extraktion (Heading, Section, Page)
+└─ Chunk-Liste mit chunk_id, chunk_text, metadata
+↓
+[EMBEDDING-SCHICHT]
+├─ Pro Chunk: Text → Embedding-Vektor generieren
+├─ Embedding speichern (z. B. 1536-dim für OpenAI)
+└─ Chunk + Embedding gebündelt
+↓
+[DATENBANK-LAYER]
+├─ PostgreSQL: rag_chunks, rag_chunks_embeddings
+├─ MongoDB: collections.chunks
+└─ Redis: Cache häufig abgerufene Chunks
+
+```
+
+### Logische Struktur eines Chunks
+
+Ein Chunk ist die **atomare Einheit** im RAG-System:
+
+| Feld | Typ | Beispiel | Zweck |
+|------|-----|---------|-------|
+| `chunk_id` | UUID/String | `"doc_abc_chunk_001"` | Eindeutige Identifizierung |
+| `document_id` | UUID | `"doc_abc"` | Rückverweis zum Originaldokument |
+| `chunk_index` | Integer | `0, 1, 2, ...` | Position im Dokument (für Rekonstruktion) |
+| `chunk_text` | Text | `"Dies ist der Chunk-Text..."` | Der eigentliche Inhalt (bis 512 Tokens) |
+| `embedding` | Float[] | `[0.123, -0.456, ...]` | Embedding-Vektor (Dimensionität: 1536 für OpenAI) |
+| `metadata` | JSON | `{heading: "2.1", page: 5, section: "Methoden"}` | Strukturelle Informationen |
+| `created_at` | Timestamp | `2025-11-28T09:40:00Z` | Audit + Versioning |
+
+---
+
+## Chunking-Konfiguration pro RAG-Instanz
+
+Für verschiedene Datenquellen können unterschiedliche Chunking-Parameter verwendet werden:
+
+```
+
+chunking_profiles:
+default:
+chunk_size: 512
+overlap: 50
+separator: "sentence"  \# oder "paragraph", "character"
+use_cases: ["general_documents", "web_content"]
+
+dense_technical:
+chunk_size: 256
+overlap: 25
+separator: "sentence"
+use_cases: ["code_docs", "technical_specs"]
+
+narrative:
+chunk_size: 768
+overlap: 100
+separator: "paragraph"
+use_cases: ["books", "articles", "essays"]
+
+```
+
+Siehe auch: **05_Chunking_Strategie.md** für Details zur Chunking-Implementierung.
