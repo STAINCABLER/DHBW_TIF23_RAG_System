@@ -18,7 +18,7 @@ Authentifizierung:
 - `POST /api/accounts/register` – Registrieren eines neuen Nutzers
 - `GET /api/chats` – Liste der Chats eines Users (Titel und IDs)
 - `GET/POST /api/chats/{id}` – Chat-Verlauf lesen und neue Fragen senden
-- `GET/POST/DELETE /api/docs` – Dokumente speichern, abrufen und loeschen (PDF, Text, CSV, JSON)
+- `GET/POST/DELETE /api/docs` – Dokumente speichern, abrufen und loeschen (PDF, Markdown, Text, CSV, JSON)
 
 Die konkrete Auspraegung der HTTP-Methoden (GET/POST/PUT/DELETE) wird in den Detaildokumenten verfeinert.
 
