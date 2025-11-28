@@ -18,8 +18,6 @@ def get_user(session_token: util.session_management.SessionToken):
     return user.to_spare_dict(), 200
 
 
-
-
 @accounts_blueprint.post("/login")
 def post_login():
     email: str = flask.request.form.get("email", "").strip()
@@ -81,7 +79,7 @@ def post_register():
 
 
 
-@accounts_blueprint.get("/logout")
+@accounts_blueprint.route("/logout", methods=["GET", "POST"])
 @util.session_management.requires_session(True)
 def get_logout(session_token: util.session_management.SessionToken):
     session_token.revoke_session_token()

@@ -1,5 +1,8 @@
+import sys
+sys.dont_write_bytecode = True
 import flask
 import endpoints.accounts
+import endpoints.chats
 import endpoints.debug
 
 
@@ -10,6 +13,8 @@ api_blueprint: flask.Blueprint = flask.Blueprint("api", "api", url_prefix="/api"
 
 
 api_blueprint.register_blueprint(endpoints.accounts.accounts_blueprint)
+api_blueprint.register_blueprint(endpoints.chats.chats_blueprint)
+
 
 
 @api_blueprint.get("/")

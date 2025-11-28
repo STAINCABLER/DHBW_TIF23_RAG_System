@@ -1,6 +1,8 @@
 import flask
 
+import database.postgres
 import database.redis
+import util.file
 import util.user
 
 debug_blueprint: flask.Blueprint = flask.Blueprint("debug", "debug", url_prefix="/debug")
@@ -23,6 +25,8 @@ def get_debug_page():
         "<a href='/debug/users'>Users</a>"
         "<br>"
         "<a href='/debug/sessions'>Sessions</a>"
+        "<br>"
+        "<a href='/debug/files'>Files</a>"
     ), 200
 
 
@@ -50,3 +54,19 @@ def get_all_sessions():
         for raw_val in raw_values
     ]
     return values, 200
+
+@debug_blueprint.get("/files")
+def get_all_uploaded_files():
+    raw_result: list[dict[str, any]] = database.postgres.fetch_all(
+        "SELECT * FROM uploaded_files"
+    )
+    uploaded_files: list[util.file.UploadedFile] = [
+        util.file.UploadedFile.from_dict(file)
+        for file in raw_result
+    ]
+
+    dict_files: list[dict[str, any]] = [
+        file.to_dict()
+        for file in uploaded_files
+    ]
+    return dict_files, 200

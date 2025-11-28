@@ -4,6 +4,7 @@ import hashlib
 import typing
 
 import database.postgres
+import util.conversation
 
 @dataclasses.dataclass
 class User(object):
@@ -40,7 +41,6 @@ class User(object):
             "WHERE "
                 f"id = {self.id}"
         )
-
     @staticmethod
     def create_user(username: str, email: str, password: str, profile_type: str = "student") -> "User":
         result = database.postgres.fetch_one(

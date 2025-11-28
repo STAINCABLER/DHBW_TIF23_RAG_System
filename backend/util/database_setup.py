@@ -34,6 +34,40 @@ def setup_tables() -> None:
         ");"
     )
 
+    database.postgres.execute(
+        "CREATE TABLE IF NOT EXISTS conversations ("
+            "conversation_id SERIAL PRIMARY KEY,"
+            "user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,"
+            "title VARCHAR(255),"
+            "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
+            "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
+            "is_active BOOLEAN DEFAULT TRUE"
+        ");"
+    )
+
+    database.postgres.execute(
+        "CREATE TABLE IF NOT EXISTS messages ("
+            "message_id SERIAL PRIMARY KEY,"
+            "conversation_id INTEGER NOT NULL REFERENCES conversations(conversation_id) ON DELETE CASCADE,"
+            "role VARCHAR(20) NOT NULL CHECK (role IN ('user', 'assistant', 'system')),"
+            "content TEXT NOT NULL,"
+            "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
+            "metadata JSONB"
+        ");"
+    )
+
+    database.postgres.execute(
+        "CREATE TABLE IF NOT EXISTS uploaded_files ("
+            "file_id SERIAL PRIMARY KEY,"
+            "conversation_id INTEGER REFERENCES conversations(conversation_id) ON DELETE SET NULL,"
+            "original_filename VARCHAR(255) NOT NULL,"
+            "file_uuid UUID NOT NULL,"
+            "file_type VARCHAR(50) NOT NULL,"
+            "is_processed BOOLEAN DEFAULT FALSE,"
+            "uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+        ");"
+    )
+
 def setup_values() -> None:
 
     does_user_exist = database.postgres.fetch_one(

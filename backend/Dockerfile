@@ -7,6 +7,7 @@ ENV POSTGRES_USER="postgres"
 ENV POSTGRES_PASSWORD="password"
 ENV REDIS_HOST="db-redis"
 ENV MONGO_HOST="db-mongo"
+ENV UPLOAD_FOLDER="/python-docker/upload"
 
 COPY requirements.txt requirements.txt
 
