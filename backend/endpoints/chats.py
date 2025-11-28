@@ -1,6 +1,7 @@
 import flask
 
 import endpoints.documents
+import rag
 import util.conversation
 import util.session_management
 import util.user
@@ -77,7 +78,8 @@ def post_to_chat(session_token: util.session_management.SessionToken, chat_id: i
     # TODO DO MAGIC HERE #
     ######################
 
-    output: str = "Platzhalter"
+    # Currently only serves as a placeholder
+    output: str = rag.process_input(user, user_input)
 
     message: util.conversation.ConversationMessage = conversation.create_conversation_message(output, "assistant", {})
 
