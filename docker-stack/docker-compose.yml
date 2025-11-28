@@ -2,7 +2,7 @@ services:
 
   # Datenbanken
   db-redis:
-    image: redis:7-alpine
+    image: redis:${IMAGE_VERSION_REDIS:-7-alpine}
     container_name: db-redis
     networks:
       - datenbanken
@@ -17,7 +17,7 @@ services:
 
   # Debug Tools
   debug-redisinsight:
-    image: redis/redisinsight:latest
+    image: redis/redisinsight:${IMAGE_VERSION_REDISINSIGHT:-latest}
     container_name: debug-redisinsight
     networks:
       - debug-tools
@@ -35,18 +35,28 @@ services:
 
   # Anwendungen
   rag-frontend:
-    image: ghcr.io/staincabler/dhbw_tif23_rag-frontend:latest
+    image: ghcr.io/staincabler/dhbw_tif23_rag-frontend:${IMAGE_VERSION_FRONTEND:-main}
     container_name: rag-frontend
     networks:
       - application
       - proxy
-    ports:
-      - "3000:3000"
     environment:
-      - REDIS_HOST=db-redis
-      - REDIS_PORT=6379
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+      - VITE_USE_MOCK=${VITE_USE_MOCK}
+      - VITE_APP_NAME=${VITE_APP_NAME}
+      - VITE_APP_FOOTER=${VITE_APP_FOOTER}
+      - VITE_APP_RELEASE=${VITE_APP_RELEASE}
+      - VITE_DEFAULT_THEME=${VITE_DEFAULT_THEME}
+      - VITE_DEFAULT_PALETTE=${VITE_DEFAULT_PALETTE}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy-network"
+      - "traefik.http.routers.ptb-rag.rule=Host(`${FQDN_RAG}`)"
+      - "traefik.http.routers.ptb-rag.entrypoints=websecure"
+      - "traefik.http.routers.ptb-rag.tls.certresolver=cloudflare"
+      - "traefik.http.services.ptb-rag.loadbalancer.server.port=3000"
     depends_on:
-      db-redis:
+      rag-backend:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "curl -fs http://localhost:3000/health || exit 1"]
@@ -55,14 +65,12 @@ services:
       retries: 3
 
   rag-backend:
-    image: ghcr.io/staincabler/dhbw_tif23_rag-backend:latest
+    image: ghcr.io/staincabler/dhbw_tif23_rag-backend:${IMAGE_VERSION_BACKEND:-main}
     container_name: rag-backend
     networks:
       - application
       - internet
       - datenbanken
-    ports:
-      - "4000:4000"
     environment:
       - REDIS_HOST=db-redis
       - REDIS_PORT=6379
