@@ -171,7 +171,7 @@ def post_upload_file(session_token: util.session_management.SessionToken, chat_i
     if not uploaded_file:
         return "Could not upload file!", 500
     
-    file.save(os.path.join(UPLOAD_FOLDER, str(uploaded_file.file_uuid)))
+    file.save(os.path.join(util.file.UPLOAD_FOLDER, str(uploaded_file.file_uuid)))
 
     return uploaded_file.to_dict(), 201
 
