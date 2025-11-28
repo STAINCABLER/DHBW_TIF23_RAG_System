@@ -51,7 +51,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy-network"
-      - "traefik.http.routers.ptb-rag.rule=Host(${FQDN_RAG})"
+      - "traefik.http.routers.ptb-rag.rule=Host('${FQDN_RAG}')"
       - "traefik.http.routers.ptb-rag.entrypoints=websecure"
       - "traefik.http.routers.ptb-rag.tls.certresolver=cloudflare"
       - "traefik.http.services.ptb-rag.loadbalancer.server.port=3000"
