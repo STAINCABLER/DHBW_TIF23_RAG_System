@@ -72,7 +72,10 @@ def post_to_chat(session_token: util.session_management.SessionToken, chat_id: i
     
     conversation.load_all_messages()
 
-    conversation.create_conversation_message(user_input, "user", {})
+    user_message: util.conversation.ConversationMessage = conversation.create_conversation_message(user_input, "user", {})
+
+    if not user_message:
+        "Could not save user-message", 500
 
     ######################
     # TODO DO MAGIC HERE #
@@ -84,7 +87,7 @@ def post_to_chat(session_token: util.session_management.SessionToken, chat_id: i
     message: util.conversation.ConversationMessage = conversation.create_conversation_message(output, "assistant", {})
 
     if not message:
-        "Could not generate assistant-mesage", 500
+        "Could not generate assistant-message", 500
 
     return message.to_dict(), 201
 
