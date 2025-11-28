@@ -1,223 +1,147 @@
-import uuid
-from util import chat
-from util.clients import postgres_db_client, mongo_db_client
-from dataclasses import dataclass, fields, asdict
-from datetime import datetime, timezone
+import dataclasses
+import datetime
+import hashlib
+import typing
 
+import database.postgres
 
-@dataclass(kw_only=True)
-class User():
-    accountId: str
+@dataclasses.dataclass
+class User(object):
+    id: int
+    username: str
     email: str
-    displayName: str
-    createdAt: str
-    displayNameUpdatedAt: str
-    emailUpdatedAt: str
-    passwordUpdatedAt: str
-    password: str = ""
+    password_hash: str
+    profile_type: typing.Literal["student", "professional", "researcher"]
+    created_at: datetime.datetime
+    last_login: datetime.datetime
+    is_active: bool
+    preferences: dict[str, str] | None = None
 
+    def update_last_login_to_now(self) -> None:
+        self.last_login = datetime.datetime.now()
+        database.postgres.execute(
+            "UPDATE users "
+            "SET "
+                f"last_login='{self.last_login}' "
+            "WHERE "
+                f"id = {self.id}"
+        )
 
-    def get_chats(self) -> list[chat.Chat]:
-        raw_chats: list[dict[str, any]] = []
+    def update_user(self) -> None:
+        database.postgres.execute(
+            "UPDATE users "
+            "SET "
+                f"username='{self.username}', "
+                f"email='{self.email}', "
+                f"password_hash='{self.password_hash}', "
+                f"profile_type='{self.profile_type}', "
+                f"last_login='{self.last_login}', "
+                f"is_active={self.is_active} "
+            "WHERE "
+                f"id = {self.id}"
+        )
 
-        with mongo_db_client.create_connection() as client:
-            database = client["rag"]
-            collection = database["chats"]
+    @staticmethod
+    def create_user(username: str, email: str, password: str, profile_type: str = "student") -> "User":
+        result = database.postgres.fetch_one(
+            "SELECT id "
+            "FROM users "
+                "WHERE "
+                    f"username = '{username}' "
+                    f"OR email = '{email}'"
+        )
+        if result:
+            return None
+        password_hash: str = hashlib.sha256(password.encode()).hexdigest()
+        database.postgres.execute(
+            "INSERT INTO users ("
+                "username,"
+                "email,"
+                "password_hash,"
+                "profile_type"
+            ") "
+            "VALUES ( "
+                f"'{username}', "
+                f"'{email}', "
+                f"'{password_hash}', "
+                f"'{profile_type}'"
+            ")"
+        )
 
-            res = collection.find({"accountId": self.accountId})
-            for i in res:
-                raw_chats.append(i)
-        
-        chats: list[chat.Chat] = [
-            chat.Chat.from_dict(raw_chat)
-            for raw_chat in raw_chats
+        return User.find_user_by_email_and_password_hash(email, password_hash)
+
+    @staticmethod
+    def get_all_users() -> list["User"]:
+        result: list[dict[str, any]] = database.postgres.fetch_all(
+            "SELECT "
+                "id, username, email, password_hash, profile_type, created_at, last_login, is_active, preferences "
+            "FROM users"
+        )
+
+        return [
+            User.from_dict(user)
+            for user in result
         ]
 
-        return chats
+    @staticmethod
+    def find_user_by_id(user_id: int) -> "User":
 
-    def get_chat_with_id(self, chat_id: str) -> chat.Chat | None:
-        raw_chat: dict[str, any] = {}
+        result: dict[str, any] | None = database.postgres.fetch_one(
+            "SELECT "
+                "id, username, email, password_hash, profile_type, created_at, last_login, is_active, preferences "
+            "FROM users "
+            "WHERE "
+                f"id = {user_id}"
+        )
 
-        with mongo_db_client.create_connection() as client:
-            database = client["rag"]
-            collection = database["chats"]
-
-            raw_chat = collection.find_one({"accountId": self.accountId, "chatId": chat_id})
-        
-        if not raw_chat:
+        if not result:
             return None
 
-        return chat.Chat.from_dict(raw_chat)
+        return User.from_dict(result)
 
-    def create_chat(self) -> chat.Chat:
-        new_chat: chat.Chat = chat.Chat(
-            str(uuid.uuid4()),
-            "New Chat",
-            datetime.now(timezone.utc),
-            self.accountId,
-            []
-            )
-        
+    @staticmethod
+    def find_user_by_email_and_password_hash(email: str, password_hash: str) -> "User":
 
-        with mongo_db_client.create_connection() as client:
-            database = client["rag"]
-            collection = database["chats"]
+        result: dict[str, any] | None = database.postgres.fetch_one(
+            "SELECT "
+                "id, username, email, password_hash, profile_type, created_at, last_login, is_active "
+            "FROM users "
+            "WHERE "
+                f"email = '{email}' "
+                f"AND password_hash = '{password_hash}' "
+                "AND is_active"
+        )
 
-            collection.insert_one(asdict(new_chat))
+        if not result:
+            return None
 
-
-
-        return new_chat
+        return User.from_dict(result)
 
     @classmethod
     def from_dict(cls, data) -> "User":
         filtered_data = {
             f.name: data[f.name.lower()] if f.name.lower() in data else data[f.name]
-            for f in fields(cls)
+            for f in dataclasses.fields(cls)
             if f.name.lower() in data
             or f.name in data
         }
         return cls(**filtered_data)
-    
+
     def to_dict(self) -> dict[str, any]:
-        return asdict(self)
+        return dataclasses.asdict(self)
 
-class UserOld(object):
-    users: list["User"] = []
-    def __init__(
-            self,
-            username: str,
-            password: str
-        ) -> None:
-        self.user_id: uuid.UUID = uuid.uuid4()
-        self.username: str = username
-        self.password: str = password
-        self.chats: list[chat.Chat] = []
-
-    def to_dict(self) -> dict[str, str]:
-        return {
-            "user_id": str(self.user_id),
+    def to_spare_dict(self) -> dict[str, any]:
+        user_data: dict[str, any] = {
+            "id": self.id,
             "username": self.username,
-            "password": self.password,
+            "email": self.email,
+            "profile_type": self.profile_type,
+            "created_at": self.created_at.isoformat(),
+            "is_active": self.is_active
         }
 
-    def get_chats_as_dict(self) -> list[dict[str, any]]:
-        return [
-            chat.to_dict()
-            for chat in self.chats
-        ]
-    
-    def get_raw_chats_as_list(self) -> list[dict[str, any]]:
-        return [
-            {
-                "chat_id": str(chat.chat_id),
-                "title": chat.title,
-            }
-            for chat in self.chats
-        ]
-
-    def get_chat_from_chat_id(self, chat_id: str) -> chat.Chat | None:
-        matched_chats: list[chat.Chat] = [
-            chat
-            for chat in self.chats
-            if str(chat.chat_id) == chat_id
-        ]
-
-        if not matched_chats:
-            return None
-
-        return matched_chats[0]
-
-    def create_chat(self) -> chat.Chat:
-        new_chat: chat.Chat = chat.Chat()
-
-        self.chats.append(new_chat)
-        return new_chat
-
-    def add_entry_to_chat(self, chat_id: str, entry: chat.Entry) -> None:
-        ref_chat: chat.Chat = self.get_chat_from_chat_id(chat_id)
-
-        if not ref_chat:
-            return
-        
-
-        ref_chat.entries.append(entry)
-
-def match_user(username: str, password: str) -> User | None:
-    
-    # I don't care about SQL-Injection...
-    matched_user_data: dict[str, any] = postgres_db_client.fetch_one(
-        "SELECT accountId, email, displayName, createdAt, displayNameUpdatedAt, emailUpdatedAt, passwordUpdatedAt "
-        "FROM userData "
-        f"WHERE email = '{username}' "
-        f"AND password = '{password}'"
-    )
-
-    if not matched_user_data:
-        return None
-
-    return User.from_dict(matched_user_data)
-
-def does_user_already_exist(username: str) -> bool:
-    # I don't care about SQL-Injection...
-    matched_user_data: dict[str, any] = postgres_db_client.fetch_one(
-        "SELECT accountId "
-        "FROM userData "
-        f"WHERE email = '{username}'"
-    )
-    if not matched_user_data:
-        return False
-
-    return True
-
-def create_user(username: str, password: str) -> User | None:
-    username_already_used: bool = does_user_already_exist(username)
-
-    if username_already_used:
-        return None
-
-    timestamp_now = datetime.now(timezone.utc)
-
-    user: User = User(
-        accountId=str(uuid.uuid4()),
-        email=username,
-        displayName=username,
-        createdAt=timestamp_now,
-        displayNameUpdatedAt=timestamp_now,
-        emailUpdatedAt=timestamp_now,
-        passwordUpdatedAt=timestamp_now,
-        password=password
-    )
-
-    postgres_db_client.execute(
-        "INSERT INTO userData "
-        "(accountId, email, displayName, createdAt, displayNameUpdatedAt, emailUpdatedAt, passwordUpdatedAt, password) " \
-        "VALUES ("
-            f"'{user.accountId}',"
-            f"'{user.displayName}',"
-            f"'{user.email}',"
-            f"TIMESTAMP '{user.createdAt}',"
-            f"TIMESTAMP '{user.displayNameUpdatedAt}',"
-            f"TIMESTAMP '{user.emailUpdatedAt}',"
-            f"TIMESTAMP '{user.passwordUpdatedAt}',"
-            f"'{user.password}'"
-        ") "
-    )
+        if self.last_login:
+            user_data["last_login"] = self.last_login.isoformat()
 
 
-    return user
-
-def get_user_from_user_id(user_id: str) -> User | None:
-    matched_user_data: dict[str, any] = postgres_db_client.fetch_one(
-        "SELECT accountId, email, displayName, createdAt, displayNameUpdatedAt, emailUpdatedAt, passwordUpdatedAt "
-        "FROM userData "
-        f"WHERE accountId = '{user_id}' "
-    )
-
-    if not matched_user_data:
-        return None
-
-    return User.from_dict(matched_user_data)
-
-
-#create_user("test", "test")
+        return user_data

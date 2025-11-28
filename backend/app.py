@@ -1,14 +1,15 @@
-from flask import Flask, Blueprint
-from endpoints import accounts, chats
+import flask
+import endpoints.accounts
+import endpoints.debug
 
-app = Flask(__name__)
+
+app = flask.app.Flask(__name__)
 app.secret_key = "hallo welt"
 
-api_blueprint: Blueprint = Blueprint("api", __name__, url_prefix="/api")
+api_blueprint: flask.Blueprint = flask.Blueprint("api", "api", url_prefix="/api")
 
-api_blueprint.register_blueprint(accounts.account)
-api_blueprint.register_blueprint(chats.chat_blueprint)
 
+api_blueprint.register_blueprint(endpoints.accounts.accounts_blueprint)
 
 
 @api_blueprint.get("/")
@@ -30,12 +31,12 @@ def get_all_endpoints() -> list[dict[str, any]]:
             })
     return endpoints
 
-
-app.register_blueprint(api_blueprint)
-
 @app.get("/health")
 def get_health() -> tuple[str, int]:
     return "", 200
 
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port="4000")
+
+app.register_blueprint(api_blueprint)
+app.register_blueprint(endpoints.debug.debug_blueprint)
+
+app.run("0.0.0.0", 8001, True)

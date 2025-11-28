@@ -1,60 +1,96 @@
-from flask import Blueprint, request, session
-from util import user, session_management
+import flask
+import hashlib
+import util.session_management
+import util.user
+
+
+accounts_blueprint: flask.Blueprint = flask.Blueprint("accounts", "accounts", url_prefix="/accounts")
+
+
+@accounts_blueprint.get("/")
+@util.session_management.requires_session(True)
+def get_user(session_token: util.session_management.SessionToken):
+    user: util.user.User = session_token.get_user()
+
+    if not user:
+        return "User not found!", 404
+
+    return user.to_spare_dict(), 200
 
 
 
-account: Blueprint = Blueprint("accounts", __name__, url_prefix="/accounts")
+
+@accounts_blueprint.post("/login")
+def post_login():
+    email: str = flask.request.form.get("email", "").strip()
+    password: str = flask.request.form.get("password", "")
 
 
-@account.post("/login")
-def login() -> tuple[str, int]:
-    if request.method == "POST":
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "")
+    current_session_token: util.session_management.SessionToken | None = util.session_management.SessionToken.get_current_session_token()
 
-        matched_user: user.User = user.match_user(username, password)
+    if current_session_token:
+        current_session_token.revoke_session_token()
 
-        session.clear()
+    if not email or not password:
+        return "Invalid credentials!", 400
 
-        if not matched_user:
-            return "Invalid credentials", 400
+    password_hash: str = hashlib.sha256(password.encode()).hexdigest()
 
-        session["accountId"] = str(matched_user.accountId)
+    user: util.user.User = util.user.User.find_user_by_email_and_password_hash(email, password_hash)
 
-        return "Valid credentials", 200
+    if not user:
+        return "Invalid credentials!", 400
 
-@account.post("/register")
-def register() -> tuple[dict[str, str], int]:
-    if request.method == "POST":
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "")
+    session_token: util.session_management.SessionToken = util.session_management.SessionToken.create_session_token(
+        user.id
+    )
 
-        new_user: user.User = user.create_user(username, password)
+    user.update_last_login_to_now()
 
-        if not new_user:
-            return "Username is already in use! Sorry :(", 400
+    # Flask option
+    flask.session["session_id"] = str(session_token.session_id)
 
-        new_user_dict: dict[str, any] = new_user.to_dict()
+    return "Successfully logged in!", 200
 
-        del new_user_dict["password"]
+    # Cookie option
 
-        return new_user_dict, 200
+    # return flask.Response(
+    #     "Successfully logged in!",
+    #     200,
+    #     {
+    #         "Set-Cookie": "SESSION_ID={session_id}; HttpOnly;"
+    #     }
+    # )
+
+@accounts_blueprint.post("/register")
+def post_register():
+    email: str = flask.request.form.get("email", "").strip()
+    password: str = flask.request.form.get("password", "")
 
 
-@account.route("/logout")
-def logout() -> tuple[dict[str, str], int]:
-    if not session_management.is_user_logged_in():
-        return "", 401
-    session.clear()
-    return "Successfully logged out!", 200
+    if not email or not password:
+        return "Email and password are required!", 400
 
-@account.route("/")
-def get_user_data() -> tuple[dict[str, str], int]:
-    if not session_management.is_user_logged_in():
-        return "", 401
-    current_user: user.User = session_management.get_user_from_session()
+    username: str = email.split("@")[0]
+    user: util.user.User = util.user.User.create_user(username, email, password, "student")
 
-    user_as_dict: dict[str, any] = current_user.to_dict()
+    if not user:
+        return "Email is already taken!", 400
 
-    del user_as_dict["password"]
-    return user_as_dict, 200
+    return "User successfully created!", 201
+
+
+
+@accounts_blueprint.get("/logout")
+@util.session_management.requires_session(True)
+def get_logout(session_token: util.session_management.SessionToken):
+    session_token.revoke_session_token()
+    flask.session.clear()
+
+    return flask.Response(
+        "Successfully logged out",
+        200,
+        {
+            "Set-Cookie": "SESSION_ID=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+        }
+    )
