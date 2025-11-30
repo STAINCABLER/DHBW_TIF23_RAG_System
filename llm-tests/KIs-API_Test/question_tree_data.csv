@@ -1,0 +1,31 @@
+question_id,category,difficulty_level,summary,full_question,question_type,is_initial,parent_question_id
+1,greeting,1,Begrüßung und Rolle,Guten Tag! Ich bin hier um dein Problem zu verstehen und zu lösen. Wie heißt du und was ist deine Rolle? (z.B. Systemadministrator, Entwickler, Forscher),open_text,TRUE,NULL
+2,greeting,1,Primäre Problemkategorie,"Welche dieser Kategorien beschreibt dein Hauptproblem am besten?",multiple_choice,TRUE,NULL
+3,urgency,1,Dringlichkeit,"Wie dringend ist dein Problem?",multiple_choice,FALSE,2
+4,environment,2,Betriebssystem,"Welche Betriebssysteme sind in deiner Umgebung vorhanden?",multiple_choice,FALSE,2
+5,environment,2,Infrastruktur-Übersicht,"Können Sie einen Kurz-Überblick über deine IT-Infrastruktur geben? (z.B. On-Premise, Cloud, Hybrid, VM-basiert, Container)",open_text,FALSE,2
+6,tech_stack,2,Programmiersprachen,"Welche Programmiersprachen sind relevant für dein Problem?",multiple_choice,FALSE,4
+7,tech_stack,2,Datenbanksysteme,"Welche Datenbanksysteme nutzt du?",multiple_choice,FALSE,4
+8,database_issue,3,PostgreSQL spezifisch,"Beschreibe kurz das PostgreSQL-Problem: Performance, Konfiguration, Replikation, Backup, oder etwas anderes?",open_text,FALSE,7
+9,database_issue,3,Datenbankgröße,"Wie groß sind deine Datenbanken? (GB/TB)",open_text,FALSE,7
+10,bioinformatics,3,Molekularbiologie-Problem,"Was ist das spezifische Bioinformatik-Problem? (Sequenzanalyse, Proteinstruktur, Genomik, etc.)",open_text,FALSE,2
+11,bioinformatics,3,Sequenzdaten,"Mit welchen Sequenzdatenformaten arbeitest du? (FASTA, FASTQ, BAM, VCF, etc.)",multiple_choice,FALSE,10
+12,bioinformatics,3,Bioinformatik-Tools,"Welche Tools verwendest du aktuell? (BLAST, TMHMM, ChimeraX, Geneious, SnapGene, etc.)",open_text,FALSE,10
+13,linux,3,Linux-Distribution,"Welche Linux-Distributionen nutzt du?",multiple_choice,FALSE,4
+14,linux,3,Kernel-Parameter,"Ist das Problem möglicherweise Kernel-bezogen oder betrifft es die Systemkonfiguration?",yes_no,FALSE,13
+15,security,3,Sicherheitsproblem,"Beschreibe das Sicherheitsproblem: Malware, Zugriffskontrolle, Verschlüsselung, oder Threat-Detection?",open_text,FALSE,2
+16,security,3,Malware-Details,"Welche Art von Malware oder Bedrohung ist betroffen? (Ransomware, Botnet, rootkit, etc.)",open_text,FALSE,15
+17,security,3,Scanning-Tools,"Welche Scanning/Detection-Tools sind relevant? (YARA, VirusTotal, Antivirus, SIEM, etc.)",multiple_choice,FALSE,15
+18,infrastructure,3,Virtualisierung,"Nutzt du Virtualisierung (KVM, Proxmox, VMware, etc.)? Wenn ja, welche?",open_text,FALSE,5
+19,infrastructure,3,Container,"Nutzt du Container (Docker, Kubernetes, Podman)?",yes_no,FALSE,5
+20,infrastructure,3,Storage,"Wie ist dein Storage aufgebaut? (NAS, SAN, lokale Disks, Cloud Storage?)",open_text,FALSE,5
+21,reproducibility,2,Reproduzierbarkeit,"Ist das Problem reproduzierbar? Tritt es konsistent auf oder sporadisch?",multiple_choice,FALSE,3
+22,error_details,3,Fehlermeldungen,"Welche genauen Fehlermeldungen oder Logs erhältst du? (Bitte kurze relevante Ausschnitte)",open_text,FALSE,21
+23,error_context,3,Zeitliche Korrelation,"Wann ist das Problem zum ersten Mal aufgetreten? Gab es kurz vorher Changes/Updates?",open_text,FALSE,22
+24,performance,2,Performance-Auswirkung,"Wie stark beeinträchtigt das Problem deine Operationen?",multiple_choice,FALSE,3
+25,dependencies,3,Abhängigkeiten,"Gibt es externe Abhängigkeiten? (APIs, externe Services, Netzwerk-Zugriff, spezifische Versionen)",open_text,FALSE,22
+26,attempted_solutions,2,Bisherige Lösungsversuche,"Was hast du bereits versucht, um das Problem zu lösen?",open_text,FALSE,3
+27,documentation,2,Dokumentation,"Hast du relevante Logs, Konfigurationsdateien oder Dokumentation verfügbar?",yes_no,FALSE,26
+28,escalation,1,Eskalation,"Benötigst du Spezialist-Wissen in einem bestimmten Bereich?",multiple_choice,FALSE,24
+29,timeline,2,Lösungszeithorizont,"Wann benötigst du die Lösung?",multiple_choice,FALSE,3
+30,budget,2,Ressourcen-Constraints,"Gibt es Constraints bei Ressourcen, Budget, oder technischen Limitationen?",open_text,FALSE,3

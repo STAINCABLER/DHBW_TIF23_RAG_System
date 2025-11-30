@@ -1,0 +1,71 @@
+option_id,question_id,option_text,option_value,next_question_id,relevance_score,category_hint
+1,2,Datenbank / PostgreSQL Problem,database_issue,7,90,database_issue
+2,2,Linux / Systemadministration Problem,linux_admin,13,85,linux
+3,2,Bioinformatik / Sequenzanalyse,bioinformatics,10,80,bioinformatics
+4,2,Sicherheit / Malware / Threat Detection,security,15,80,security
+5,2,Cloud / Infrastructure / Virtualisierung,infrastructure,5,75,infrastructure
+6,2,Performance / Skalierbarkeit,performance,24,70,performance
+7,2,API / Integration / Entwicklung,development,6,70,tech_stack
+8,2,Andere / Nicht gelistet,other,1,50,other
+9,3,Sofort (Stunden),immediate,22,95,urgency
+10,3,Heute/Morgen,urgent,22,90,urgency
+11,3,Diese Woche,this_week,22,75,urgency
+12,3,Nächste Woche oder später,not_urgent,22,50,urgency
+13,4,Rocky Linux,rocky_linux,13,90,linux
+14,4,Ubuntu,ubuntu,13,85,linux
+15,4,CentOS,centos,13,85,linux
+16,4,Debian,debian,13,80,linux
+17,4,Andere Linux,other_linux,13,75,linux
+18,4,Windows Server,windows,6,60,tech_stack
+19,4,macOS,macos,6,50,tech_stack
+20,4,Mixed / Multiple,multiple_os,13,70,linux
+21,6,Python,python,7,85,tech_stack
+22,6,Bash/Shell,bash,13,90,tech_stack
+23,6,PowerShell,powershell,6,75,tech_stack
+24,6,JavaScript/Node.js,javascript,6,70,tech_stack
+25,6,Go,go,6,60,tech_stack
+26,6,Rust,rust,6,55,tech_stack
+27,6,Java,java,6,55,tech_stack
+28,6,C/C++,cpp,6,50,tech_stack
+29,7,PostgreSQL,postgresql,8,95,database_issue
+30,7,MongoDB,mongodb,7,70,database_issue
+31,7,MySQL/MariaDB,mysql,7,60,database_issue
+32,7,Redis,redis,7,60,database_issue
+33,7,Other,other_db,7,40,database_issue
+34,11,FASTA,fasta,12,90,bioinformatics
+35,11,FASTQ,fastq,12,90,bioinformatics
+36,11,BAM/SAM,bam_sam,12,85,bioinformatics
+37,11,VCF,vcf,12,85,bioinformatics
+38,11,GFF/GTF,gff_gtf,12,80,bioinformatics
+39,11,Multiple,multiple_formats,12,85,bioinformatics
+40,13,Rocky Linux,rocky_linux,14,90,linux
+41,13,Ubuntu LTS,ubuntu_lts,14,85,linux
+42,13,CentOS,centos,14,85,linux
+43,13,Debian,debian,14,80,linux
+44,13,Other,other_linux,14,75,linux
+45,17,YARA Rules,yara,16,90,security
+46,17,VirusTotal,virustotal,16,85,security
+47,17,ClamAV,clamav,16,80,security
+48,17,Suricata/Zeek,suricata,16,75,security
+49,17,SIEM Solution,siem,16,70,security
+50,19,Docker,docker,20,90,infrastructure
+51,19,Kubernetes,kubernetes,20,90,infrastructure
+52,19,Podman,podman,20,85,infrastructure
+53,19,None currently,none_containers,20,60,infrastructure
+54,21,Konsistent reproduzierbar,reproducible,22,95,error_details
+55,21,Sporadisch/Intermittierend,sporadic,25,85,error_context
+56,21,Nur unter bestimmten Bedingungen,conditional,25,85,error_context
+57,24,Kritisch (Business-Impact),critical,28,95,escalation
+58,24,Erheblich (Produktivität reduziert),significant,28,90,escalation
+59,24,Moderat (Workaround existiert),moderate,28,75,escalation
+60,24,Gering (Eher ein Nice-to-Have),minor,28,50,escalation
+61,28,Datenbank-Spezialist,db_specialist,NULL,95,database_issue
+62,28,Linux/Sysadmin-Spezialist,sysadmin_specialist,NULL,95,linux
+63,28,Bioinformatik-Spezialist,bio_specialist,NULL,95,bioinformatics
+64,28,Security/Malware-Analyst,security_specialist,NULL,95,security
+65,28,DevOps/Infrastructure,devops_specialist,NULL,95,infrastructure
+66,28,Kein spezifisches Spezialist-Wissen nötig,no_specialist,NULL,60,other
+67,29,Heute noch,today,26,95,timeline
+68,29,Morgen,tomorrow,26,90,timeline
+69,29,Diese Woche,this_week,26,80,timeline
+70,29,Kein Zeitdruck,no_timeline,26,50,timeline
