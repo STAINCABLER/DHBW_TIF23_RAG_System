@@ -1,0 +1,20 @@
+2025-12-03 14:21:26,696 | INFO | Loaded 2 questions
+2025-12-03 14:21:26,699 | INFO | Use pytorch device_name: cpu
+2025-12-03 14:21:26,699 | INFO | Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-12-03 14:21:28,462 | WARNING | Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+2025-12-03 14:21:37,105 | ERROR | Database operation failed: connection to server at "localhost" (::1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+Traceback (most recent call last):
+  File "d:\Documents\GitHub\DHBW_TIF23_RAG_System\datenbank-tests\Embeddings\embedding-test.py", line 146, in main
+    with psycopg2.connect(args.dsn) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\datenbank-tests\Embeddings\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
