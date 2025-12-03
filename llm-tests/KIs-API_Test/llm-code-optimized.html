@@ -446,50 +446,53 @@
 
         <!-- Three-Step Pipeline -->
         <div class="steps-grid">
-            <!-- Step 1: Gemini Analysis -->
+            <!-- Step 1: Chunks & Embeddings -->
             <div class="step-card">
                 <h3>
                     <span class="step-number">1</span>
-                    Gemini Analyse
+                    Chunks & Embeddings
                 </h3>
                 
                 <div class="input-group">
-                    <label>Dokument hochladen</label>
+                    <label>Dokument hochladen (TXT/PDF)</label>
                     <div class="file-upload-area" id="fileUploadArea" onclick="document.getElementById('fileInput').click()">
                         <input 
                             type="file" 
                             id="fileInput" 
-                            accept=".jpg,.jpeg,.png,.gif,.pdf"
+                            accept=".txt,.pdf,.md"
                         >
                         <div id="uploadPrompt">
                             <p style="margin: 0; font-weight: 500;">📁 Datei auswählen</p>
-                            <p style="margin: var(--space-8) 0 0 0; font-size: var(--font-size-sm); color: var(--color-text-secondary);">JPG, PNG, GIF oder PDF (max. 10 MB)</p>
+                            <p style="margin: var(--space-8) 0 0 0; font-size: var(--font-size-sm); color: var(--color-text-secondary);">TXT, PDF oder MD (max. 50 MB)</p>
                         </div>
                         <div id="fileInfo" class="file-info" style="display: none;"></div>
                     </div>
                 </div>
 
                 <div class="input-group">
-                    <label for="analysisPrompt">Analyse-Prompt (optional)</label>
-                    <textarea 
-                        id="analysisPrompt" 
-                        rows="4" 
-                        placeholder="Analysiere dieses Dokument detailliert und gib eine strukturierte Zusammenfassung mit Hauptpunkten..."
-                    ></textarea>
+                    <label for="chunkSize">Chunk-Größe (Tokens)</label>
+                    <input 
+                        type="number" 
+                        id="chunkSize" 
+                        value="512" 
+                        min="100" 
+                        max="2000"
+                    >
+                    <div class="embedding-info">Empfohlen: 512 Tokens mit Überlappung</div>
                 </div>
 
-                <button class="btn btn-primary btn-full" id="analyzeBtn" disabled>
-                    📊 Gemini Analyse starten
+                <button class="btn btn-primary btn-full" id="embedBtn" disabled>
+                    🔗 Chunks erstellen & Embeddings generieren
                 </button>
 
-                <div id="analysisStatus" class="status-message"></div>
+                <div id="embedStatus" class="status-message"></div>
             </div>
 
-            <!-- Step 2: Perplexity Query -->
+            <!-- Step 2: Vektor-Suche & Perplexity Query -->
             <div class="step-card">
                 <h3>
                     <span class="step-number">2</span>
-                    Perplexity Abfrage
+                    Vektor-Suche & Abfrage
                 </h3>
 
                 <div class="input-group">
@@ -497,8 +500,20 @@
                     <textarea 
                         id="queryInput" 
                         rows="4" 
-                        placeholder="Was sind die wichtigsten Erkenntnisse aus den analysierten Dokumenten?"
+                        placeholder="Stellen Sie eine Frage basierend auf dem hochgeladenen Dokument..."
                     ></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="topK">Top-K ähnliche Chunks</label>
+                    <input 
+                        type="number" 
+                        id="topK" 
+                        value="5" 
+                        min="1" 
+                        max="20"
+                    >
+                    <div class="embedding-info">Anzahl der relevantesten Chunks für Kontext</div>
                 </div>
 
                 <div class="input-group">
@@ -513,7 +528,7 @@
                 <div id="docCountDisplay" style="margin-bottom: var(--space-16);"></div>
 
                 <button class="btn btn-primary btn-full" id="queryBtn" disabled>
-                    🔍 Perplexity abfragen
+                    🔍 Vektor-Suche + Perplexity
                 </button>
 
                 <div id="queryStatus" class="status-message"></div>
@@ -522,13 +537,13 @@
 
         <!-- Full Pipeline Section -->
         <section class="pipeline-section">
-            <h3>⚡ Gesamte Pipeline ausführen</h3>
+            <h3>⚡ Vollständige RAG-Pipeline ausführen</h3>
             <p class="pipeline-description">
-                Führt automatisch die Analyse mit Gemini durch und stellt anschließend die Frage an Perplexity.
+                1. Chunks erstellen → 2. Embeddings generieren → 3. Vektor-Suche → 4. Perplexity Antwort
             </p>
             <div class="pipeline-controls">
                 <button class="btn btn-primary" id="pipelineBtn" disabled style="flex: 1;">
-                    🚀 Pipeline starten
+                    🚀 Komplette Pipeline starten
                 </button>
             </div>
             <div id="pipelineStatus" class="status-message"></div>
@@ -558,7 +573,8 @@
             geminiApiKey: '',
             perplexityApiKey: '',
             currentFile: null,
-            storedDocuments: [],
+            chunks: [],
+            embeddings: [],
             isProcessing: false
         };
 
@@ -598,10 +614,11 @@
             fileUploadArea: document.getElementById('fileUploadArea'),
             uploadPrompt: document.getElementById('uploadPrompt'),
             fileInfo: document.getElementById('fileInfo'),
-            analysisPrompt: document.getElementById('analysisPrompt'),
-            analyzeBtn: document.getElementById('analyzeBtn'),
-            analysisStatus: document.getElementById('analysisStatus'),
+            chunkSize: document.getElementById('chunkSize'),
+            embedBtn: document.getElementById('embedBtn'),
+            embedStatus: document.getElementById('embedStatus'),
             queryInput: document.getElementById('queryInput'),
+            topK: document.getElementById('topK'),
             modelSelect: document.getElementById('modelSelect'),
             queryBtn: document.getElementById('queryBtn'),
             queryStatus: document.getElementById('queryStatus'),
@@ -624,7 +641,7 @@
             updateButtonStates();
         });
         elements.fileInput.addEventListener('change', handleFileSelect);
-        elements.analyzeBtn.addEventListener('click', handleAnalyze);
+        elements.embedBtn.addEventListener('click', handleEmbed);
         elements.queryBtn.addEventListener('click', handleQuery);
         elements.pipelineBtn.addEventListener('click', handlePipeline);
         document.getElementById('clearDebugBtn').addEventListener('click', () => {
@@ -664,16 +681,18 @@
             const hasGeminiKey = state.geminiApiKey.length > 0;
             const hasPerplexityKey = state.perplexityApiKey.length > 0;
             const hasFile = state.currentFile !== null;
+            const hasChunks = state.chunks.length > 0;
             
-            elements.analyzeBtn.disabled = !hasGeminiKey || !hasFile || state.isProcessing;
+            elements.embedBtn.disabled = !hasGeminiKey || !hasFile || state.isProcessing;
             elements.pipelineBtn.disabled = !hasGeminiKey || !hasPerplexityKey || !hasFile || state.isProcessing;
-            elements.queryBtn.disabled = !hasPerplexityKey || state.storedDocuments.length === 0 || state.isProcessing;
+            elements.queryBtn.disabled = !hasPerplexityKey || !hasChunks || state.isProcessing;
+            updateDocumentCount();
         }
 
         function updateDocumentCount() {
-            const count = state.storedDocuments.length;
+            const count = state.chunks.length;
             if (count > 0) {
-                elements.docCountDisplay.innerHTML = `<span class="document-count">📚 ${count} Dokument${count > 1 ? 'e' : ''} im Kontext</span>`;
+                elements.docCountDisplay.innerHTML = `<span class="document-count">📚 ${count} Chunks im Speicher</span>`;
             } else {
                 elements.docCountDisplay.innerHTML = '';
             }
@@ -695,87 +714,141 @@
             document.getElementById(elementId).className = 'status-message';
         }
 
-        // Convert File to Base64
-        function fileToBase64(file) {
+        // Read File as Text
+        function readFileAsText(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = () => resolve(reader.result);
                 reader.onerror = reject;
-                reader.readAsDataURL(file);
+                reader.readAsText(file);
             });
         }
 
-        // Handle Analyze with Gemini
-        async function handleAnalyze() {
+        // Split Text into Chunks
+        function splitIntoChunks(text, chunkSize) {
+            const words = text.split(/\s+/);
+            const chunks = [];
+            let currentChunk = [];
+            
+            for (const word of words) {
+                currentChunk.push(word);
+                if (currentChunk.length >= chunkSize) {
+                    chunks.push(currentChunk.join(' '));
+                    currentChunk = currentChunk.slice(-Math.ceil(chunkSize * 0.15));
+                }
+            }
+            
+            if (currentChunk.length > 0) {
+                chunks.push(currentChunk.join(' '));
+            }
+            
+            return chunks;
+        }
+
+        // Get Embedding from Gemini
+        async function getEmbedding(text) {
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/embedding-001:embedContent?key=${state.geminiApiKey}`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: 'models/embedding-001',
+                        content: { parts: [{ text: text }] }
+                    })
+                }
+            );
+            
+            if (!response.ok) throw new Error(`Embedding API: ${response.status}`);
+            const data = await response.json();
+            return data.embedding.values;
+        }
+
+        // Cosine Similarity
+        function cosineSimilarity(a, b) {
+            const dotProduct = a.reduce((sum, val, i) => sum + val * b[i], 0);
+            const magnitudeA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0));
+            const magnitudeB = Math.sqrt(b.reduce((sum, val) => sum + val * val, 0));
+            return magnitudeA && magnitudeB ? dotProduct / (magnitudeA * magnitudeB) : 0;
+        }
+
+        // Handle Embed & Generate Embeddings
+        async function handleEmbed() {
             if (!state.currentFile) return;
             
-            debugLog('=== GEMINI ANALYSE GESTARTET ===', 'info');
+            debugLog('=== EMBEDDING GENERIERUNG GESTARTET ===', 'info');
             state.isProcessing = true;
             updateButtonStates();
-            showStatus('analysisStatus', 'Gemini analysiert Dokument...', 'loading');
+            showStatus('embedStatus', 'Chunks erstellen und Embeddings generieren...', 'loading');
             
             try {
-                const base64Data = await fileToBase64(state.currentFile);
-                const cleanBase64 = base64Data.split(',')[1] || base64Data;
-                const prompt = elements.analysisPrompt.value || 'Analysiere dieses Dokument detailliert';
+                const text = await readFileAsText(state.currentFile);
+                debugLog(`Datei gelesen: ${text.length} Zeichen`, 'info');
                 
-                debugLog('Sende Anfrage an Gemini API...', 'info');
+                const chunkSize = parseInt(elements.chunkSize.value) || 512;
+                state.chunks = splitIntoChunks(text, chunkSize);
+                debugLog(`${state.chunks.length} Chunks erstellt (Größe: ${chunkSize} Wörter)`, 'success');
                 
-                const response = await fetch(
-                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${state.geminiApiKey}`,
-                    {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{
-                                parts: [
-                                    { text: prompt },
-                                    {
-                                        inline_data: {
-                                            mime_type: state.currentFile.type,
-                                            data: cleanBase64
-                                        }
-                                    }
-                                ]
-                            }]
-                        })
-                    }
-                );
+                state.embeddings = [];
+                for (let i = 0; i < state.chunks.length; i++) {
+                    const embedding = await getEmbedding(state.chunks[i]);
+                    state.embeddings.push(embedding);
+                    debugLog(`Embedding ${i + 1}/${state.chunks.length} erstellt`, 'info');
+                }
                 
-                if (!response.ok) throw new Error(`Gemini API Error: ${response.status}`);
-                const data = await response.json();
-                const analysis = data.candidates[0].content.parts[0].text;
-                
-                state.storedDocuments = [{ analysis, fileName: state.currentFile.name }];
-                
-                showStatus('analysisStatus', '✓ Analyse abgeschlossen', 'success');
-                displayResult('analyze', { analysis });
+                debugLog(`${state.embeddings.length} Embeddings erfolgreich generiert ✓`, 'success');
+                showStatus('embedStatus', `✓ ${state.chunks.length} Chunks & Embeddings erstellt`, 'success');
+                displayResult('embed', { chunksCount: state.chunks.length, embeddingsCount: state.embeddings.length });
                 updateDocumentCount();
                 
-                setTimeout(() => hideStatus('analysisStatus'), 3000);
+                setTimeout(() => hideStatus('embedStatus'), 3000);
             } catch (error) {
                 debugLog(`Fehler: ${error.message}`, 'error');
-                showStatus('analysisStatus', `✗ Fehler: ${error.message}`, 'error');
+                showStatus('embedStatus', `✗ Fehler: ${error.message}`, 'error');
             } finally {
                 state.isProcessing = false;
                 updateButtonStates();
             }
         }
 
-        // Handle Query
+        // Handle Query with Vector Search
         async function handleQuery() {
             const question = elements.queryInput.value.trim();
-            if (!question || state.storedDocuments.length === 0) return;
+            if (!question || state.chunks.length === 0) return;
             
-            debugLog('=== PERPLEXITY ABFRAGE GESTARTET ===', 'info');
+            debugLog('=== VEKTOR-SUCHE & PERPLEXITY ABFRAGE GESTARTET ===', 'info');
             state.isProcessing = true;
             updateButtonStates();
-            showStatus('queryStatus', 'Perplexity Abfrage läuft...', 'loading');
+            showStatus('queryStatus', 'Vektor-Suche läuft...', 'loading');
             
             try {
-                debugLog('Sende Anfrage an Perplexity...', 'info');
+                // Step 1: Get Query Embedding
+                debugLog('Erstelle Query-Embedding...', 'info');
+                const queryEmbedding = await getEmbedding(question);
+                debugLog('Query-Embedding erstellt ✓', 'success');
                 
-                const context = state.storedDocuments.map(d => d.analysis).join('\n\n');
+                // Step 2: Vector Search
+                debugLog('Führe Vektor-Suche durch...', 'info');
+                const topK = parseInt(elements.topK.value) || 5;
+                const similarities = state.embeddings.map((emb, idx) => ({
+                    idx: idx,
+                    similarity: cosineSimilarity(queryEmbedding, emb)
+                }));
+                
+                const topResults = similarities
+                    .sort((a, b) => b.similarity - a.similarity)
+                    .slice(0, topK);
+                
+                debugLog(`Top-${topK} ähnliche Chunks gefunden (Ähnlichkeit: ${(topResults[0].similarity * 100).toFixed(1)}%)`, 'success');
+                
+                // Step 3: Build Context
+                const contextChunks = topResults
+                    .map((r, i) => `[Chunk ${i + 1}, Ähnlichkeit: ${(r.similarity * 100).toFixed(1)}%]\n${state.chunks[r.idx]}`)
+                    .join('\n\n---\n\n');
+                
+                // Step 4: Send to Perplexity
+                showStatus('queryStatus', 'Perplexity wird abgefragt...', 'loading');
+                debugLog('Sende Anfrage an Perplexity...', 'info');
                 
                 const response = await fetch('https://api.perplexity.ai/chat/completions', {
                     method: 'POST',
@@ -786,8 +859,8 @@
                     body: JSON.stringify({
                         model: elements.modelSelect.value,
                         messages: [
-                            { role: 'system', content: 'Du bist ein hilfreicher Assistent. Antworte basierend auf dem bereitgestellten Kontext.' },
-                            { role: 'system', content: `Kontext aus Dokumenten:\n\n${context}` },
+                            { role: 'system', content: 'Du bist ein hilfreicher Assistent. Antworte basierend nur auf dem bereitgestellten Kontext.' },
+                            { role: 'system', content: `Kontext (${topK} ähnlichste Chunks):\n\n${contextChunks}` },
                             { role: 'user', content: question }
                         ],
                         temperature: 0.2,
@@ -799,8 +872,9 @@
                 const data = await response.json();
                 const answer = data.choices[0].message.content;
                 
-                showStatus('queryStatus', '✓ Antwort erhalten', 'success');
-                displayResult('query', { question, answer, model: elements.modelSelect.value });
+                debugLog('Antwort von Perplexity erhalten ✓', 'success');
+                showStatus('queryStatus', '✓ Antwort generiert', 'success');
+                displayResult('query', { question, answer, topK, model: elements.modelSelect.value });
                 
                 setTimeout(() => hideStatus('queryStatus'), 3000);
             } catch (error) {
@@ -812,51 +886,53 @@
             }
         }
 
-        // Handle Pipeline
+        // Handle Full RAG Pipeline
         async function handlePipeline() {
             if (!state.currentFile) return;
             
-            debugLog('=== PIPELINE BUTTON GEKLICKT ===', 'info');
+            debugLog('=== VOLLSTÄNDIGE RAG-PIPELINE GESTARTET ===', 'info');
             const question = elements.queryInput.value.trim() || 'Fasse das Dokument zusammen';
             
             state.isProcessing = true;
             updateButtonStates();
             
             try {
-                // Step 1: Gemini Analysis
-                showStatus('pipelineStatus', 'Schritt 1/2: Gemini Analyse...', 'loading');
-                const base64Data = await fileToBase64(state.currentFile);
-                const cleanBase64 = base64Data.split(',')[1] || base64Data;
-                const prompt = elements.analysisPrompt.value || 'Analysiere detailliert';
+                // Step 1: Create Chunks & Embeddings
+                showStatus('pipelineStatus', 'Schritt 1/4: Chunks & Embeddings erstellen...', 'loading');
+                const text = await readFileAsText(state.currentFile);
+                const chunkSize = parseInt(elements.chunkSize.value) || 512;
+                state.chunks = splitIntoChunks(text, chunkSize);
+                debugLog(`${state.chunks.length} Chunks erstellt`, 'success');
                 
-                const geminiResponse = await fetch(
-                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${state.geminiApiKey}`,
-                    {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{
-                                parts: [
-                                    { text: prompt },
-                                    {
-                                        inline_data: {
-                                            mime_type: state.currentFile.type,
-                                            data: cleanBase64
-                                        }
-                                    }
-                                ]
-                            }]
-                        })
-                    }
-                );
+                state.embeddings = [];
+                for (let i = 0; i < state.chunks.length; i++) {
+                    state.embeddings.push(await getEmbedding(state.chunks[i]));
+                }
+                debugLog('Step 1: Embeddings erstellt ✓', 'success');
                 
-                if (!geminiResponse.ok) throw new Error(`Gemini API: ${geminiResponse.status}`);
-                const geminiData = geminiResponse.json();
-                const analysis = (await geminiData).candidates[0].content.parts[0].text;
-                debugLog('Step 1: Gemini Analyse ✓', 'success');
+                // Step 2: Vector Search
+                showStatus('pipelineStatus', 'Schritt 2/4: Vektor-Suche durchführen...', 'loading');
+                const queryEmbedding = await getEmbedding(question);
+                const topK = parseInt(elements.topK.value) || 5;
+                const similarities = state.embeddings.map((emb, idx) => ({
+                    idx: idx,
+                    similarity: cosineSimilarity(queryEmbedding, emb)
+                }));
                 
-                // Step 2: Perplexity Query
-                showStatus('pipelineStatus', 'Schritt 2/2: Perplexity Abfrage...', 'loading');
+                const topResults = similarities
+                    .sort((a, b) => b.similarity - a.similarity)
+                    .slice(0, topK);
+                debugLog(`Step 2: Top-${topK} Chunks gefunden ✓`, 'success');
+                
+                // Step 3: Build Context
+                showStatus('pipelineStatus', 'Schritt 3/4: Kontext aufbauen...', 'loading');
+                const contextChunks = topResults
+                    .map((r, i) => `[Chunk ${i + 1}]\n${state.chunks[r.idx]}`)
+                    .join('\n\n---\n\n');
+                debugLog('Step 3: Kontext vorbereitet ✓', 'success');
+                
+                // Step 4: Perplexity Query
+                showStatus('pipelineStatus', 'Schritt 4/4: Perplexity generiert Antwort...', 'loading');
                 const perplexityResponse = await fetch('https://api.perplexity.ai/chat/completions', {
                     method: 'POST',
                     headers: {
@@ -866,8 +942,8 @@
                     body: JSON.stringify({
                         model: elements.modelSelect.value,
                         messages: [
-                            { role: 'system', content: 'Du bist ein hilfreicher Assistent.' },
-                            { role: 'system', content: `Kontext aus Gemini:\n\n${analysis}` },
+                            { role: 'system', content: 'Du bist ein hilfreicher Assistent. Antworte basierend nur auf dem bereitgestellten Kontext.' },
+                            { role: 'system', content: `Kontext aus Vektor-Suche:\n\n${contextChunks}` },
                             { role: 'user', content: question }
                         ],
                         temperature: 0.2,
@@ -878,10 +954,11 @@
                 if (!perplexityResponse.ok) throw new Error(`Perplexity API: ${perplexityResponse.status}`);
                 const perplexityData = await perplexityResponse.json();
                 const answer = perplexityData.choices[0].message.content;
-                debugLog('Step 2: Perplexity Antwort ✓', 'success');
+                debugLog('Step 4: Perplexity Antwort ✓', 'success');
                 
-                showStatus('pipelineStatus', '✓ Pipeline erfolgreich', 'success');
-                displayResult('pipeline', { question, answer, analysis, model: elements.modelSelect.value });
+                showStatus('pipelineStatus', '✓ Pipeline erfolgreich abgeschlossen', 'success');
+                displayResult('pipeline', { question, answer, chunksUsed: state.chunks.length, topK, model: elements.modelSelect.value });
+                updateDocumentCount();
                 
                 setTimeout(() => hideStatus('pipelineStatus'), 5000);
             } catch (error) {
@@ -898,19 +975,20 @@
             const resultItem = document.createElement('div');
             resultItem.className = 'result-item';
             
-            if (type === 'analyze') {
+            if (type === 'embed') {
                 resultItem.innerHTML = `
-                    <h4>📊 Gemini Analyse</h4>
+                    <h4>🔗 Embeddings erstellt</h4>
                     <div class="result-content">
-                        <p>${data.analysis.replace(/\n/g, '<br>')}</p>
+                        <p><strong>Chunks:</strong> ${data.chunksCount}</p>
+                        <p><strong>Embeddings:</strong> ${data.embeddingsCount}</p>
                     </div>
                 `;
             } else if (type === 'query') {
                 resultItem.innerHTML = `
-                    <h4>🔍 Perplexity Abfrage</h4>
+                    <h4>🔍 Vektor-Suche + Perplexity Abfrage</h4>
                     <div class="result-content">
                         <p><strong>Frage:</strong> ${data.question}</p>
-                        <p><strong>Antwort:</strong></p>
+                        <p><strong>Antwort (mit ${data.topK} Top-Chunks):</strong></p>
                         <p>${data.answer.replace(/\n/g, '<br>')}</p>
                     </div>
                 `;
@@ -921,7 +999,7 @@
                         <p><strong>Frage:</strong> ${data.question}</p>
                         <p><strong>Antwort:</strong></p>
                         <p>${data.answer.replace(/\n/g, '<br>')}</p>
-                        <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-top: var(--space-16);">📊 Gemini + ${data.model}</p>
+                        <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-top: var(--space-16);">📊 ${data.chunksUsed} Chunks → Top-${data.topK} → ${data.model}</p>
                     </div>
                 `;
             }
@@ -930,8 +1008,8 @@
         }
 
         // Initialize
-        debugLog('=== RAG System mit Gemini & Perplexity initialisiert ===', 'success');
-        debugLog('Geben Sie Ihre API Keys ein und laden Sie eine Datei hoch', 'info');
+        debugLog('=== RAG System mit Chunks, Embeddings & Vektor-Suche initialisiert ===', 'success');
+        debugLog('1. Datei hochladen → 2. Embeddings generieren → 3. Vektor-Suche → 4. Perplexity Antwort', 'info');
         updateButtonStates();
     </script>
 </body>
