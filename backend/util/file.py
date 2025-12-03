@@ -26,6 +26,9 @@ class UploadedFile(object):
         file_path: str = os.path.join(UPLOAD_FOLDER, str(self.file_uuid))
         os.remove(file_path)
 
+    def get_file_path(self) -> str:
+        return os.path.join(UPLOAD_FOLDER, str(self.file_uuid))
+
     @classmethod
     def from_dict(cls, data) -> "UploadedFile":
         filtered_data = {
@@ -48,7 +51,7 @@ class UploadedFile(object):
 
         if not result:
             return None
-        
+
         return UploadedFile.from_dict(result)
 
     def to_dict(self) -> dict[str, any]:

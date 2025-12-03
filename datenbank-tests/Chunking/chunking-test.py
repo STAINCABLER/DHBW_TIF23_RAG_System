@@ -79,7 +79,7 @@ def enrich_metadata(docs: List[Document], doc_name: str, version: str) -> List[D
 # --- 4. DAS LABOR-EXPERIMENT MIT DATEI-OUTPUT ---
 
 def run_experiment(query: str, configurations: list):
-    output_file = "results.md"
+    output_file = "results2.md"
     
     # "w" Modus sorgt dafür, dass die Datei jedes Mal neu überschrieben wird
     with open(output_file, "w", encoding="utf-8") as f:

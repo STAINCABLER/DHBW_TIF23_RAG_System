@@ -7,14 +7,13 @@ class Timer():
         self.start_time: float = 0.0
         self.end_time: float = 0.0
         self.duration: float = 0.0
-    
+
     def start(self) -> None:
         self.start_time = time.perf_counter()
-    
+
     def stop(self) -> None:
         self.end_time = time.perf_counter()
         self.duration = self.end_time - self.start_time
-    
 
 def setup() -> None:
     with postgres.create_connection("rag") as connection:
