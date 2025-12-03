@@ -28,8 +28,8 @@ export function Topbar() {
   }
 
   const handleLogin = () => navigate('/login')
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await logout()
     navigate('/')
   }
 
@@ -54,7 +54,7 @@ export function Topbar() {
       <div className="topbar__actions">
         {user ? (
           <>
-            <button type="button" className="btn btn--ghost" onClick={handleLogout}>
+            <button type="button" className="btn btn--ghost" onClick={() => void handleLogout()}>
               <LogOut size={16} aria-hidden />
               Logout
             </button>

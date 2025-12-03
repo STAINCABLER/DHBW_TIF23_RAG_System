@@ -5,6 +5,7 @@ import { useAuth } from '../auth/useAuth'
 import { appConfig } from '../config/appConfig'
 import { ThemeToggle } from '../components/ThemeToggle'
 import Logo from '../assets/ltm-logo.svg'
+import { useRuntimeMode } from '../runtime/useRuntimeMode'
 
 const landingStats = [
   { value: '90 s', label: 'bis zum ersten Architekturvorschlag' },
@@ -97,7 +98,8 @@ const footerOpsLinks = [
 
 export function LandingPage() {
   const { user } = useAuth()
-  const showLandingCta = appConfig.mockModeEnabled
+  const { preferredMode } = useRuntimeMode()
+  const showLandingCta = preferredMode === 'mock'
   const topbarRef = useRef<HTMLElement>(null)
   const [topbarStuck, setTopbarStuck] = useState(false)
   const currentYear = new Date().getFullYear()

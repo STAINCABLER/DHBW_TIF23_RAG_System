@@ -3,7 +3,10 @@ import { useAuth } from '../auth/useAuth'
 import { AppLayout } from '../components/layout/AppLayout'
 
 export function ProtectedLayout() {
-  const { user } = useAuth()
+  const { user, isReady } = useAuth()
+  if (!isReady) {
+    return null
+  }
   if (!user) {
     return <Navigate to="/" replace />
   }

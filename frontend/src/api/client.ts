@@ -1,5 +1,6 @@
 import type {
   Account,
+  ChatMessage,
   ChatDetail,
   ChatSummary,
   DocumentMeta,
@@ -23,9 +24,61 @@ type LoginResult = {
   message?: string
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api'
-const BACKEND_BASE_URL = API_BASE_URL.replace(/\/(?:api)\/?$/, '') || API_BASE_URL
-const USE_MOCK = appConfig.mockModeEnabled
+type BackendAccountPayload = {
+  accountId?: string
+  id?: number | string
+  account_id?: number | string
+  email?: string
+  username?: string
+  displayName?: string
+  created_at?: string
+  createdAt?: string
+  displayNameUpdatedAt?: string
+  emailUpdatedAt?: string
+  passwordUpdatedAt?: string
+  last_login?: string
+  lastLogin?: string
+  profileType?: string
+  profile_type?: string
+}
+
+type BackendConversationSummary = {
+  conversation_id?: number | string
+  chat_id?: number | string
+  chatId?: number | string
+  title?: string
+  created_at?: string
+  createdAt?: string
+}
+
+type BackendMessage = {
+  message_id?: number | string
+  messageId?: number | string
+  role?: string
+  content?: string
+  text?: string
+}
+
+type BackendConversationDetail = BackendConversationSummary & {
+  messages?: BackendMessage[]
+}
+
+export type ApiRuntimeMode = 'mock' | 'productive'
+
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api'
+export const BACKEND_BASE_URL = API_BASE_URL.replace(/\/(?:api)\/?$/, '') || API_BASE_URL
+
+let currentMode: ApiRuntimeMode = appConfig.mockModeEnabled ? 'mock' : 'productive'
+
+export function setApiRuntimeMode(nextMode: ApiRuntimeMode) {
+  currentMode = nextMode
+}
+
+export function getApiRuntimeMode(): ApiRuntimeMode {
+  return currentMode
+}
+
+const isMockMode = () => currentMode === 'mock'
 
 async function request<T>({ path, ...options }: RequestOptions): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -45,8 +98,8 @@ async function request<T>({ path, ...options }: RequestOptions): Promise<T> {
 }
 
 export const apiClient = {
-  async checkBackendHealth(): Promise<boolean> {
-    if (USE_MOCK) return true
+  async checkBackendHealth(options?: { forceNetwork?: boolean }): Promise<boolean> {
+    if (!options?.forceNetwork && isMockMode()) return true
     try {
       const response = await fetch(`${BACKEND_BASE_URL}/health`, { method: 'GET' })
       return response.ok
@@ -55,13 +108,14 @@ export const apiClient = {
     }
   },
   async login(email: string, password: string): Promise<LoginResult> {
+    const body = new URLSearchParams({ email, password })
     const response = await fetch(`${API_BASE_URL}/accounts/login`, {
       method: 'POST',
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: JSON.stringify({ email, password }),
+      body: body.toString(),
     })
 
     let message: string | undefined
@@ -75,6 +129,15 @@ export const apiClient = {
       } catch {
         // ignore body parse errors; fallback message below
       }
+    } else {
+      try {
+        const payloadText = await response.text()
+        if (payloadText.trim().length > 0) {
+          message = payloadText
+        }
+      } catch {
+        // ignore text parse errors
+      }
     }
 
     if (!response.ok && !message) {
@@ -83,30 +146,124 @@ export const apiClient = {
 
     return { status: response.status, ok: response.ok, message }
   },
+  async logout(): Promise<void> {
+    if (isMockMode()) return
+    try {
+      await fetch(`${API_BASE_URL}/accounts/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      })
+    } catch {
+      // swallow logout errors to keep UX responsive
+    }
+  },
   async getAccount(): Promise<Account> {
-    if (USE_MOCK) return mockAccount
-    return request<Account>({ path: '/accounts/me', method: 'GET' })
+    if (isMockMode()) return mockAccount
+
+    const payload = await request<BackendAccountPayload>({ path: '/accounts/', method: 'GET' })
+
+    const accountId = payload?.accountId ?? payload?.id ?? payload?.account_id ?? ''
+    const createdAt = payload?.createdAt ?? payload?.created_at ?? new Date().toISOString()
+    const displayName = payload?.displayName ?? payload?.username ?? payload?.email ?? 'User'
+    const lastLogin = payload?.last_login ?? payload?.lastLogin
+    const profileType = payload?.profileType ?? payload?.profile_type
+
+    return {
+      accountId: typeof accountId === 'string' ? accountId : String(accountId ?? ''),
+      email: payload?.email ?? '',
+      displayName,
+      createdAt,
+      displayNameUpdatedAt: payload?.displayNameUpdatedAt ?? lastLogin,
+      emailUpdatedAt: payload?.emailUpdatedAt ?? lastLogin,
+      passwordUpdatedAt: payload?.passwordUpdatedAt ?? lastLogin,
+      profileType,
+    }
   },
   async getSessions(): Promise<SessionToken[]> {
-    if (USE_MOCK) return mockSessions
-    return request<{ sessions: SessionToken[] }>({ path: '/accounts/sessions', method: 'GET' }).then(
-      (res) => res.sessions,
-    )
+    if (isMockMode()) return mockSessions
+    try {
+      const result = await request<{ sessions: SessionToken[] }>({ path: '/accounts/sessions', method: 'GET' })
+      return result.sessions
+    } catch {
+      return []
+    }
   },
   async getSystemStatus(): Promise<SystemStatus[]> {
-    if (USE_MOCK) return mockSystemStatus
-    return request<{ services: SystemStatus[] }>({ path: '/', method: 'GET' }).then((res) => res.services)
+    if (isMockMode()) return mockSystemStatus
+    try {
+      const result = await request<{ services: SystemStatus[] }>({ path: '/', method: 'GET' })
+      return result.services
+    } catch {
+      return []
+    }
   },
   async getChats(): Promise<ChatDetail[]> {
-    if (USE_MOCK) return mockChats
-    return request<{ chats: ChatDetail[] }>({ path: '/chats', method: 'GET' }).then((res) => res.chats)
+    if (isMockMode()) return mockChats
+
+    const summaries = await request<BackendConversationSummary[]>({ path: '/chats/', method: 'GET' })
+    const chats = await Promise.all(
+      summaries.map(async (summary) => {
+        const chatId = summary?.conversation_id ?? summary?.chat_id ?? summary?.chatId
+        if (!chatId) {
+          return {
+            chatId: crypto.randomUUID(),
+            chatTitle: summary?.title ?? 'Conversation',
+            messages: [],
+          }
+        }
+        try {
+          const detail = await request<BackendConversationDetail>({ path: `/chats/${chatId}`, method: 'GET' })
+          return normalizeChatDetail(detail)
+        } catch {
+          return normalizeChatDetail(summary)
+        }
+      }),
+    )
+
+    return chats
   },
   async getChatSummaries(): Promise<ChatSummary[]> {
-    if (USE_MOCK) return mockChatSummaries
-    return request<{ chats: ChatSummary[] }>({ path: '/chats', method: 'GET' }).then((res) => res.chats)
+    if (isMockMode()) return mockChatSummaries
+    const summaries = await request<BackendConversationSummary[]>({ path: '/chats/', method: 'GET' })
+    return summaries.map(normalizeChatSummary)
   },
   async getDocuments(): Promise<DocumentMeta[]> {
-    if (USE_MOCK) return mockDocuments
-    return request<{ documents: DocumentMeta[] }>({ path: '/docs', method: 'GET' }).then((res) => res.documents)
+    if (isMockMode()) return mockDocuments
+    return []
   },
+}
+
+function normalizeChatSummary(input: BackendConversationSummary): ChatSummary {
+  const chatId = input.conversation_id ?? input.chat_id ?? input.chatId ?? crypto.randomUUID()
+  const createdAt = input.created_at ?? input.createdAt ?? new Date().toISOString()
+
+  return {
+    chatId: String(chatId),
+    chatTitle: input.title ?? 'Conversation',
+    createdAt,
+  }
+}
+
+function normalizeChatDetail(input: BackendConversationDetail | BackendConversationSummary): ChatDetail {
+  const summary = normalizeChatSummary(input)
+  const messageSource = 'messages' in input ? input.messages : undefined
+  const messages = Array.isArray(messageSource) ? messageSource.map(mapBackendMessage) : []
+
+  return {
+    ...summary,
+    messages,
+  }
+}
+
+function mapBackendMessage(message: BackendMessage): ChatMessage {
+  const messageId = message.message_id ?? message.messageId ?? crypto.randomUUID()
+  const role = message.role === 'assistant' ? 'assistant' : 'user'
+  const text = message.content ?? message.text ?? ''
+
+  return {
+    messageId: String(messageId),
+    role,
+    text,
+    files: [],
+  }
 }

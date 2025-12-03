@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { FormEvent, useCallback, useEffect, useState } from 'react'
 import { useAuth } from '../auth/useAuth'
 import { appConfig } from '../config/appConfig'
-import { apiClient } from '../api/client'
+import { useRuntimeMode } from '../runtime/useRuntimeMode'
 
 type Mode = 'login' | 'register'
 
@@ -13,33 +13,27 @@ type Props = {
 export function AuthPage({ mode }: Props) {
   const isLogin = mode === 'login'
   const navigate = useNavigate()
-  const { login } = useAuth()
+  const { login, mode: authMode } = useAuth()
+  const { preferredMode, mode: runtimeMode, backendHealthy, status, refreshBackendHealth } = useRuntimeMode()
   const [error, setError] = useState<string | null>(null)
-  const mockModeEnabled = appConfig.mockModeEnabled
-  const shouldCheckBackend = !mockModeEnabled
-  const [backendReachable, setBackendReachable] = useState(true)
-  const [checkingBackend, setCheckingBackend] = useState(shouldCheckBackend)
+  const mockModeEnabled = runtimeMode === 'mock'
+  const shouldCheckBackend = preferredMode === 'productive'
   const [submitting, setSubmitting] = useState(false)
 
-  const checkBackend = useCallback(async () => {
+  const checkingBackend = shouldCheckBackend && status === 'checking'
+  const backendReachable = shouldCheckBackend ? Boolean(backendHealthy) : true
+
+  const handleBackendRefresh = useCallback(async () => {
     if (!shouldCheckBackend) return true
-    setCheckingBackend(true)
-    try {
-      const reachable = await apiClient.checkBackendHealth()
-      setBackendReachable(reachable)
-      return reachable
-    } catch {
-      setBackendReachable(false)
-      return false
-    } finally {
-      setCheckingBackend(false)
-    }
-  }, [shouldCheckBackend])
+    return refreshBackendHealth()
+  }, [refreshBackendHealth, shouldCheckBackend])
 
   useEffect(() => {
     if (!shouldCheckBackend) return
-    void checkBackend()
-  }, [checkBackend, shouldCheckBackend])
+    if (backendHealthy === null) {
+      void refreshBackendHealth()
+    }
+  }, [backendHealthy, refreshBackendHealth, shouldCheckBackend])
 
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -60,7 +54,7 @@ export function AuthPage({ mode }: Props) {
       }
 
       if (mockModeEnabled) {
-        const result = login(email, password)
+        const result = await login(email, password)
         if (!result.success) {
           setError(result.message)
           return
@@ -70,7 +64,7 @@ export function AuthPage({ mode }: Props) {
         return
       }
 
-      const reachable = backendReachable || (await checkBackend())
+      const reachable = backendReachable || (await handleBackendRefresh())
       if (!reachable) {
         setError('Backend aktuell nicht erreichbar. Bitte versuche es in Kürze erneut.')
         return
@@ -78,8 +72,8 @@ export function AuthPage({ mode }: Props) {
 
       try {
         setSubmitting(true)
-        const result = await apiClient.login(email, password)
-        if (!result.ok) {
+        const result = await login(email, password)
+        if (!result.success) {
           setError(result.message ?? 'Login fehlgeschlagen.')
           return
         }
@@ -92,7 +86,7 @@ export function AuthPage({ mode }: Props) {
         setSubmitting(false)
       }
     },
-    [backendReachable, checkBackend, isLogin, login, mockModeEnabled, navigate],
+    [backendReachable, handleBackendRefresh, isLogin, login, mockModeEnabled, navigate],
   )
 
   return (
@@ -100,7 +94,7 @@ export function AuthPage({ mode }: Props) {
       <div className="auth-card">
         <p className="u-no-select auth-card__eyebrow">Retrieval Access</p>
         <h1 className="u-no-select">{isLogin ? 'Sign in' : 'Create account'}</h1>
-        {!mockModeEnabled && (
+        {shouldCheckBackend && (
           <div className="auth-card__alert" role="status" aria-live="polite">
             {checkingBackend ? (
               <p>Verbindung zum Backend wird geprüft …</p>
@@ -110,7 +104,7 @@ export function AuthPage({ mode }: Props) {
               <>
                 <strong>Backend nicht erreichbar</strong>
                 <p>Stelle sicher, dass der Server unter {appConfig.apiBaseUrl} verfügbar ist und versuche es erneut.</p>
-                <button type="button" className="btn btn--ghost btn--compact" onClick={() => void checkBackend()}>
+                <button type="button" className="btn btn--ghost btn--compact" onClick={() => void handleBackendRefresh()}>
                   Erneut prüfen
                 </button>
               </>
@@ -144,7 +138,7 @@ export function AuthPage({ mode }: Props) {
         </form>
         {error && <p role="alert">{error}</p>}
 
-        {mockModeEnabled && (
+        {authMode === 'mock' && (
           <div className="auth-card__info">
             <p className="u-no-select">Verfügbare Test-Logins (Mock-Modus):</p>
             <ul>
