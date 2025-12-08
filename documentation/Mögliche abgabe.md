@@ -42,7 +42,7 @@ Die Wissensbasis des RAG-Systems setzt sich aus kuratierten Textmaterialien zusa
 
 | Dokumenttyp | Quelle | Umfang | Fokus |
 |---|---|---|---|
-| Vorlesungsmitschriften | Eigenproduktion (Data Engineering Vorlesung) | ca. 15-20 Seiten | NoSQL-Grundlagen, Modellierungskonzepte, ACID vs. BASE |
+| Vorlesungsmitschriften | Eigenproduktion ) | ca. 15-20 Seiten | NoSQL-Grundlagen, Modellierungskonzepte, ACID vs. BASE |
 | Folieninhalte | Eigenproduktion (Datenbanken-Modul) | ca. 10-12 Seiten | Indexe, Query Planning, Performance-Tuning |
 | Zusammenfassungen | Eigenproduktion (strukturiert) | ca. 8-10 Seiten | MongoDB Document Model, PostgreSQL-Spezialitäten |
 | Rechercheergebnisse | Wikipedia, technische Blogs | ca. 5-8 Seiten | RDBMS-Vergleiche, NewSQL, Distributed Systems |
