@@ -1,0 +1,29 @@
+{
+  "qa_pairs": [
+    {
+      "id": 1,
+      "question": "Was ist der Unterschied zwischen INNER JOIN und LEFT JOIN?",
+      "answer": "INNER JOIN liefert nur Zeilen mit passenden Schlüsseln in beiden Tabellen, LEFT JOIN zusätzlich alle Zeilen der linken Tabelle mit NULLs auf der rechten Seite, falls kein Match existiert."
+    },
+    {
+      "id": 2,
+      "question": "Wann sollte ein zusammengesetzter Primärschlüssel verwendet werden?",
+      "answer": "Wenn kein einzelnes Attribut eine Zeile eindeutig identifiziert, die Kombination mehrerer Attribute aber natürlich eindeutig ist, z. B. (bestell_id, positions_nr)."
+    },
+    {
+      "id": 3,
+      "question": "Warum sind Fremdschlüssel für Datenintegrität wichtig?",
+      "answer": "Fremdschlüssel erzwingen, dass referenzierte Werte existieren; dadurch werden verwaiste Datensätze verhindert und Konsistenz zwischen Relationen sichergestellt."
+    },
+    {
+      "id": 4,
+      "question": "Wozu dient GROUP BY in SQL?",
+      "answer": "GROUP BY fasst Zeilen mit identischen Gruppierungsattributen zusammen, damit Aggregatfunktionen wie COUNT, SUM oder AVG pro Gruppe berechnet werden können."
+    },
+    {
+      "id": 5,
+      "question": "Was ist der Unterschied zwischen WHERE und HAVING?",
+      "answer": "WHERE filtert Zeilen vor der Aggregation; HAVING filtert Gruppen nach der Aggregation und kann Aggregatfunktionen im Prädikat verwenden."
+    }
+  ]
+}

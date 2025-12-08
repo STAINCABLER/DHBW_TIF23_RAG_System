@@ -1,0 +1,5 @@
+join_type,description,includes_unmatched_rows,typical_use
+INNER JOIN,Liefert nur Zeilen mit passenden Schlüsseln in beiden Tabellen.,nein,Standard-Join für verknüpfte Entitäten
+LEFT JOIN,"Alle Zeilen der linken Tabelle, rechte Seite ggf. mit NULL.",ja (linke Tabelle),"Berichte, bei denen alle linken Entitäten gezeigt werden sollen"
+RIGHT JOIN,"Alle Zeilen der rechten Tabelle, linke Seite ggf. mit NULL.",ja (rechte Tabelle),"Symmetrisch zu LEFT JOIN, in der Praxis seltener verwendet"
+FULL OUTER JOIN,"Alle Zeilen beider Tabellen, fehlende Seiten mit NULL.",ja (beide Tabellen),"Vergleiche zwischen zwei Datenbeständen, Differenzenanalyse"
