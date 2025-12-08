@@ -136,7 +136,6 @@ def load_questions(path: Path) -> List[str]:
 
 def ensure_faq_table(cursor: psycopg2.extensions.cursor) -> None:
     """Create the target table if it does not already exist."""
-
     cursor.execute(
         """
         CREATE TABLE IF NOT EXISTS scenarios (
@@ -149,6 +148,9 @@ def ensure_faq_table(cursor: psycopg2.extensions.cursor) -> None:
             tags TEXT[]
         )
         """
+    )
+
+    cursor.execute(
         """
         CREATE TABLE IF NOT EXISTS faq (
             id SERIAL PRIMARY KEY,
