@@ -79,7 +79,7 @@ def enrich_metadata(docs: List[Document], doc_name: str, version: str) -> List[D
 # --- 4. DAS LABOR-EXPERIMENT MIT DATEI-OUTPUT ---
 
 def run_experiment(query: str, configurations: list):
-    output_file = "results.md"
+    output_file = "results3.md"
     
     # "w" Modus sorgt dafür, dass die Datei jedes Mal neu überschrieben wird
     with open(output_file, "w", encoding="utf-8") as f:
@@ -88,6 +88,19 @@ def run_experiment(query: str, configurations: list):
         def log(text=""):
             print(text)
             f.write(text + "\n")
+        
+
+        def get_header_info(doc) -> tuple[str, int]:
+            raw_data = doc.metadata.get("Header 1", None)
+            if raw_data:
+                return raw_data, 1
+            raw_data = doc.metadata.get("Header 2", None)
+            if raw_data:
+                return raw_data, 2
+            raw_data = doc.metadata.get("Header 3", None)
+            if raw_data:
+                return raw_data, 3
+            return "N/A", 0
 
         log(f"# RAG Experiment Report")
         log(f"**Datum:** {time.strftime('%Y-%m-%d %H:%M:%S')}")
@@ -113,6 +126,9 @@ def run_experiment(query: str, configurations: list):
                  chunks = strategy_func(raw_text)
             else:
                 chunks = strategy_func(raw_text, size, overlap)
+            if chunks:
+                for i in chunks:
+                    print(i)
             
             # 2. Metadaten anreichern
             chunks = enrich_metadata(chunks, "Manual_v1", "1.0.2")
@@ -130,19 +146,22 @@ def run_experiment(query: str, configurations: list):
             # 5. Output
             log("\n### Retrieval Ergebnisse:")
             for i, doc in enumerate(retrieved_docs):
-                content_snippet = doc.page_content.replace('\n', ' ')[:80]
-                header_info = doc.metadata.get('Header 2', 'N/A')
+                content_snippet = doc.page_content.replace('\n', ' ')
+                
+                raw_header_info = get_header_info(doc)
+                header_info = raw_header_info[0]
+                header_type: int = raw_header_info[1]
                 pos_info = doc.metadata.get('chunk_number')
                 
-                log(f"**{i+1}. Treffer** (Sec: `{header_info}` | Pos: `{pos_info}`)")
-                log(f"> \"{content_snippet}...\"")
+                log(f"**{i+1}. Treffer** (Sec: `{header_info}` | Type: `{header_type}` | Pos: `{pos_info}`)")
+                log(f"> \"{content_snippet}\"")
             
             log("-" * 40)
             
     print(f"\n[INFO] Ergebnisse wurden in '{output_file}' gespeichert.")
 
 # --- MAIN ---
-
+number_of_k: int = 20
 if __name__ == "__main__":
     experiment_configs = [
         {
@@ -150,21 +169,21 @@ if __name__ == "__main__":
             "strategy": strategy_fixed_size,
             "size": 150,
             "overlap": 0,
-            "k": 5
+            "k": number_of_k
         },
         {
             "name": "Rekursiv (Standard)",
             "strategy": strategy_recursive,
             "size": 300,
             "overlap": 60,
-            "k": 5
+            "k": number_of_k
         },
         {
             "name": "Heading Aware (Strukturiert)",
             "strategy": strategy_heading_aware,
             "size": 0,
             "overlap": 0,
-            "k": 5
+            "k": number_of_k
         }
     ]
 

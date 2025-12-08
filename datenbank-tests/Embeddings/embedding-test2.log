@@ -1,0 +1,43 @@
+2025-12-08 11:38:06,402 | INFO | Loaded 2 questions
+2025-12-08 11:38:06,402 | INFO | Use pytorch device_name: cpu
+2025-12-08 11:38:06,402 | INFO | Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-12-08 11:38:11,846 | INFO | Inserted question 'How do I reset my password?' (embedding length 384)
+2025-12-08 11:38:11,945 | INFO | Inserted question 'How to change my billing plan?' (embedding length 384)
+2025-12-08 11:38:11,952 | INFO | Embedding test completed. Inserted 2 new rows.
+2025-12-08 11:47:58,363 | INFO | Use pytorch device_name: cpu
+2025-12-08 11:47:58,363 | INFO | Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-12-08 11:48:01,137 | ERROR | Database operation failed: not all arguments converted during string formatting
+Traceback (most recent call last):
+  File "d:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\datenbank-tests\Embeddings\embedding-test.py", line 168, in search
+    inserted = get_embed(conn, question, model)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\datenbank-tests\Embeddings\embedding-test.py", line 142, in get_embed
+    cursor.execute(
+TypeError: not all arguments converted during string formatting
+2025-12-08 11:49:05,818 | INFO | Use pytorch device_name: cpu
+2025-12-08 11:49:05,818 | INFO | Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-12-08 11:49:08,394 | ERROR | Database operation failed: not all arguments converted during string formatting
+Traceback (most recent call last):
+  File "d:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\datenbank-tests\Embeddings\embedding-test.py", line 167, in search
+    inserted = get_embed(conn, question, model)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\datenbank-tests\Embeddings\embedding-test.py", line 142, in get_embed
+    cursor.execute(
+TypeError: not all arguments converted during string formatting
+2025-12-08 11:49:43,105 | INFO | Use pytorch device_name: cpu
+2025-12-08 11:49:43,106 | INFO | Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-12-08 11:49:45,788 | ERROR | Database operation failed: operator does not exist: double precision[] <=> unknown
+LINE 1: SELECT question, 1 - (embedding <=> 'ARRAY[ -0.0354220420122...
+                                        ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+Traceback (most recent call last):
+  File "d:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\datenbank-tests\Embeddings\embedding-test.py", line 166, in search
+    inserted = get_embed(conn, question, model)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\datenbank-tests\Embeddings\embedding-test.py", line 142, in get_embed
+    cursor.execute(
+psycopg2.errors.UndefinedFunction: operator does not exist: double precision[] <=> unknown
+LINE 1: SELECT question, 1 - (embedding <=> 'ARRAY[ -0.0354220420122...
+                                        ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
