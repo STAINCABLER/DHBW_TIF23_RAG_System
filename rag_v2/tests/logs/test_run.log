@@ -624,3 +624,257 @@ TimeoutError
 [2025-12-10 15:57:15] INFO     utils.docker_manager: Stoppe Docker Container...
 [2025-12-10 15:57:15] INFO     utils.docker_manager: ============================================================
 [2025-12-10 15:57:18] INFO     utils.docker_manager: ✓ Alle Container gestoppt und aufgeräumt!
+[2025-12-10 15:15:43] INFO     __main__: ======================================================================
+[2025-12-10 15:15:43] INFO     __main__: RAG-System Datenbank Performance Tests
+[2025-12-10 15:15:43] INFO     __main__: ======================================================================
+[2025-12-10 15:15:43] INFO     __main__: Gestartet: 2025-12-10 15:15:43
+[2025-12-10 15:15:43] INFO     __main__: Konfiguration: /app/rag_v2/tests/config/test_config.yaml
+[2025-12-10 15:15:43] INFO     __main__: Ausgewählte Tests: redis, mongo, postgres, vector
+[2025-12-10 15:15:43] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-10 15:15:43] INFO     __main__: Starte Docker-Infrastruktur...
+[2025-12-10 15:15:43] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-10 15:15:43] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:15:43] INFO     utils.docker_manager: Starte Docker Container...
+[2025-12-10 15:15:43] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:15:43] INFO     utils.docker_manager: Führe aus: docker compose -f /app/rag_v2/tests/docker/docker-compose.yml up -d --wait
+[2025-12-10 15:15:43] ERROR    utils.docker_manager: Fehler beim Starten der Container: [Errno 2] No such file or directory: 'docker'
+[2025-12-10 15:15:43] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:15:43] INFO     utils.docker_manager: Stoppe Docker Container...
+[2025-12-10 15:15:43] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:15:43] ERROR    utils.docker_manager: Fehler beim Stoppen der Container: [Errno 2] No such file or directory: 'docker'
+[2025-12-10 15:15:43] ERROR    __main__: Kritischer Fehler: [Errno 2] No such file or directory: 'docker'
+Traceback (most recent call last):
+  File "/app/rag_v2/tests/run_tests.py", line 319, in main
+    docker_manager.start_containers()
+  File "/app/rag_v2/tests/utils/docker_manager.py", line 110, in start_containers
+    result = subprocess.run(
+             ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/local/lib/python3.12/subprocess.py", line 1955, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'docker'
+[2025-12-10 15:15:44] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-10 15:15:44] INFO     __main__: Stoppe Docker-Infrastruktur...
+[2025-12-10 15:15:44] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-10 15:15:44] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:15:44] INFO     utils.docker_manager: Stoppe Docker Container...
+[2025-12-10 15:15:44] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:15:44] ERROR    utils.docker_manager: Fehler beim Stoppen der Container: [Errno 2] No such file or directory: 'docker'
+[2025-12-10 15:16:27] INFO     __main__: ======================================================================
+[2025-12-10 15:16:27] INFO     __main__: RAG-System Datenbank Performance Tests
+[2025-12-10 15:16:27] INFO     __main__: ======================================================================
+[2025-12-10 15:16:27] INFO     __main__: Gestartet: 2025-12-10 15:16:27
+[2025-12-10 15:16:27] INFO     __main__: Konfiguration: /app/rag_v2/tests/config/test_config.yaml
+[2025-12-10 15:16:27] INFO     __main__: Ausgewählte Tests: redis, mongo, postgres, vector
+[2025-12-10 15:16:27] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-10 15:16:27] INFO     __main__: Starte Docker-Infrastruktur...
+[2025-12-10 15:16:27] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-10 15:16:27] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:16:27] INFO     utils.docker_manager: Starte Docker Container...
+[2025-12-10 15:16:27] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:16:27] INFO     utils.docker_manager: Führe aus: docker compose -f /app/rag_v2/tests/docker/docker-compose.yml up -d --wait
+[2025-12-10 15:16:27] ERROR    utils.docker_manager: Fehler beim Starten der Container: [Errno 2] No such file or directory: 'docker'
+[2025-12-10 15:16:27] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:16:27] INFO     utils.docker_manager: Stoppe Docker Container...
+[2025-12-10 15:16:27] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:16:27] ERROR    utils.docker_manager: Fehler beim Stoppen der Container: [Errno 2] No such file or directory: 'docker'
+[2025-12-10 15:16:27] ERROR    __main__: Kritischer Fehler: [Errno 2] No such file or directory: 'docker'
+Traceback (most recent call last):
+  File "/app/rag_v2/tests/run_tests.py", line 319, in main
+    docker_manager.start_containers()
+  File "/app/rag_v2/tests/utils/docker_manager.py", line 110, in start_containers
+    result = subprocess.run(
+             ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/local/lib/python3.12/subprocess.py", line 1955, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'docker'
+[2025-12-10 15:16:27] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-10 15:16:27] INFO     __main__: Stoppe Docker-Infrastruktur...
+[2025-12-10 15:16:27] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-10 15:16:27] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:16:27] INFO     utils.docker_manager: Stoppe Docker Container...
+[2025-12-10 15:16:27] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:16:27] ERROR    utils.docker_manager: Fehler beim Stoppen der Container: [Errno 2] No such file or directory: 'docker'
+[2025-12-10 15:18:06] INFO     __main__: ======================================================================
+[2025-12-10 15:18:06] INFO     __main__: RAG-System Datenbank Performance Tests
+[2025-12-10 15:18:06] INFO     __main__: ======================================================================
+[2025-12-10 15:18:06] INFO     __main__: Gestartet: 2025-12-10 15:18:06
+[2025-12-10 15:18:06] INFO     __main__: Konfiguration: /app/rag_v2/tests/config/test_config.yaml
+[2025-12-10 15:18:06] INFO     __main__: Ausgewählte Tests: redis, mongo, postgres, vector
+[2025-12-10 15:18:06] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-10 15:18:06] INFO     __main__: Starte Docker-Infrastruktur...
+[2025-12-10 15:18:06] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-10 15:18:06] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:18:06] INFO     utils.docker_manager: Starte Docker Container...
+[2025-12-10 15:18:06] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:18:06] INFO     utils.docker_manager: Führe aus: docker compose -f /app/rag_v2/tests/docker/docker-compose.yml up -d --wait
+[2025-12-10 15:18:06] ERROR    utils.docker_manager: Fehler beim Starten der Container: [Errno 2] No such file or directory: 'docker'
+[2025-12-10 15:18:06] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:18:06] INFO     utils.docker_manager: Stoppe Docker Container...
+[2025-12-10 15:18:06] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:18:06] ERROR    utils.docker_manager: Fehler beim Stoppen der Container: [Errno 2] No such file or directory: 'docker'
+[2025-12-10 15:18:06] ERROR    __main__: Kritischer Fehler: [Errno 2] No such file or directory: 'docker'
+Traceback (most recent call last):
+  File "/app/rag_v2/tests/run_tests.py", line 319, in main
+    docker_manager.start_containers()
+  File "/app/rag_v2/tests/utils/docker_manager.py", line 110, in start_containers
+    result = subprocess.run(
+             ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/local/lib/python3.12/subprocess.py", line 1955, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'docker'
+[2025-12-10 15:18:06] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-10 15:18:06] INFO     __main__: Stoppe Docker-Infrastruktur...
+[2025-12-10 15:18:06] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-10 15:18:06] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:18:06] INFO     utils.docker_manager: Stoppe Docker Container...
+[2025-12-10 15:18:06] INFO     utils.docker_manager: ============================================================
+[2025-12-10 15:18:06] ERROR    utils.docker_manager: Fehler beim Stoppen der Container: [Errno 2] No such file or directory: 'docker'
+[2025-12-10 16:22:32] INFO     __main__: ======================================================================
+[2025-12-10 16:22:32] INFO     __main__: RAG-System Datenbank Performance Tests
+[2025-12-10 16:22:32] INFO     __main__: ======================================================================
+[2025-12-10 16:22:32] INFO     __main__: Gestartet: 2025-12-10 16:22:32
+[2025-12-10 16:22:32] INFO     __main__: Konfiguration: d:\DHBW\Software Engineering\Projekt\DHBW_TIF23_RAG_System\rag_v2\tests\config\test_config.yaml
+[2025-12-10 16:22:32] INFO     __main__: Ausgewählte Tests: redis, mongo, postgres, vector
+[2025-12-10 16:22:32] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-10 16:22:32] INFO     __main__: Starte Docker-Infrastruktur...
+[2025-12-10 16:22:32] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-10 16:22:32] INFO     utils.docker_manager: ============================================================
+[2025-12-10 16:22:32] INFO     utils.docker_manager: Starte Docker Container...
+[2025-12-10 16:22:32] INFO     utils.docker_manager: ============================================================
+[2025-12-10 16:22:32] INFO     utils.docker_manager: Führe aus: docker compose -f d:\DHBW\Software Engineering\Projekt\DHBW_TIF23_RAG_System\rag_v2\tests\docker\docker-compose.yml up -d --wait
+[2025-12-10 16:23:10] INFO     utils.docker_manager: Container gestartet, warte auf Initialisierung...
+[2025-12-10 16:23:25] INFO     utils.docker_manager: ✓ Alle Container sind bereit!
+[2025-12-10 16:23:25] INFO     __main__: 
+======================================================================
+[2025-12-10 16:23:25] INFO     __main__: Starte REDIS Tests
+[2025-12-10 16:23:25] INFO     __main__: ======================================================================
+[2025-12-10 16:23:25] INFO     db_tests.base_test: ============================================================
+[2025-12-10 16:23:25] INFO     db_tests.base_test: Starte Tests für: Redis
+[2025-12-10 16:23:25] INFO     db_tests.base_test: ============================================================
+[2025-12-10 16:23:25] INFO     db_tests.base_test: Beschreibung:
+
+    Redis Key-Value Store Performance Tests
+    
+    WARUM: Redis ist der primäre Cache und Session-Store im RAG-System.
+           Er liegt im kritischen Pfad für Rate-Limiting und Session-Checks.
+    
+    HYPOTHESE:
+        - Pipeline/Batch-Operationen sind 10-20x schneller
+        - P99 Latenz unter 2ms für Einzeloperationen
+        - Asynchrone Tests zeigen höheren Durchsatz
+    
+    REFERENZ: Modul 4 (Query Paths), Modul 8 (Performance-Myth-Busting)
+    
+[2025-12-10 16:23:25] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-10 16:23:25] INFO     db_tests.base_test: Setup...
+[2025-12-10 16:23:25] INFO     db_tests.redis_tests: Verbinde zu Redis: localhost:6379
+[2025-12-10 16:23:25] INFO     db_tests.redis_tests: ✓ Redis-Verbindung hergestellt
+[2025-12-10 16:23:25] INFO     db_tests.redis_tests: ✓ Redis-Datenbank geleert
+[2025-12-10 16:23:25] INFO     db_tests.redis_tests: Generiere 10000 Key-Value Paare...
+[2025-12-10 16:23:25] INFO     utils.data_generator: Generiere 10000 Key-Value Paare...
+[2025-12-10 16:23:25] INFO     db_tests.redis_tests: ✓ 10000 Testdaten generiert
+[2025-12-10 16:23:25] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-10 16:23:25] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-10 16:23:25] INFO     db_tests.redis_tests: Test: Naive Writes (einzelne SET)
+[2025-12-10 16:23:30] INFO     db_tests.base_test:   → Redis Naive SET: 2,295 ops/s, P95=0.60ms
+[2025-12-10 16:23:30] INFO     db_tests.redis_tests: Test: Pipeline Writes (Batch-SET)
+[2025-12-10 16:23:30] INFO     db_tests.base_test:   → Redis Pipeline SET: 89,848 ops/s, P95=0.01ms
+[2025-12-10 16:23:30] INFO     db_tests.redis_tests: Test: Naive Reads (einzelne GET)
+[2025-12-10 16:23:34] INFO     db_tests.base_test:   → Redis Naive GET: 2,293 ops/s, P95=0.60ms
+[2025-12-10 16:23:34] INFO     db_tests.redis_tests: Test: Pipeline Reads (Batch-GET)
+[2025-12-10 16:23:34] INFO     db_tests.base_test:   → Redis Pipeline GET: 176,581 ops/s, P95=0.01ms
+[2025-12-10 16:23:34] INFO     db_tests.redis_tests: Test: MGET (Multi-Key GET)
+[2025-12-10 16:23:35] INFO     db_tests.base_test:   → Redis MGET: 24,494 ops/s, P95=0.04ms
+[2025-12-10 16:23:35] INFO     db_tests.redis_tests: Starte asynchrone Redis-Tests...
+[2025-12-10 16:23:35] INFO     db_tests.redis_tests: Test: Async Writes (10 Clients)
+[2025-12-10 16:23:36] INFO     db_tests.base_test:   → Redis Async SET: 9,763 ops/s, P95=1.39ms
+[2025-12-10 16:23:36] INFO     db_tests.redis_tests: Test: Async Reads (10 Clients)
+[2025-12-10 16:23:37] INFO     db_tests.base_test:   → Redis Async GET: 10,683 ops/s, P95=1.33ms
+[2025-12-10 16:23:37] INFO     db_tests.base_test: ✓ 7 Tests abgeschlossen
+[2025-12-10 16:23:37] INFO     db_tests.base_test: Teardown...
+[2025-12-10 16:23:37] INFO     db_tests.redis_tests: ✓ Redis-Verbindung geschlossen
+[2025-12-10 16:23:37] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Naive SET
+[2025-12-10 16:23:37] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Pipeline SET
+[2025-12-10 16:23:37] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Naive GET
+[2025-12-10 16:23:37] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Pipeline GET
+[2025-12-10 16:23:37] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis MGET
+[2025-12-10 16:23:37] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Async SET
+[2025-12-10 16:23:37] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Async GET
+[2025-12-10 16:23:37] INFO     __main__: 
+======================================================================
+[2025-12-10 16:23:37] INFO     __main__: Starte MONGO Tests
+[2025-12-10 16:23:37] INFO     __main__: ======================================================================
+[2025-12-10 16:23:37] INFO     db_tests.base_test: ============================================================
+[2025-12-10 16:23:37] INFO     db_tests.base_test: Starte Tests für: MongoDB
+[2025-12-10 16:23:37] INFO     db_tests.base_test: ============================================================
+[2025-12-10 16:23:37] INFO     db_tests.base_test: Beschreibung:
+
+    MongoDB Document Store Performance Tests
+    
+    WARUM: MongoDB speichert die Chunk-Dokumente im RAG-System.
+           Nach der Vektorsuche werden Chunks per ID geladen.
+    
+    HYPOTHESE:
+        - insert_many() ist 5-10x schneller als insert_one()
+        - $in-Query ist effizienter als mehrere find_one()
+        - Async zeigt höheren Durchsatz bei parallelen Zugriffen
+    
+    REFERENZ: Modul 5 & 6 (Chunking & Datenmodellierung), Modul 8
+    
+[2025-12-10 16:23:37] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-10 16:23:37] INFO     db_tests.base_test: Setup...
+[2025-12-10 16:23:37] INFO     db_tests.mongo_tests: Verbinde zu MongoDB: localhost:27017
+[2025-12-10 16:23:37] INFO     db_tests.mongo_tests: ✓ MongoDB-Verbindung hergestellt
+[2025-12-10 16:23:37] INFO     db_tests.mongo_tests: ✓ Collection geleert
+[2025-12-10 16:23:37] INFO     db_tests.mongo_tests: ✓ Index auf metadata.category erstellt
+[2025-12-10 16:23:37] INFO     db_tests.mongo_tests: Generiere 10000 Chunk-Dokumente...
+[2025-12-10 16:23:37] INFO     utils.data_generator: Generiere 10000 Chunks...
+[2025-12-10 16:23:38] INFO     db_tests.mongo_tests: ✓ 10000 Testdaten generiert
+[2025-12-10 16:23:38] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-10 16:23:38] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-10 16:23:38] INFO     db_tests.mongo_tests: Test: Single Inserts (insert_one)
+[2025-12-10 16:23:48] INFO     db_tests.base_test:   → MongoDB Single insert_one: 1,070 ops/s, P95=1.37ms
+[2025-12-10 16:23:48] INFO     db_tests.mongo_tests: Test: Bulk Inserts (insert_many)
+[2025-12-10 16:23:48] INFO     db_tests.base_test:   → MongoDB Bulk insert_many: 46,338 ops/s, P95=0.02ms
+[2025-12-10 16:23:48] INFO     db_tests.mongo_tests: Test: Single Reads (find_one)
+[2025-12-10 16:23:58] INFO     db_tests.base_test:   → MongoDB Single find_one: 1,004 ops/s, P95=1.55ms
+[2025-12-10 16:23:58] INFO     db_tests.mongo_tests: Test: Batch Reads ($in Query)
+[2025-12-10 16:23:59] INFO     db_tests.base_test:   → MongoDB Batch find ($in): 7,247 ops/s, P95=0.20ms
+[2025-12-10 16:23:59] INFO     db_tests.mongo_tests: Test: Filtered Reads (mit Index)
+[2025-12-10 16:23:59] INFO     db_tests.base_test:   → MongoDB Filtered find: 351 ops/s, P95=3.12ms
+[2025-12-10 16:23:59] INFO     db_tests.mongo_tests: Starte asynchrone MongoDB-Tests...
+[2025-12-10 16:23:59] INFO     db_tests.mongo_tests: Test: Async Inserts (10 Clients)
+[2025-12-10 16:24:02] INFO     db_tests.base_test: Teardown...
+[2025-12-10 16:24:02] WARNING  db_tests.mongo_tests: Fehler beim Schließen der MongoDB-Verbindung: Collection objects do not implement truth value testing or bool(). Please compare with None instead: collection is not None
+[2025-12-10 16:24:02] WARNING  __main__: 
+Tests durch Benutzer abgebrochen!
+[2025-12-10 16:24:02] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-10 16:24:02] INFO     __main__: Stoppe Docker-Infrastruktur...
+[2025-12-10 16:24:02] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-10 16:24:02] INFO     utils.docker_manager: ============================================================
+[2025-12-10 16:24:02] INFO     utils.docker_manager: Stoppe Docker Container...
+[2025-12-10 16:24:02] INFO     utils.docker_manager: ============================================================
+[2025-12-10 16:24:04] INFO     utils.docker_manager: ✓ Alle Container gestoppt und aufgeräumt!
