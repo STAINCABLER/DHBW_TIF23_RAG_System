@@ -74,6 +74,7 @@ from db_tests.base_test import TestContext
 def setup_logging(config: dict) -> None:
     """Konfiguriert das Logging-System."""
     log_config = config.get("logging", {})
+    report_config = config.get("reporting", {})
     log_level = getattr(logging, log_config.get("level", "INFO").upper())
     
     # Format
@@ -94,8 +95,15 @@ def setup_logging(config: dict) -> None:
     
     # File Handler (optional)
     if log_config.get("file_logging", False):
-        log_file = Path(__file__).parent / log_config.get("log_file", "logs/test_run.log")
-        log_file.parent.mkdir(parents=True, exist_ok=True)
+        # Dynamischer Dateiname mit Timestamp (wie bei Reports)
+        timestamp_format = report_config.get("timestamp_format", "%Y-%m-%d_%H-%M-%S")
+        timestamp = datetime.now().strftime(timestamp_format)
+        filename_pattern = log_config.get("filename_pattern", "log_{timestamp}.log")
+        filename = filename_pattern.replace("{timestamp}", timestamp)
+        
+        output_dir = Path(__file__).parent / log_config.get("output_dir", "logs")
+        output_dir.mkdir(parents=True, exist_ok=True)
+        log_file = output_dir / filename
         
         file_handler = logging.FileHandler(log_file, encoding="utf-8")
         file_handler.setLevel(log_level)

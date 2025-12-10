@@ -154,4 +154,9 @@ logging:
   
   # Logs in Datei schreiben
   file_logging: true
-  log_file: "logs/test_run.log"
+  
+  # Ausgabeverzeichnis für Logs (relativ zum tests/ Ordner)
+  output_dir: "logs"
+  
+  # Dateinamens-Muster ({timestamp} wird ersetzt)
+  filename_pattern: "log_{timestamp}.log"
