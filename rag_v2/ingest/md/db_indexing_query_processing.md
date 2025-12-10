@@ -2,7 +2,7 @@
 
 ## 1. Grundlagen der Indexierung
 
-Ein **Index** ist eine zusätzliche Datenstruktur, die den Zugriff auf Zeilen einer Tabelle beschleunigt, indem sie Suchattribute sortiert speichert und so die Anzahl der zu prüfenden Seiten reduziert. RDBMS setzen standardmäßig häufig **B-Baum-Varianten (B+ Bäume)** ein.[31][34][37][40]
+Ein **Index** ist eine zusätzliche Datenstruktur, die den Zugriff auf Zeilen einer Tabelle beschleunigt, indem sie Suchattribute sortiert speichert und so die Anzahl der zu prüfenden Seiten reduziert. RDBMS setzen standardmäßig häufig **B-Baum-Varianten (B+ Bäume)** ein.
 
 Zentrale Ziele:
 - Reduktion von I/O-Zugriffen
@@ -16,14 +16,14 @@ Typische Indexarten:
 
 ## 2. B-Baum-Indizes
 
-**B-Bäume** sind balancierte Suchbäume mit folgendem Eigenschaften:[31][34][37]
+**B-Bäume** sind balancierte Suchbäume mit folgendem Eigenschaften:
 - Alle Blätter liegen auf derselben Höhe.
 - Jeder Knoten enthält eine sortierte Menge von Schlüsseln und Kindzeigern.
 - Suchen, Einfügen und Löschen laufen in \(O(\log n)\).
 
 Vorteile:
 - Sehr gut für **Bereichsanfragen** (\(>\), \(<\), BETWEEN) und für ORDER BY geeignet.
-- Weit verbreitet in OLTP-Datenbanken (PostgreSQL, MySQL/InnoDB, Oracle, SQL Server).[34][40]
+- Weit verbreitet in OLTP-Datenbanken (PostgreSQL, MySQL/InnoDB, Oracle, SQL Server).
 
 Einsatzempfehlungen:
 - Primärschlüssel und häufig genutzte Fremdschlüssel.
@@ -31,7 +31,7 @@ Einsatzempfehlungen:
 
 ## 3. Hash-Indizes
 
-**Hash-Indizes** verwenden eine Hash-Funktion, um einen Suchschlüssel direkt auf einen Bucket abzubilden.[31][34][40]
+**Hash-Indizes** verwenden eine Hash-Funktion, um einen Suchschlüssel direkt auf einen Bucket abzubilden.
 
 Eigenschaften:
 - Sehr schnell für **exakte Gleichheitsabfragen** (=).
@@ -43,7 +43,7 @@ Typische Einsatzszenarien:
 
 ## 4. Kostenbasierte Anfrageoptimierung
 
-Moderne DBMS setzen einen **kostenbasierten Optimierer (CBO)** ein, der aus vielen äquivalenten physikalischen Ausführungsplänen den kostengünstigsten wählt.[32][35][38]
+Moderne DBMS setzen einen **kostenbasierten Optimierer (CBO)** ein, der aus vielen äquivalenten physikalischen Ausführungsplänen den kostengünstigsten wählt.
 
 Wesentliche Schritte:
 1. **Logischen Plan erzeugen** (basierend auf SQL und relationaler Algebra).
@@ -60,14 +60,14 @@ Wesentliche Schritte:
   - Einfache Implementierung.
   - Gut, wenn die innere Seite stark eingeschränkt und/oder indiziert ist.
 - **Hash Join**:
-  - Baut Hash-Tabelle auf der kleineren Eingabe, probt dann mit der größeren.[36][38]
+  - Baut Hash-Tabelle auf der kleineren Eingabe, probt dann mit der größeren.
   - Sehr effizient für Gleich-Joins ohne Sortierung.
 - **Sort-Merge Join**:
-  - Beide Eingaben werden sortiert, dann linear gemergt.[36]
+  - Beide Eingaben werden sortiert, dann linear gemergt.
   - Vorteile bei bereits sortierten Eingaben (z. B. durch Indizes).
 
 ## 6. Praktische Tuning-Regeln
 
-- **Selektive Prädikate zuerst auswerten** (Filter Pushdown).[35][38]
-- Nur dort indizieren, wo **Leselast und Selektivität** den Schreib-Overhead rechtfertigen.[31][34]
-- Statistiken regelmäßig aktualisieren, da sie Grundlage der Kostenabschätzung sind.[32][35]
+- **Selektive Prädikate zuerst auswerten** (Filter Pushdown).
+- Nur dort indizieren, wo **Leselast und Selektivität** den Schreib-Overhead rechtfertigen.
+- Statistiken regelmäßig aktualisieren, da sie Grundlage der Kostenabschätzung sind.
