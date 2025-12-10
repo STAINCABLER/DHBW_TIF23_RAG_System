@@ -1,0 +1,50 @@
+[2025-12-10 16:32:29] INFO     __main__: ======================================================================
+[2025-12-10 16:32:29] INFO     __main__: RAG-System Datenbank Performance Tests
+[2025-12-10 16:32:29] INFO     __main__: ======================================================================
+[2025-12-10 16:32:29] INFO     __main__: Gestartet: 2025-12-10 16:32:29
+[2025-12-10 16:32:29] INFO     __main__: Konfiguration: d:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\config\test_config.yaml
+[2025-12-10 16:32:29] INFO     __main__: Ausgewählte Tests: redis, mongo, postgres, vector
+[2025-12-10 16:32:29] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-10 16:32:29] INFO     __main__: Starte Docker-Infrastruktur...
+[2025-12-10 16:32:29] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-10 16:32:29] INFO     utils.docker_manager: ============================================================
+[2025-12-10 16:32:29] INFO     utils.docker_manager: Starte Docker Container...
+[2025-12-10 16:32:29] INFO     utils.docker_manager: ============================================================
+[2025-12-10 16:32:29] INFO     utils.docker_manager: Führe aus: docker compose -f d:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\docker\docker-compose.yml up -d --wait
+[2025-12-10 16:41:28] ERROR    utils.docker_manager: Timeout beim Starten der Container (180s)
+[2025-12-10 16:41:28] INFO     utils.docker_manager: ============================================================
+[2025-12-10 16:41:28] INFO     utils.docker_manager: Stoppe Docker Container...
+[2025-12-10 16:41:28] INFO     utils.docker_manager: ============================================================
+[2025-12-10 16:41:31] INFO     utils.docker_manager: ✓ Alle Container gestoppt und aufgeräumt!
+[2025-12-10 16:41:31] ERROR    __main__: Kritischer Fehler: Container-Start Timeout
+Traceback (most recent call last):
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\utils\docker_manager.py", line 110, in start_containers
+    result = subprocess.run(
+             ^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\subprocess.py", line 1630, in _communicate
+    raise TimeoutExpired(self.args, orig_timeout)
+subprocess.TimeoutExpired: Command '['docker', 'compose', '-f', 'd:\\Documents\\GitHub\\DHBW_TIF23_RAG_System\\rag_v2\\tests\\docker\\docker-compose.yml', 'up', '-d', '--wait']' timed out after 180 seconds
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "d:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\run_tests.py", line 327, in main
+    docker_manager.start_containers()
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\utils\docker_manager.py", line 135, in start_containers
+    raise RuntimeError("Container-Start Timeout")
+RuntimeError: Container-Start Timeout
+[2025-12-10 16:41:31] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-10 16:41:31] INFO     __main__: Stoppe Docker-Infrastruktur...
+[2025-12-10 16:41:31] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-10 16:41:31] INFO     utils.docker_manager: ============================================================
+[2025-12-10 16:41:31] INFO     utils.docker_manager: Stoppe Docker Container...
+[2025-12-10 16:41:31] INFO     utils.docker_manager: ============================================================
+[2025-12-10 16:41:32] INFO     utils.docker_manager: ✓ Alle Container gestoppt und aufgeräumt!

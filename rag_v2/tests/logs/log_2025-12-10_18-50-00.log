@@ -1,0 +1,300 @@
+[2025-12-10 18:50:00] INFO     __main__: ======================================================================
+[2025-12-10 18:50:00] INFO     __main__: RAG-System Datenbank Performance Tests
+[2025-12-10 18:50:00] INFO     __main__: ======================================================================
+[2025-12-10 18:50:00] INFO     __main__: Gestartet: 2025-12-10 18:50:00
+[2025-12-10 18:50:00] INFO     __main__: Konfiguration: d:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\config\test_config.yaml
+[2025-12-10 18:50:00] INFO     __main__: Ausgewählte Tests: redis, mongo, postgres, vector
+[2025-12-10 18:50:00] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-10 18:50:00] INFO     __main__: Starte Docker-Infrastruktur...
+[2025-12-10 18:50:00] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-10 18:50:00] INFO     utils.docker_manager: ============================================================
+[2025-12-10 18:50:00] INFO     utils.docker_manager: Starte Docker Container...
+[2025-12-10 18:50:00] INFO     utils.docker_manager: ============================================================
+[2025-12-10 18:50:00] INFO     utils.docker_manager: Führe aus: docker compose -f d:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\docker\docker-compose.yml up -d --wait
+[2025-12-10 18:50:07] INFO     utils.docker_manager: Container gestartet, warte auf Initialisierung...
+[2025-12-10 18:50:22] INFO     utils.docker_manager: ✓ Alle Container sind bereit!
+[2025-12-10 18:50:23] INFO     __main__: 
+======================================================================
+[2025-12-10 18:50:23] INFO     __main__: Starte REDIS Tests
+[2025-12-10 18:50:23] INFO     __main__: ======================================================================
+[2025-12-10 18:50:23] INFO     db_tests.base_test: ============================================================
+[2025-12-10 18:50:23] INFO     db_tests.base_test: Starte Tests für: Redis
+[2025-12-10 18:50:23] INFO     db_tests.base_test: ============================================================
+[2025-12-10 18:50:23] INFO     db_tests.base_test: Beschreibung:
+
+    Redis Key-Value Store Performance Tests
+    
+    WARUM: Redis ist der primäre Cache und Session-Store im RAG-System.
+           Er liegt im kritischen Pfad für Rate-Limiting und Session-Checks.
+    
+    HYPOTHESE:
+        - Pipeline/Batch-Operationen sind 10-20x schneller
+        - P99 Latenz unter 2ms für Einzeloperationen
+        - Asynchrone Tests zeigen höheren Durchsatz
+    
+    REFERENZ: Modul 4 (Query Paths), Modul 8 (Performance-Myth-Busting)
+    
+[2025-12-10 18:50:23] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-10 18:50:23] INFO     db_tests.base_test: Setup...
+[2025-12-10 18:50:23] INFO     db_tests.redis_tests: Verbinde zu Redis: localhost:6379
+[2025-12-10 18:50:23] INFO     db_tests.redis_tests: ✓ Redis-Verbindung hergestellt
+[2025-12-10 18:50:23] INFO     db_tests.redis_tests: ✓ Redis-Datenbank geleert
+[2025-12-10 18:50:23] INFO     db_tests.redis_tests: Generiere 10000 Key-Value Paare...
+[2025-12-10 18:50:23] INFO     utils.data_generator: Generiere 10000 Key-Value Paare...
+[2025-12-10 18:50:23] INFO     db_tests.redis_tests: ✓ 10000 Testdaten generiert
+[2025-12-10 18:50:23] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-10 18:50:24] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-10 18:50:24] INFO     db_tests.redis_tests: Test: Naive Writes (einzelne SET)
+[2025-12-10 18:50:26] INFO     db_tests.base_test:   → Redis Naive SET: 3,556 ops/s, P95=0.59ms
+[2025-12-10 18:50:26] INFO     db_tests.redis_tests: Test: Pipeline Writes (Batch-SET)
+[2025-12-10 18:50:26] INFO     db_tests.base_test:   → Redis Pipeline SET: 89,519 ops/s, P95=0.02ms
+[2025-12-10 18:50:26] INFO     db_tests.redis_tests: Test: Naive Reads (einzelne GET)
+[2025-12-10 18:50:29] INFO     db_tests.base_test:   → Redis Naive GET: 3,607 ops/s, P95=0.42ms
+[2025-12-10 18:50:29] INFO     db_tests.redis_tests: Test: Pipeline Reads (Batch-GET)
+[2025-12-10 18:50:29] INFO     db_tests.base_test:   → Redis Pipeline GET: 170,540 ops/s, P95=0.01ms
+[2025-12-10 18:50:29] INFO     db_tests.redis_tests: Test: MGET (Multi-Key GET)
+[2025-12-10 18:50:30] INFO     db_tests.base_test:   → Redis MGET: 19,872 ops/s, P95=0.05ms
+[2025-12-10 18:50:30] INFO     db_tests.redis_tests: Starte asynchrone Redis-Tests...
+[2025-12-10 18:50:30] INFO     db_tests.redis_tests: Test: Async Writes (10 Clients)
+[2025-12-10 18:50:31] INFO     db_tests.base_test:   → Redis Async SET: 9,602 ops/s, P95=1.44ms
+[2025-12-10 18:50:31] INFO     db_tests.redis_tests: Test: Async Reads (10 Clients)
+[2025-12-10 18:50:32] INFO     db_tests.base_test:   → Redis Async GET: 11,926 ops/s, P95=1.28ms
+[2025-12-10 18:50:32] INFO     db_tests.base_test: ✓ 7 Tests abgeschlossen
+[2025-12-10 18:50:32] INFO     db_tests.base_test: Teardown...
+[2025-12-10 18:50:32] INFO     db_tests.redis_tests: ✓ Redis-Verbindung geschlossen
+[2025-12-10 18:50:32] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Naive SET
+[2025-12-10 18:50:32] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Pipeline SET
+[2025-12-10 18:50:32] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Naive GET
+[2025-12-10 18:50:32] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Pipeline GET
+[2025-12-10 18:50:32] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis MGET
+[2025-12-10 18:50:32] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Async SET
+[2025-12-10 18:50:32] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Async GET
+[2025-12-10 18:50:32] INFO     __main__: 
+======================================================================
+[2025-12-10 18:50:32] INFO     __main__: Starte MONGO Tests
+[2025-12-10 18:50:32] INFO     __main__: ======================================================================
+[2025-12-10 18:50:32] INFO     db_tests.base_test: ============================================================
+[2025-12-10 18:50:32] INFO     db_tests.base_test: Starte Tests für: MongoDB
+[2025-12-10 18:50:32] INFO     db_tests.base_test: ============================================================
+[2025-12-10 18:50:32] INFO     db_tests.base_test: Beschreibung:
+
+    MongoDB Document Store Performance Tests
+    
+    WARUM: MongoDB speichert die Chunk-Dokumente im RAG-System.
+           Nach der Vektorsuche werden Chunks per ID geladen.
+    
+    HYPOTHESE:
+        - insert_many() ist 5-10x schneller als insert_one()
+        - $in-Query ist effizienter als mehrere find_one()
+        - Async zeigt höheren Durchsatz bei parallelen Zugriffen
+    
+    REFERENZ: Modul 5 & 6 (Chunking & Datenmodellierung), Modul 8
+    
+[2025-12-10 18:50:32] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-10 18:50:32] INFO     db_tests.base_test: Setup...
+[2025-12-10 18:50:32] INFO     db_tests.mongo_tests: Verbinde zu MongoDB: localhost:27017
+[2025-12-10 18:50:32] INFO     db_tests.mongo_tests: ✓ MongoDB-Verbindung hergestellt
+[2025-12-10 18:50:32] INFO     db_tests.mongo_tests: ✓ Collection geleert
+[2025-12-10 18:50:32] INFO     db_tests.mongo_tests: ✓ Index auf metadata.category erstellt
+[2025-12-10 18:50:32] INFO     db_tests.mongo_tests: Generiere 10000 Chunk-Dokumente...
+[2025-12-10 18:50:32] INFO     utils.data_generator: Generiere 10000 Chunks...
+[2025-12-10 18:50:34] INFO     db_tests.mongo_tests: ✓ 10000 Testdaten generiert
+[2025-12-10 18:50:34] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-10 18:50:34] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-10 18:50:34] INFO     db_tests.mongo_tests: Test: Single Inserts (insert_one)
+[2025-12-10 18:50:49] INFO     db_tests.base_test:   → MongoDB Single insert_one: 662 ops/s, P95=2.15ms
+[2025-12-10 18:50:49] INFO     db_tests.mongo_tests: Test: Bulk Inserts (insert_many)
+[2025-12-10 18:50:49] INFO     db_tests.base_test:   → MongoDB Bulk insert_many: 47,128 ops/s, P95=0.03ms
+[2025-12-10 18:50:49] INFO     db_tests.mongo_tests: Test: Single Reads (find_one)
+[2025-12-10 18:51:01] INFO     db_tests.base_test:   → MongoDB Single find_one: 826 ops/s, P95=2.03ms
+[2025-12-10 18:51:01] INFO     db_tests.mongo_tests: Test: Batch Reads ($in Query)
+[2025-12-10 18:51:03] INFO     db_tests.base_test:   → MongoDB Batch find ($in): 6,538 ops/s, P95=0.21ms
+[2025-12-10 18:51:03] INFO     db_tests.mongo_tests: Test: Filtered Reads (mit Index)
+[2025-12-10 18:51:03] INFO     db_tests.base_test:   → MongoDB Filtered find: 276 ops/s, P95=6.82ms
+[2025-12-10 18:51:03] INFO     db_tests.mongo_tests: Starte asynchrone MongoDB-Tests...
+[2025-12-10 18:51:03] INFO     db_tests.mongo_tests: Test: Async Inserts (10 Clients)
+[2025-12-10 18:51:06] INFO     db_tests.base_test:   → MongoDB Async insert_one: 2,815 ops/s, P95=4.91ms
+[2025-12-10 18:51:06] INFO     db_tests.mongo_tests: Test: Async Reads (10 Clients)
+[2025-12-10 18:51:13] INFO     db_tests.base_test:   → MongoDB Async find_one: 1,553 ops/s, P95=10.91ms
+[2025-12-10 18:51:13] INFO     db_tests.base_test: ✓ 7 Tests abgeschlossen
+[2025-12-10 18:51:13] INFO     db_tests.base_test: Teardown...
+[2025-12-10 18:51:13] WARNING  db_tests.mongo_tests: Fehler beim Schließen der MongoDB-Verbindung: Collection objects do not implement truth value testing or bool(). Please compare with None instead: collection is not None
+[2025-12-10 18:51:13] INFO     utils.report_generator: Ergebnis hinzugefügt: MongoDB Single insert_one
+[2025-12-10 18:51:13] INFO     utils.report_generator: Ergebnis hinzugefügt: MongoDB Bulk insert_many
+[2025-12-10 18:51:13] INFO     utils.report_generator: Ergebnis hinzugefügt: MongoDB Single find_one
+[2025-12-10 18:51:13] INFO     utils.report_generator: Ergebnis hinzugefügt: MongoDB Batch find ($in)
+[2025-12-10 18:51:13] INFO     utils.report_generator: Ergebnis hinzugefügt: MongoDB Filtered find
+[2025-12-10 18:51:13] INFO     utils.report_generator: Ergebnis hinzugefügt: MongoDB Async insert_one
+[2025-12-10 18:51:13] INFO     utils.report_generator: Ergebnis hinzugefügt: MongoDB Async find_one
+[2025-12-10 18:51:13] INFO     __main__: 
+======================================================================
+[2025-12-10 18:51:13] INFO     __main__: Starte POSTGRES Tests
+[2025-12-10 18:51:13] INFO     __main__: ======================================================================
+[2025-12-10 18:51:13] INFO     db_tests.base_test: ============================================================
+[2025-12-10 18:51:13] INFO     db_tests.base_test: Starte Tests für: PostgreSQL
+[2025-12-10 18:51:13] INFO     db_tests.base_test: ============================================================
+[2025-12-10 18:51:13] INFO     db_tests.base_test: Beschreibung:
+
+    PostgreSQL Relationale Datenbank Performance Tests
+    
+    WARUM: PostgreSQL speichert strukturierte, ACID-kritische Daten
+           (User-Profile, Berechtigungen, Audit-Logs).
+    
+    HYPOTHESE:
+        - Transaktionsbatch ist 50-100x schneller als Single Commits
+        - Indizierte Queries sind 10-100x schneller
+        - P99 Latenz unter 5ms für indizierte SELECTs
+    
+    REFERENZ: Modul 4 (Query Paths), Modul 8 (PostgreSQL Commits)
+    
+[2025-12-10 18:51:13] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-10 18:51:13] INFO     db_tests.base_test: Setup...
+[2025-12-10 18:51:13] INFO     db_tests.postgres_tests: Verbinde zu PostgreSQL: localhost:5432
+[2025-12-10 18:51:13] INFO     db_tests.postgres_tests: ✓ PostgreSQL-Verbindung hergestellt
+[2025-12-10 18:51:13] INFO     db_tests.postgres_tests: ✓ Tabellen erstellt
+[2025-12-10 18:51:13] INFO     db_tests.postgres_tests: Generiere 10000 User-Datensätze...
+[2025-12-10 18:51:13] INFO     utils.data_generator: Generiere 10000 User-Datensätze...
+[2025-12-10 18:51:13] INFO     db_tests.postgres_tests: ✓ 10000 Testdaten generiert
+[2025-12-10 18:51:13] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-10 18:51:14] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-10 18:51:14] INFO     db_tests.postgres_tests: Test: Single Commits (jedes INSERT mit COMMIT)
+[2025-12-10 18:51:22] INFO     db_tests.base_test:   → PostgreSQL Single Commits: 1,201 ops/s, P95=1.82ms
+[2025-12-10 18:51:22] INFO     db_tests.postgres_tests: Test: Transactional Batch (eine Transaktion)
+[2025-12-10 18:51:25] INFO     db_tests.base_test:   → PostgreSQL Transactional Batch: 3,410 ops/s, P95=0.45ms
+[2025-12-10 18:51:25] INFO     db_tests.postgres_tests: Test: execute_batch (psycopg2 optimiert)
+[2025-12-10 18:51:25] INFO     db_tests.base_test:   → PostgreSQL execute_batch: 18,037 ops/s, P95=0.06ms
+[2025-12-10 18:51:25] INFO     db_tests.postgres_tests: Test: Primary Key SELECT
+[2025-12-10 18:51:28] INFO     db_tests.base_test:   → PostgreSQL PK SELECT: 3,658 ops/s, P95=0.50ms
+[2025-12-10 18:51:28] INFO     db_tests.postgres_tests: Test: Indexed SELECT (role)
+[2025-12-10 18:51:28] INFO     db_tests.base_test:   → PostgreSQL Indexed SELECT: 2,333 ops/s, P95=0.84ms
+[2025-12-10 18:51:28] INFO     db_tests.postgres_tests: Test: Unindexed SELECT (Sequential Scan)
+[2025-12-10 18:51:28] INFO     db_tests.base_test:   → PostgreSQL Unindexed SELECT: 870 ops/s, P95=2.11ms
+[2025-12-10 18:51:28] INFO     db_tests.postgres_tests: Starte asynchrone PostgreSQL-Tests...
+[2025-12-10 18:51:59] ERROR    db_tests.base_test: Fehler in PostgreSQL Tests: 
+[2025-12-10 18:51:59] INFO     db_tests.base_test: Teardown...
+[2025-12-10 18:51:59] INFO     db_tests.postgres_tests: ✓ PostgreSQL-Verbindung geschlossen
+[2025-12-10 18:51:59] ERROR    __main__: Fehler in postgres Tests: 
+Traceback (most recent call last):
+  File "d:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\run_tests.py", line 222, in run_tests
+    results = test.run_all_tests()
+              ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\db_tests\base_test.py", line 150, in run_all_tests
+    self._run_tests()
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\db_tests\postgres_tests.py", line 253, in _run_tests
+    asyncio.run(self._run_async_tests())
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\db_tests\postgres_tests.py", line 640, in _run_async_tests
+    await conn.execute("TRUNCATE test_users CASCADE")
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\.venv\Lib\site-packages\asyncpg\connection.py", line 354, in execute
+    result = await self._protocol.query(query, timeout)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "asyncpg/protocol/protocol.pyx", line 369, in query
+TimeoutError
+[2025-12-10 18:51:59] INFO     __main__: 
+======================================================================
+[2025-12-10 18:51:59] INFO     __main__: Starte VECTOR Tests
+[2025-12-10 18:51:59] INFO     __main__: ======================================================================
+[2025-12-10 18:51:59] INFO     db_tests.base_test: ============================================================
+[2025-12-10 18:51:59] INFO     db_tests.base_test: Starte Tests für: Vector Search
+[2025-12-10 18:51:59] INFO     db_tests.base_test: ============================================================
+[2025-12-10 18:51:59] INFO     db_tests.base_test: Beschreibung:
+
+    Vektorsuche Performance Tests (pgvector & MongoDB)
+    
+    WARUM: Die Vektorsuche ist der kritische Pfad im RAG-System.
+           Das 50ms SLO (P95) muss eingehalten werden!
+    
+    HYPOTHESE:
+        - HNSW-Index ist 10-100x schneller als lineare Suche
+        - P95 Latenz mit HNSW unter 50ms
+        - Pre-Filtering beschleunigt die Suche
+    
+    REFERENZ: Modul 7 (Embeddings & Vektorsuche)
+    
+[2025-12-10 18:51:59] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-10 18:51:59] INFO     db_tests.base_test: Setup...
+[2025-12-10 18:51:59] INFO     db_tests.vector_tests: Generiere 50000 Vektoren (768D)...
+[2025-12-10 18:51:59] INFO     utils.data_generator: Generiere 50000 Vektoren (768D)...
+[2025-12-10 18:52:01] INFO     db_tests.vector_tests: ✓ 50000 Vektoren generiert
+[2025-12-10 18:52:01] INFO     db_tests.vector_tests: ✓ 1000 Query-Vektoren generiert
+[2025-12-10 18:52:01] INFO     db_tests.vector_tests: Verbinde zu pgvector-native: localhost:5433
+[2025-12-10 18:52:01] INFO     db_tests.vector_tests: ✓ pgvector-native verbunden und konfiguriert
+[2025-12-10 18:52:01] INFO     db_tests.vector_tests: Füge Vektoren in pgvector-native ein...
+[2025-12-10 18:53:21] INFO     db_tests.vector_tests: ✓ 50000 Vektoren in pgvector-native eingefügt
+[2025-12-10 18:53:21] INFO     db_tests.vector_tests: Verbinde zu pgvector-manual: localhost:5434
+[2025-12-10 18:53:21] INFO     db_tests.vector_tests: ✓ pgvector-manual verbunden und konfiguriert
+[2025-12-10 18:53:21] INFO     db_tests.vector_tests: Füge Vektoren in pgvector-manual ein...
+[2025-12-10 18:54:35] INFO     db_tests.vector_tests: ✓ 50000 Vektoren in pgvector-manual eingefügt
+[2025-12-10 18:54:35] INFO     db_tests.vector_tests: Verbinde zu MongoDB-Vector: localhost:27018
+[2025-12-10 18:54:35] INFO     db_tests.vector_tests: Füge Vektoren in MongoDB ein...
+[2025-12-10 18:54:46] INFO     db_tests.vector_tests: ✓ 50000 Vektoren in MongoDB eingefügt
+[2025-12-10 18:54:46] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-10 18:54:48] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-10 18:54:48] INFO     db_tests.vector_tests: 
+============================================================
+[2025-12-10 18:54:48] INFO     db_tests.vector_tests: pgvector NATIVE Tests
+[2025-12-10 18:54:48] INFO     db_tests.vector_tests: ============================================================
+[2025-12-10 18:54:48] INFO     db_tests.vector_tests: Test: Exakte Suche (KNN) - pgvector-Native
+[2025-12-10 18:54:59] INFO     db_tests.base_test:   → pgvector-Native KNN (exakt): 9 ops/s, P95=130.05ms
+[2025-12-10 18:54:59] INFO     db_tests.vector_tests: Erstelle HNSW-Index für pgvector-Native...
+[2025-12-10 18:56:02] INFO     db_tests.vector_tests: ✓ HNSW-Index für pgvector-Native erstellt
+[2025-12-10 18:56:02] INFO     db_tests.vector_tests: Test: ANN-Suche (HNSW) - pgvector-Native
+[2025-12-10 18:56:56] INFO     db_tests.base_test:   → pgvector-Native ANN (HNSW): 19 ops/s, P95=61.02ms
+[2025-12-10 18:56:56] INFO     db_tests.vector_tests: Test: Filtered ANN-Suche - pgvector-Native
+[2025-12-10 18:57:47] INFO     db_tests.base_test:   → pgvector-Native Filtered ANN: 20 ops/s, P95=59.96ms
+[2025-12-10 18:57:47] INFO     db_tests.vector_tests: 
+============================================================
+[2025-12-10 18:57:47] INFO     db_tests.vector_tests: pgvector MANUAL Tests
+[2025-12-10 18:57:47] INFO     db_tests.vector_tests: ============================================================
+[2025-12-10 18:57:47] INFO     db_tests.vector_tests: Test: Exakte Suche (KNN) - pgvector-Manual
+[2025-12-10 18:57:57] INFO     db_tests.base_test:   → pgvector-Manual KNN (exakt): 10 ops/s, P95=111.52ms
+[2025-12-10 18:57:57] INFO     db_tests.vector_tests: Erstelle HNSW-Index für pgvector-Manual...
+[2025-12-10 19:00:15] INFO     db_tests.vector_tests: ✓ HNSW-Index für pgvector-Manual erstellt
+[2025-12-10 19:00:15] INFO     db_tests.vector_tests: Test: ANN-Suche (HNSW) - pgvector-Manual
+[2025-12-10 19:01:10] INFO     db_tests.base_test:   → pgvector-Manual ANN (HNSW): 18 ops/s, P95=61.26ms
+[2025-12-10 19:01:10] INFO     db_tests.vector_tests: Test: Filtered ANN-Suche - pgvector-Manual
+[2025-12-10 19:02:01] INFO     db_tests.base_test:   → pgvector-Manual Filtered ANN: 20 ops/s, P95=59.93ms
+[2025-12-10 19:02:01] INFO     db_tests.vector_tests: 
+============================================================
+[2025-12-10 19:02:01] INFO     db_tests.vector_tests: MongoDB Vector Tests
+[2025-12-10 19:02:01] INFO     db_tests.vector_tests: ============================================================
+[2025-12-10 19:02:01] INFO     db_tests.vector_tests: Test: MongoDB Vector Search
+[2025-12-10 19:12:30] INFO     db_tests.base_test:   → MongoDB Vector Search: 0 ops/s, P95=6560.46ms
+[2025-12-10 19:12:30] INFO     db_tests.base_test: ✓ 7 Tests abgeschlossen
+[2025-12-10 19:12:30] INFO     db_tests.base_test: Teardown...
+[2025-12-10 19:12:30] INFO     db_tests.vector_tests: ✓ Vector-Test Cleanup abgeschlossen
+[2025-12-10 19:12:30] INFO     utils.report_generator: Ergebnis hinzugefügt: pgvector-Native KNN (exakt)
+[2025-12-10 19:12:30] INFO     utils.report_generator: Ergebnis hinzugefügt: pgvector-Native ANN (HNSW)
+[2025-12-10 19:12:30] INFO     utils.report_generator: Ergebnis hinzugefügt: pgvector-Native Filtered ANN
+[2025-12-10 19:12:30] INFO     utils.report_generator: Ergebnis hinzugefügt: pgvector-Manual KNN (exakt)
+[2025-12-10 19:12:30] INFO     utils.report_generator: Ergebnis hinzugefügt: pgvector-Manual ANN (HNSW)
+[2025-12-10 19:12:30] INFO     utils.report_generator: Ergebnis hinzugefügt: pgvector-Manual Filtered ANN
+[2025-12-10 19:12:30] INFO     utils.report_generator: Ergebnis hinzugefügt: MongoDB Vector Search
+[2025-12-10 19:12:30] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-10 19:12:30] INFO     __main__: Generiere Report...
+[2025-12-10 19:12:30] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-10 19:12:30] INFO     utils.report_generator: Generiere Performance Report...
+[2025-12-10 19:12:30] INFO     utils.report_generator: ✓ Report generiert: d:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\reports\report_2025-12-10_18-50-00.md
+[2025-12-10 19:12:30] INFO     __main__: ✓ Report gespeichert: d:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\reports\report_2025-12-10_18-50-00.md
+[2025-12-10 19:12:30] INFO     __main__: 
+======================================================================
+[2025-12-10 19:12:30] INFO     __main__: Alle Tests erfolgreich abgeschlossen!
+[2025-12-10 19:12:30] INFO     __main__: ======================================================================
+[2025-12-10 19:12:30] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-10 19:12:30] INFO     __main__: Stoppe Docker-Infrastruktur...
+[2025-12-10 19:12:30] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-10 19:12:30] INFO     utils.docker_manager: ============================================================
+[2025-12-10 19:12:30] INFO     utils.docker_manager: Stoppe Docker Container...
+[2025-12-10 19:12:30] INFO     utils.docker_manager: ============================================================
+[2025-12-10 19:12:35] INFO     utils.docker_manager: ✓ Alle Container gestoppt und aufgeräumt!
