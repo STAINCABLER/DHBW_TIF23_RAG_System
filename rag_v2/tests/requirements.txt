@@ -1,0 +1,36 @@
+# =============================================================================
+# RAG-System Datenbank Performance Tests - Python-Abhängigkeiten
+# =============================================================================
+# Installiere alle Abhängigkeiten mit:
+#   pip install -r requirements.txt
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Konfiguration
+# -----------------------------------------------------------------------------
+PyYAML>=6.0              # YAML-Konfigurationsdatei-Parsing
+
+# -----------------------------------------------------------------------------
+# Datenbanktreiber - Synchron
+# -----------------------------------------------------------------------------
+redis>=5.0               # Redis Client
+pymongo>=4.6             # MongoDB Client
+psycopg2-binary>=2.9     # PostgreSQL Client (binär für einfache Installation)
+
+# -----------------------------------------------------------------------------
+# Datenbanktreiber - Asynchron
+# -----------------------------------------------------------------------------
+motor>=3.3               # Async MongoDB Client (basiert auf pymongo)
+asyncpg>=0.29            # Async PostgreSQL Client
+
+# -----------------------------------------------------------------------------
+# Testdaten-Generierung
+# -----------------------------------------------------------------------------
+numpy>=1.24              # Vektor-Operationen und Zufallszahlen
+Faker>=22.0              # Realistische Testdaten (Namen, E-Mails, etc.)
+
+# -----------------------------------------------------------------------------
+# Optional: Entwicklung & Debugging
+# -----------------------------------------------------------------------------
+# ipython                # Interaktive Python-Shell
+# pytest                 # Unit-Tests für die Test-Suite selbst

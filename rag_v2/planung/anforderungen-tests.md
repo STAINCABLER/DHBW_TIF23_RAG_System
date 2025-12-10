@@ -107,4 +107,127 @@ Um realistische Ergebnisse zu erhalten, sollten die Testdaten den Strukturen aus
 *   Stelle sicher, dass Docker-Volumes bereinigt werden, um Seiteneffekte zwischen Testläufen zu vermeiden.
 *   Fehlerbehandlung: Wenn ein Test fehlschlägt, muss der Report dies vermerken, aber die Aufräumarbeiten (Docker stop) müssen trotzdem erfolgen.
 
+---
 
+## 5. Konkretisierte Implementierungsentscheidungen
+
+Die folgenden Entscheidungen wurden getroffen, um die Implementierung zu konkretisieren:
+
+### 5.1 Projektstruktur (Modular)
+
+Die Tests werden in einer **modularen Struktur** organisiert:
+
+```
+tests/
+├── config/
+│   └── test_config.yaml          # Zentrale Konfigurationsdatei
+├── docker/
+│   └── docker-compose.yml        # Docker Compose für alle Services
+├── db_tests/
+│   ├── __init__.py
+│   ├── base_test.py              # Abstrakte Basisklasse für Tests
+│   ├── redis_tests.py            # Redis-spezifische Tests
+│   ├── mongo_tests.py            # MongoDB-spezifische Tests
+│   ├── postgres_tests.py         # PostgreSQL-spezifische Tests
+│   └── vector_tests.py           # Vektorsuche-Tests (pgvector & MongoDB)
+├── utils/
+│   ├── __init__.py
+│   ├── docker_manager.py         # Docker Compose Steuerung
+│   ├── data_generator.py         # Testdaten-Generierung
+│   ├── metrics.py                # Latenz-Berechnung (P95, P99, etc.)
+│   └── report_generator.py       # Markdown-Report-Erstellung
+├── reports/                      # Ausgabeverzeichnis für Reports
+│   └── .gitkeep
+├── run_tests.py                  # Haupt-Entry-Point
+└── requirements.txt              # Python-Abhängigkeiten
+```
+
+### 5.2 Docker-Management
+
+*   **Docker Compose** wird verwendet, um alle Container zu orchestrieren.
+*   Eine zentrale `docker-compose.yml` definiert alle Services (Redis, MongoDB, PostgreSQL mit pgvector).
+*   Die Python-Tests steuern Docker Compose über Subprocess-Aufrufe (`docker compose up -d`, `docker compose down -v`).
+
+### 5.3 PostgreSQL & pgvector
+
+Es werden **zwei Varianten** getestet, um den Installations-Overhead zu vergleichen:
+
+1.  **Offizielles pgvector-Image:** `pgvector/pgvector:pg16` (vorkonfiguriert).
+2.  **Manuelle Installation:** Standard `postgres:16` Image + Installation von `pgvector` via SQL (`CREATE EXTENSION vector;`).
+
+*Beide Varianten werden in der `docker-compose.yml` als separate Services definiert (z.B. `postgres-pgvector-native` und `postgres-pgvector-manual`).*
+
+### 5.4 MongoDB Vector Search (Lokal)
+
+Für lokale Vektorsuche in MongoDB werden folgende Ansätze unterstützt:
+
+1.  **Community Image mit Vector Search:** `jlmconsulting/mongo-vector-search` (Docker Hub).
+    *   Referenz: https://hub.docker.com/r/jlmconsulting/mongo-vector-search
+2.  **MongoDB Atlas Search (Self-Managed):** Konfiguration gemäß offizieller Dokumentation.
+    *   Referenz: https://www.mongodb.com/docs/atlas/atlas-vector-search/tutorials/vector-search-quick-start/
+
+*Die Tests müssen beide Varianten unterstützen, wobei das Community-Image als Standard für lokale Entwicklung dient.*
+
+### 5.5 Konfiguration
+
+Alle Test-Parameter sind in einer **zentralen YAML-Konfigurationsdatei** (`config/test_config.yaml`) definiert:
+
+```yaml
+# Beispielstruktur
+general:
+  num_operations: 10000          # Anzahl Operationen für Write/Read-Tests
+  vector_count: 50000            # Anzahl Vektoren für Vektor-Tests
+  vector_dimensions: 768         # Dimensionen der Embeddings
+  batch_size: 1000               # Batch-Größe für Bulk-Operationen
+
+docker:
+  compose_file: "docker/docker-compose.yml"
+  startup_wait_seconds: 10       # Wartezeit nach Container-Start
+
+databases:
+  redis:
+    host: "localhost"
+    port: 6379
+  mongodb:
+    host: "localhost"
+    port: 27017
+    database: "rag_test"
+  postgres:
+    host: "localhost"
+    port: 5432
+    database: "rag_test"
+    user: "postgres"
+    password: "postgres"
+
+reporting:
+  output_dir: "reports"
+  filename_pattern: "report_{timestamp}.md"
+```
+
+### 5.6 Report-Ausgabe
+
+*   Reports werden im Verzeichnis `tests/reports/` gespeichert.
+*   Dateinamensformat: `report_YYYY-MM-DD_HH-MM-SS.md`
+*   **Tabellenformat** für Ergebnisse (keine Diagramme/Charts erforderlich).
+
+### 5.7 Synchrone & Asynchrone Tests
+
+Es werden **beide Varianten** implementiert:
+
+1.  **Synchrone Tests:** Für einfache Baseline-Messungen und Debugging.
+    *   Verwendung: `redis-py`, `pymongo`, `psycopg2`
+2.  **Asynchrone Tests:** Für realistische Parallelitäts-Szenarien.
+    *   Verwendung: `aioredis`, `motor` (async MongoDB), `asyncpg`
+    *   Simulation von N parallelen Clients (konfigurierbar).
+
+*Beide Modi werden im Report separat ausgewiesen, um den Einfluss von Concurrency auf die Latenz zu dokumentieren.*
+
+---
+
+## 6. Offene Punkte / Annahmen
+
+*   **Netzwerk-Overhead:** Da Docker lokal läuft, ist der Netzwerk-Overhead minimal. Dies sollte im Report als Einschränkung erwähnt werden.
+*   **Warmup-Phase:** Vor den eigentlichen Messungen sollte eine kurze Warmup-Phase erfolgen, um JIT-Effekte und Connection-Pooling zu stabilisieren.
+*   **Fehlertoleranz:** Bei Datenbank-Ausfällen oder Timeouts während der Tests muss dies im Report dokumentiert werden, ohne den gesamten Testlauf abzubrechen.
+*   **Ressourcenbegrenzung:** Es wird angenommen, dass die lokale Maschine ausreichend Ressourcen (CPU, RAM) für alle Container und Tests bereitstellt.
+*   **Datenpersistenz:** Da die Container nach den Tests gelöscht werden, ist Persistenz der Testdaten nicht erforderlich.
