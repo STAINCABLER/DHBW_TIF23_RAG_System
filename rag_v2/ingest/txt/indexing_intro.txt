@@ -1,0 +1,30 @@
+Ein Datenbankindex ist eine Datenstruktur, die die Geschwindigkeit der Datenabrufoperationen auf einer Datenbanktabelle auf Kosten zusätzlicher Schreibvorgänge und Speicherplatz verbessert.
+Indizes werden verwendet, um Daten schnell zu finden, ohne jede Zeile in einer Datenbanktabelle durchsuchen zu müssen (Full Table Scan).
+
+Funktionsweise:
+Ein Index funktioniert ähnlich wie das Inhaltsverzeichnis in einem Buch. Anstatt das ganze Buch nach einem Begriff zu durchsuchen, schaut man im Index nach, auf welcher Seite der Begriff steht.
+In Datenbanken werden häufig B-Bäume (B-Trees) oder Hash-Tabellen als Datenstrukturen für Indizes verwendet.
+
+Arten von Indizes:
+1. Primärindex:
+Wird automatisch erstellt, wenn ein Primärschlüssel (Primary Key) definiert wird. Er stellt sicher, dass der Datensatz eindeutig identifizierbar ist.
+2. Sekundärindex:
+Kann auf jeder anderen Spalte erstellt werden, um Abfragen zu beschleunigen, die nicht den Primärschlüssel verwenden.
+3. Clustered Index:
+Bestimmt die physische Reihenfolge der Daten in der Tabelle. Eine Tabelle kann nur einen Clustered Index haben.
+4. Non-Clustered Index:
+Die logische Reihenfolge des Index entspricht nicht der physischen Reihenfolge der Daten auf der Festplatte.
+
+Vor- und Nachteile:
+Vorteile:
+- Erhebliche Beschleunigung von Leseoperationen (SELECT).
+- Effizientes Sortieren und Gruppieren von Daten.
+
+Nachteile:
+- Verlangsamt Schreiboperationen (INSERT, UPDATE, DELETE), da der Index bei jeder Änderung aktualisiert werden muss.
+- Benötigt zusätzlichen Speicherplatz.
+
+Wann sollte man indizieren?
+- Spalten, die häufig in WHERE-Klauseln verwendet werden.
+- Spalten, die für JOIN-Verbindungen genutzt werden.
+- Spalten, die sortiert werden müssen (ORDER BY).

@@ -1,0 +1,34 @@
+{
+  "terms": [
+    {
+      "term": "Relation",
+      "definition": "Menge von Tupeln mit gleicher Attributstruktur; wird als Tabelle dargestellt.",
+      "category": "Relationales Modell"
+    },
+    {
+      "term": "Funktionale Abhängigkeit",
+      "definition": "Attributmenge X bestimmt Attributmenge Y eindeutig (X -> Y).",
+      "category": "Normalisierung"
+    },
+    {
+      "term": "Primärschlüssel",
+      "definition": "Ausgewählter Kandidatenschlüssel, der Tupel eindeutig identifiziert und nicht NULL sein darf.",
+      "category": "Schlüssel"
+    },
+    {
+      "term": "Fremdschlüssel",
+      "definition": "Attribut, das auf einen Primärschlüssel einer anderen Relation verweist und referenzielle Integrität erzwingt.",
+      "category": "Schlüssel"
+    },
+    {
+      "term": "Transaktion",
+      "definition": "Logische Einheit von Operationen, die die ACID-Eigenschaften erfüllen soll.",
+      "category": "Transaktionen"
+    },
+    {
+      "term": "Index (B-Baum)",
+      "definition": "Balancierte Baumstruktur zur Beschleunigung von Suchen und Bereichsanfragen.",
+      "category": "Indexierung"
+    }
+  ]
+}
