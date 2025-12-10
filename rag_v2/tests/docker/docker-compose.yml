@@ -1,0 +1,180 @@
+# =============================================================================
+# RAG-System Datenbank Performance Tests - Docker Compose
+# =============================================================================
+# Diese Datei definiert alle benötigten Datenbank-Container für die Tests.
+# 
+# Services:
+#   - Redis: Key-Value Store für Session/Cache Tests
+#   - MongoDB: Document Store für Chunk-Retrieval Tests
+#   - MongoDB Vector: MongoDB mit Vector Search Support
+#   - PostgreSQL: Relationale DB für strukturierte Daten
+#   - PostgreSQL pgvector (native): Vorkonfiguriertes pgvector Image
+#   - PostgreSQL pgvector (manual): Standard Postgres mit manueller Extension
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # Redis - Key-Value Store
+  # ---------------------------------------------------------------------------
+  # Verwendungszweck: Session-Daten, Rate-Limiting, Caching
+  # Modul-Referenz: Modul 4 (Query Paths), Modul 8 (Performance-Myth-Busting)
+  redis:
+    image: redis:7-alpine
+    container_name: rag_test_redis
+    ports:
+      - "6379:6379"
+    # Keine Persistenz für Tests (schnellerer Start)
+    command: redis-server --save "" --appendonly no
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - rag_test_network
+
+  # ---------------------------------------------------------------------------
+  # MongoDB - Document Store (Standard)
+  # ---------------------------------------------------------------------------
+  # Verwendungszweck: Chunk-Dokumente, JSON-Daten
+  # Modul-Referenz: Modul 5 (Datenmodellierung), Modul 6 (Chunking)
+  mongodb:
+    image: mongo:7
+    container_name: rag_test_mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      # Keine Authentifizierung für lokale Tests
+      MONGO_INITDB_DATABASE: rag_performance_test
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - rag_test_network
+
+  # ---------------------------------------------------------------------------
+  # MongoDB Vector - Separater MongoDB für Vektor-Tests
+  # ---------------------------------------------------------------------------
+  # Verwendungszweck: Lokale Vektorsuche-Tests mit MongoDB
+  # 
+  # HINWEIS: Echte MongoDB Atlas Vector Search benötigt Atlas.
+  # Für lokale Tests verwenden wir Standard-MongoDB und simulieren
+  # die Vektorsuche über aggregation pipelines mit $vectorSearch
+  # oder manuelle Ähnlichkeitsberechnung.
+  mongodb_vector:
+    image: mongo:7
+    container_name: rag_test_mongodb_vector
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_DATABASE: rag_vector_test
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - rag_test_network
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL - Standard (Relationale Daten)
+  # ---------------------------------------------------------------------------
+  # Verwendungszweck: User-Profile, Metadaten, ACID-Transaktionen
+  # Modul-Referenz: Modul 4 (Query Paths), Modul 8 (Performance-Myth-Busting)
+  postgres:
+    image: postgres:16-alpine
+    container_name: rag_test_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rag_performance_test
+    # Optimierte Einstellungen für Performance-Tests
+    command: >
+      postgres
+      -c shared_buffers=256MB
+      -c max_connections=100
+      -c synchronous_commit=on
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - rag_test_network
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL mit pgvector - Natives Image
+  # ---------------------------------------------------------------------------
+  # Verwendungszweck: Vektorsuche mit vorinstalliertem pgvector
+  # Modul-Referenz: Modul 7 (Embeddings als Datentyp)
+  # 
+  # HINWEIS: Dies ist das offizielle pgvector-Image, pgvector ist bereits
+  # installiert und muss nur noch mit CREATE EXTENSION aktiviert werden.
+  postgres_pgvector_native:
+    image: pgvector/pgvector:pg16
+    container_name: rag_test_pgvector_native
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rag_vector_test
+    command: >
+      postgres
+      -c shared_buffers=256MB
+      -c max_connections=100
+      -c maintenance_work_mem=256MB
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - rag_test_network
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL mit pgvector - Manuelle Extension-Aktivierung
+  # ---------------------------------------------------------------------------
+  # Verwendungszweck: Zweite pgvector-Instanz für Vergleichstests
+  # 
+  # HINWEIS: Verwendet auch das offizielle pgvector-Image.
+  # Die "manuelle Installation" bezieht sich auf CREATE EXTENSION,
+  # nicht auf die Kompilierung (die in Docker unpraktisch ist).
+  postgres_pgvector_manual:
+    image: pgvector/pgvector:pg16
+    container_name: rag_test_pgvector_manual
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rag_vector_test
+    command: >
+      postgres
+      -c shared_buffers=256MB
+      -c max_connections=100
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - rag_test_network
+
+# -----------------------------------------------------------------------------
+# Netzwerk
+# -----------------------------------------------------------------------------
+networks:
+  rag_test_network:
+    driver: bridge
+
+# -----------------------------------------------------------------------------
+# Volumes (optional, für Persistenz - hier nicht benötigt)
+# -----------------------------------------------------------------------------
+# volumes:
+#   postgres_data:
+#   mongodb_data:
