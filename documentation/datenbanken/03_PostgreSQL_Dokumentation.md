@@ -212,8 +212,41 @@ CREATE INDEX idx_audit_log_timestamp ON audit_log(timestamp DESC);
 
 ```
 
-## Views für häufige Abfragen
+#### 11. `scenarios`
+Szenarien mit Beschreibung, Kategorie und 384-dimensionalem Embedding für Similarity Search sowie flexiblen Metadaten.[web:41][web:48]
+```
+CREATE TABLE scenarios (
+id BIGSERIAL PRIMARY KEY,
+name VARCHAR(255) NOT NULL, -- Szenario-Name
+description TEXT, -- Ausführliche Beschreibung
+category VARCHAR(100), -- Kategorie (z.B. security, demo)
+embedding VECTOR(384), -- 384-dim Embedding (z.B. kompaktes Modell)
+metadata JSONB, -- Flexible Metadaten (Tags, Konfiguration, Scores)
+is_active BOOLEAN NOT NULL DEFAULT TRUE, -- Aktiv-Flag
+created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), -- Erstellungszeitpunkt
+updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW() -- Letzte Änderung
+);
 
+
+```
+
+#### 12. `scenario_questions`
+Einzelne Fragen zu Szenarien mit Text, Antwort, 384-dimensionalem Embedding und Metadaten, referenziert auf `scenarios`.[web:41][web:48]
+```
+CREATE TABLE scenario_questions (
+id BIGSERIAL PRIMARY KEY,
+scenario_id BIGINT NOT NULL REFERENCES scenarios(id) ON DELETE CASCADE,
+question TEXT NOT NULL, -- Frage-Text
+answer TEXT, -- Modell-/Beispielantwort
+embedding VECTOR(384), -- 384-dim Embedding der Frage
+metadata JSONB, -- Metadaten (z.B. Tags, Difficulty, Source)
+is_active BOOLEAN NOT NULL DEFAULT TRUE,
+created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+```
+## Views für häufige Abfragen
 ### Chat-Historie mit Nachrichtenanzahl
 ```
 
