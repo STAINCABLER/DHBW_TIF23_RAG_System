@@ -1,0 +1,29 @@
+{
+  "rules": [
+    {
+      "name": "1NF",
+      "description": "Alle Attribute sind atomar, keine Wiederholungsgruppen oder Arrays in einer Spalte.",
+      "category": "Normalisierung"
+    },
+    {
+      "name": "3NF",
+      "description": "Keine transitiven Abhängigkeiten von Schlüsselattributen auf Nichtschlüsselattribute.",
+      "category": "Normalisierung"
+    },
+    {
+      "name": "BCNF",
+      "description": "Für jede nicht-triviale funktionale Abhängigkeit X -> Y ist X ein Superschlüssel.",
+      "category": "Normalisierung"
+    },
+    {
+      "name": "Referenzielle Integrität",
+      "description": "Jeder Fremdschlüsselwert muss auf einen existierenden Primärschlüssel oder NULL verweisen.",
+      "category": "Integrität"
+    },
+    {
+      "name": "Indexierungsstrategie",
+      "description": "Häufig verwendete Such- und Join-Attribute werden indiziert; übermäßige Indexierung wird wegen Schreib-Overhead vermieden.",
+      "category": "Performance"
+    }
+  ]
+}

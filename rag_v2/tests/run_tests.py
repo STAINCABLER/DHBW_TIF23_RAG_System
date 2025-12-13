@@ -65,6 +65,8 @@ from db_tests import (
     PostgresPerformanceTest,
     VectorPerformanceTest,
 )
+from db_tests.ingest_tests import IngestPerformanceTest
+from db_tests.e2e_ingest_tests import E2EIngestPerformanceTest
 from db_tests.base_test import TestContext
 
 # =============================================================================
@@ -203,6 +205,8 @@ def run_tests(
         "mongo": MongoPerformanceTest,
         "postgres": PostgresPerformanceTest,
         "vector": VectorPerformanceTest,
+        "ingest": IngestPerformanceTest,
+        "e2e": E2EIngestPerformanceTest,
     }
     
     # Tests ausführen

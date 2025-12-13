@@ -14,17 +14,19 @@
 
 services:
   # ---------------------------------------------------------------------------
-  # Redis - Key-Value Store
+  # Redis Stack - Key-Value Store MIT RediSearch für Vektorsuche
   # ---------------------------------------------------------------------------
-  # Verwendungszweck: Session-Daten, Rate-Limiting, Caching
+  # Verwendungszweck: Session-Daten, Rate-Limiting, Caching, Vektorsuche
   # Modul-Referenz: Modul 4 (Query Paths), Modul 8 (Performance-Myth-Busting)
+  # HINWEIS: redis-stack enthält RediSearch, RedisJSON, RedisGraph etc.
   redis:
-    image: redis:7-alpine
+    image: redis/redis-stack-server:latest
     container_name: rag_test_redis
     ports:
       - "6379:6379"
     # Keine Persistenz für Tests (schnellerer Start)
-    command: redis-server --save "" --appendonly no
+    environment:
+      - REDIS_ARGS=--save "" --appendonly no
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s

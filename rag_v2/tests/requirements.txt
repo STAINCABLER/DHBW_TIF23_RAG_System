@@ -30,6 +30,12 @@ numpy>=1.24              # Vektor-Operationen und Zufallszahlen
 Faker>=22.0              # Realistische Testdaten (Namen, E-Mails, etc.)
 
 # -----------------------------------------------------------------------------
+# Ingest Pipeline - PDF & Embeddings
+# -----------------------------------------------------------------------------
+PyMuPDF>=1.24            # PDF-Text-Extraktion (import: pymupdf/fitz)
+sentence-transformers>=2.2  # Echte Embedding-Generierung (all-MiniLM-L6-v2)
+
+# -----------------------------------------------------------------------------
 # Optional: Entwicklung & Debugging
 # -----------------------------------------------------------------------------
 # ipython                # Interaktive Python-Shell

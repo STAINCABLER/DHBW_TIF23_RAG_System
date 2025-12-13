@@ -1,0 +1,130 @@
+[2025-12-13 16:05:42] INFO     __main__: ======================================================================
+[2025-12-13 16:05:42] INFO     __main__: RAG-System Datenbank Performance Tests
+[2025-12-13 16:05:42] INFO     __main__: ======================================================================
+[2025-12-13 16:05:42] INFO     __main__: Gestartet: 2025-12-13 16:05:42
+[2025-12-13 16:05:42] INFO     __main__: Konfiguration: D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\config\test_config.yaml
+[2025-12-13 16:05:42] INFO     __main__: Ausgewählte Tests: e2e
+[2025-12-13 16:05:42] INFO     __main__: Docker-Management übersprungen (--no-docker)
+[2025-12-13 16:05:43] INFO     __main__: 
+======================================================================
+[2025-12-13 16:05:43] INFO     __main__: Starte E2E Tests
+[2025-12-13 16:05:43] INFO     __main__: ======================================================================
+[2025-12-13 16:05:43] INFO     db_tests.base_test: ============================================================
+[2025-12-13 16:05:43] INFO     db_tests.base_test: Starte Tests für: Unknown
+[2025-12-13 16:05:43] INFO     db_tests.base_test: ============================================================
+[2025-12-13 16:05:43] INFO     db_tests.base_test: Beschreibung:
+Keine Beschreibung verfügbar
+[2025-12-13 16:05:43] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-13 16:05:43] INFO     db_tests.base_test: Setup...
+[2025-12-13 16:05:43] INFO     db_tests.e2e_ingest_tests:   .JSON: 3 Dateien
+[2025-12-13 16:05:43] INFO     db_tests.e2e_ingest_tests:   .MD: 6 Dateien
+[2025-12-13 16:05:43] INFO     db_tests.e2e_ingest_tests:   .CSV: 3 Dateien
+[2025-12-13 16:05:43] INFO     db_tests.e2e_ingest_tests:   .PDF: 3 Dateien
+[2025-12-13 16:05:43] INFO     db_tests.e2e_ingest_tests:   .TXT: 5 Dateien
+[2025-12-13 16:05:43] INFO     db_tests.e2e_ingest_tests: Gefunden: 20 Dateien zum Verarbeiten
+[2025-12-13 16:05:49] INFO     db_tests.e2e_ingest_tests: Lade Embedding-Modell: all-MiniLM-L6-v2...
+[2025-12-13 16:05:49] INFO     sentence_transformers.SentenceTransformer: Use pytorch device_name: cpu
+[2025-12-13 16:05:49] INFO     sentence_transformers.SentenceTransformer: Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+[2025-12-13 16:05:51] INFO     db_tests.e2e_ingest_tests: ✓ Modell geladen: 384 Dimensionen
+[2025-12-13 16:05:51] INFO     db_tests.e2e_ingest_tests: ✓ Redis verbunden
+[2025-12-13 16:05:51] INFO     db_tests.e2e_ingest_tests: ✓ MongoDB verbunden
+[2025-12-13 16:05:51] INFO     db_tests.e2e_ingest_tests: ✓ PostgreSQL verbunden
+[2025-12-13 16:05:51] INFO     db_tests.e2e_ingest_tests: ✓ E2E-Ingest-Setup abgeschlossen
+[2025-12-13 16:05:51] INFO     db_tests.e2e_ingest_tests:   Verfügbare DBs: ['redis', 'mongodb', 'postgres']
+[2025-12-13 16:05:51] INFO     db_tests.e2e_ingest_tests:   Embedding-Dimensionen: 384
+[2025-12-13 16:05:51] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-13 16:05:51] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-13 16:05:51] INFO     db_tests.e2e_ingest_tests: ============================================================
+[2025-12-13 16:05:51] INFO     db_tests.e2e_ingest_tests: Phase 1: Ingest Pipeline (Parse → Chunk → Embed)
+[2025-12-13 16:05:51] INFO     db_tests.e2e_ingest_tests: ============================================================
+[2025-12-13 16:05:51] INFO     db_tests.e2e_ingest_tests:   db_isolation_levels_matrix.csv: 2 Chunks
+[2025-12-13 16:05:51] INFO     db_tests.e2e_ingest_tests:   db_normal_forms_summary.csv: 2 Chunks
+[2025-12-13 16:05:51] INFO     db_tests.e2e_ingest_tests:   db_sql_join_types.csv: 2 Chunks
+[2025-12-13 16:05:51] INFO     db_tests.e2e_ingest_tests:   db_glossary_relational.json: 2 Chunks
+[2025-12-13 16:05:51] INFO     db_tests.e2e_ingest_tests:   db_schema_design_rules.json: 2 Chunks
+[2025-12-13 16:05:52] INFO     db_tests.e2e_ingest_tests:   db_sql_qa_pairs.json: 3 Chunks
+[2025-12-13 16:05:52] INFO     db_tests.e2e_ingest_tests:   db_concurrency_recovery.md: 10 Chunks
+[2025-12-13 16:05:52] INFO     db_tests.e2e_ingest_tests:   db_distributed_replication.md: 8 Chunks
+[2025-12-13 16:05:52] INFO     db_tests.e2e_ingest_tests:   db_er_model_to_relations.md: 8 Chunks
+[2025-12-13 16:05:52] INFO     db_tests.e2e_ingest_tests:   db_indexing_query_processing.md: 8 Chunks
+[2025-12-13 16:05:52] INFO     db_tests.e2e_ingest_tests:   db_nosql_models_overview.md: 6 Chunks
+[2025-12-13 16:05:53] INFO     db_tests.e2e_ingest_tests:   db_schema_design_best_practices.md: 7 Chunks
+[2025-12-13 16:05:53] INFO     db_tests.e2e_ingest_tests:   DB202 Modul 1 Musterloesung.pdf: 14 Chunks
+[2025-12-13 16:05:54] INFO     db_tests.e2e_ingest_tests:   DB202 Overview Systems Design EduScrum.pdf: 22 Chunks
+[2025-12-13 16:05:54] INFO     db_tests.e2e_ingest_tests:   pizza_sprint_student_handout.pdf: 4 Chunks
+[2025-12-13 16:05:54] INFO     db_tests.e2e_ingest_tests:   db_normalization_anomalies.txt: 4 Chunks
+[2025-12-13 16:05:54] INFO     db_tests.e2e_ingest_tests:   db_relational_model_basics.txt: 5 Chunks
+[2025-12-13 16:05:54] INFO     db_tests.e2e_ingest_tests:   db_transactions_acid_isolation.txt: 4 Chunks
+[2025-12-13 16:05:54] INFO     db_tests.e2e_ingest_tests:   indexing_intro.txt: 5 Chunks
+[2025-12-13 16:05:54] INFO     db_tests.e2e_ingest_tests:   nosql_basics.txt: 4 Chunks
+[2025-12-13 16:05:54] INFO     db_tests.e2e_ingest_tests: ✓ Ingest abgeschlossen: 122 Chunks generiert
+[2025-12-13 16:05:54] INFO     db_tests.e2e_ingest_tests: ============================================================
+[2025-12-13 16:05:54] INFO     db_tests.e2e_ingest_tests: Phase 2: Speicherung in Datenbanken
+[2025-12-13 16:05:54] INFO     db_tests.e2e_ingest_tests: ============================================================
+[2025-12-13 16:05:55] INFO     db_tests.e2e_ingest_tests:   Redis: 122 Chunks in 21.1ms
+[2025-12-13 16:05:55] INFO     db_tests.e2e_ingest_tests:   MongoDB: 122 Chunks in 14.4ms
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests:   PostgreSQL: 122 Chunks in 6170.7ms
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests: ============================================================
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests: Phase 3: Vektor-Ähnlichkeitssuche
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests: ============================================================
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests:   Redis: Ø 1.14ms pro Suche
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests:   MongoDB: Ø 15.38ms pro Suche
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests:   PostgreSQL: Ø 46.96ms pro Suche
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests: ============================================================
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests: Phase 4: Such-Ergebnis-Vergleich
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests: ============================================================
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests: Query: "Erkläre Datenbank-Normalisierung und Normalformen"
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests: ------------------------------------------------------------
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests: 
+Redis (in 1.00ms):
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests:   1. [Score: 0.0000] ...
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests:   2. [Score: 0.0000] ...
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests:   3. [Score: 0.0000] ...
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests: 
+MongoDB (in 13.37ms):
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests:   1. [Score: 0.5684] Titel: Normalformen, funktionale Abhängigkeiten und Anomalien  1. Funktionale Ab...
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests:   2. [Score: 0.5480] Titel: Relationales Datenbankmodell – Grundbegriffe  1. Datenbank und DBMS - Ein...
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests:   3. [Score: 0.5397] dass die gesamte Datenbank migriert werden muss. - Hierarchische Daten: Komplexe...
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests: 
+PostgreSQL (in 53.27ms):
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests:   1. [Score: 0.5684] Titel: Normalformen, funktionale Abhängigkeiten und Anomalien  1. Funktionale Ab...
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests:   2. [Score: 0.5480] Titel: Relationales Datenbankmodell – Grundbegriffe  1. Datenbank und DBMS - Ein...
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests:   3. [Score: 0.5397] dass die gesamte Datenbank migriert werden muss. - Hierarchische Daten: Komplexe...
+[2025-12-13 16:06:01] INFO     db_tests.base_test: ✓ 21 Tests abgeschlossen
+[2025-12-13 16:06:01] INFO     db_tests.base_test: Teardown...
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests: ✓ redis aufgeräumt
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests: ✓ mongodb aufgeräumt
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests: ✓ postgres aufgeräumt
+[2025-12-13 16:06:01] INFO     db_tests.e2e_ingest_tests: ✓ E2E-Ingest-Test abgeschlossen
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Parse .CSV
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Chunk .CSV
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Embed .CSV
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Parse .JSON
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Chunk .JSON
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Embed .JSON
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Parse .MD
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Chunk .MD
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Embed .MD
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Parse .PDF
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Chunk .PDF
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Embed .PDF
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Parse .TXT
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Chunk .TXT
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Embed .TXT
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Store Redis
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Store MongoDB
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Store PostgreSQL
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Search Redis
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Search MongoDB
+[2025-12-13 16:06:01] INFO     utils.report_generator: Ergebnis hinzugefügt: E2E Search PostgreSQL
+[2025-12-13 16:06:01] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-13 16:06:01] INFO     __main__: Generiere Report...
+[2025-12-13 16:06:01] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-13 16:06:01] INFO     utils.report_generator: Generiere Performance Report...
+[2025-12-13 16:06:01] INFO     utils.report_generator: ✓ Report generiert: D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\reports\report_2025-12-13_16-05-42.md
+[2025-12-13 16:06:01] INFO     __main__: ✓ Report gespeichert: D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\reports\report_2025-12-13_16-05-42.md
+[2025-12-13 16:06:01] INFO     __main__: 
+======================================================================
+[2025-12-13 16:06:01] INFO     __main__: Alle Tests erfolgreich abgeschlossen!
+[2025-12-13 16:06:01] INFO     __main__: ======================================================================

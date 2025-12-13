@@ -160,3 +160,29 @@ logging:
   
   # Dateinamens-Muster ({timestamp} wird ersetzt)
   filename_pattern: "log_{timestamp}.log"
+
+# -----------------------------------------------------------------------------
+# Ingest (Chunking & Vektorisierung) Konfiguration
+# -----------------------------------------------------------------------------
+ingest:
+  # Chunk-Größe in Zeichen
+  chunk_size: 500
+  
+  # Überlappung zwischen Chunks in Zeichen
+  chunk_overlap: 50
+  
+  # Embedding-Modell für sentence-transformers
+  # all-MiniLM-L6-v2: schnell, 384 Dimensionen
+  # all-mpnet-base-v2: besser, 768 Dimensionen, langsamer
+  embedding_model: "all-MiniLM-L6-v2"
+  
+  # Simulierte Embedding-Latenz (nur für Mock-Tests ohne echtes Modell)
+  simulated_embedding_latency_ms: 5.0
+  
+  # Unterstützte Dateiformate (inkl. PDF!)
+  supported_formats:
+    - ".md"
+    - ".txt"
+    - ".json"
+    - ".csv"
+    - ".pdf"
