@@ -1,0 +1,101 @@
+id,scenario_id,question,response
+1,1,Wie viele gleichzeitige Schreibzugriffe (Bestellungen) erwarten Sie pro Sekunde?,write_heavy transaction_safety
+2,1,Müssen Bestandsdaten über mehrere Lager hinweg sofort konsistent sein?,strong_consistency acid
+3,1,Sollen Nutzer Produkte nach komplexen Kriterien (Volltext, Facetten) filtern können?,search_engine fulltext_index
+4,1,Wie wichtig ist die horizontale Skalierbarkeit des Produktkatalogs bei Millionen von Artikeln?,sharding read_heavy
+5,1,Benötigen Sie Warenkorb-Daten, die auch bei Serverausfall erhalten bleiben?,persistence key_value_store
+6,1,Müssen historische Preisentwicklungen für Analysen gespeichert werden?,time_series analytics
+7,1,Wie komplex sind die Beziehungen zwischen Produkten (Zubehör, Ähnliche Artikel)?,relational graph
+8,1,Erwarten Sie saisonale Lastspitzen (z.B. Black Friday)?,elastic_scaling cloud_native
+9,1,Müssen Zahlungsdaten revisionssicher gespeichert werden?,compliance audit_log
+10,1,Sollen personalisierte Empfehlungen in Echtzeit berechnet werden?,realtime_analytics graph_traversal
+11,2,Wie hoch ist die Frequenz der eingehenden Messwerte pro Sensor?,write_throughput time_series
+12,2,Müssen Daten nach einer bestimmten Zeit automatisch gelöscht werden (TTL)?,retention_policy ttl
+13,2,Benötigen Sie Aggregationen (Durchschnitt, Max) über Zeitfenster in Echtzeit?,stream_processing aggregation
+14,2,Ist die genaue Reihenfolge der Messwerte essenziell?,ordering timestamp_precision
+15,2,Wie viele Sensoren schreiben gleichzeitig in die Datenbank?,concurrency partitioning
+16,2,Sollen Metadaten (Standort, Typ) mit den Messwerten verknüpft werden?,hybrid_model wide_column
+17,2,Müssen fehlende Messwerte interpoliert werden?,gap_filling analytics
+18,2,Ist der Speicherplatzbedarf ein kritischer Kostenfaktor?,compression columnar_storage
+19,2,Benötigen Sie Alarme bei Schwellenwertüberschreitungen?,event_driven triggers
+20,2,Werden Daten nachträglich korrigiert oder nur angehängt?,append_only immutability
+21,3,Wie stark variiert die Struktur der Inhalte (Artikel vs. Video vs. Galerie)?,schema_flexibility document_store
+22,3,Müssen alte Versionen von Dokumenten wiederhergestellt werden können?,versioning history
+23,3,Ist eine hierarchische Struktur (Baum) für Kategorien notwendig?,hierarchy tree_structure
+24,3,Wie wichtig ist die Volltextsuche in den Inhalten?,fulltext_search inverted_index
+25,3,Arbeiten mehrere Redakteure gleichzeitig am selben Dokument?,concurrency_control locking
+26,3,Werden große Binärdateien (Bilder, Videos) direkt in der DB gespeichert?,blob_storage external_reference
+27,3,Müssen Inhalte in mehreren Sprachen verwaltet werden?,localization internationalization
+28,3,Benötigen Sie komplexe Workflows (Entwurf -> Review -> Live)?,state_machine workflow
+29,3,Wie granular müssen Zugriffsberechtigungen gesteuert werden?,acl rbac
+30,3,Sollen Inhalte dynamisch aus verschiedenen Fragmenten zusammengesetzt werden?,composition json_structure
+31,4,Wie tief müssen Beziehungen (Freunde von Freunden) traversiert werden?,graph_traversal depth_search
+32,4,Ändern sich Beziehungen zwischen Nutzern sehr häufig?,dynamic_topology graph_updates
+33,4,Müssen kürzeste Pfade zwischen zwei Nutzern berechnet werden?,shortest_path graph_algo
+34,4,Sollen Nutzer basierend auf gemeinsamen Interessen geclustert werden?,clustering community_detection
+35,4,Wie wichtig ist die Performance bei komplexen Join-Operationen?,join_performance native_graph
+36,4,Müssen Feeds in Echtzeit an Millionen Follower gepusht werden?,pub_sub fan_out
+37,4,Gibt es "Super-Nodes" (Nutzer mit extrem vielen Verbindungen)?,hotspot_handling partitioning
+38,4,Sollen Empfehlungen basierend auf dem Netzwerk berechnet werden?,recommendation collaborative_filtering
+39,4,Benötigen Sie flexible Eigenschaften an den Kanten (Beziehungen)?,edge_properties property_graph
+40,4,Ist die Datenstruktur stark vernetzt oder eher hierarchisch?,highly_connected network_model
+41,5,Welche gesetzlichen Aufbewahrungsfristen müssen eingehalten werden?,compliance archiving
+42,5,Müssen Änderungen an Datensätzen lückenlos protokolliert werden?,audit_trail immutable_log
+43,5,Sind die Patientendaten stark strukturiert oder eher Freitext?,hybrid_data document_relational
+44,5,Wie kritisch ist der Schutz vor unbefugtem Zugriff?,encryption security
+45,5,Müssen Daten zwischen verschiedenen Kliniken ausgetauscht werden?,interoperability standards
+46,5,Benötigen Sie komplexe Abfragen über medizinische Historien?,analytical_query olap
+47,5,Wie wichtig ist die Hochverfügbarkeit des Systems (24/7)?,high_availability disaster_recovery
+48,5,Müssen Bilddaten (Röntgen, MRT) mit Patientenakten verknüpft werden?,blob_linking pacs_integration
+49,5,Sollen Daten für Forschungszwecke anonymisiert exportiert werden?,anonymization etl
+50,5,Ist das Schema der medizinischen Befunde starr oder veränderlich?,schema_evolution jsonb
+51,6,Müssen Bestandsänderungen in Echtzeit sichtbar sein?,realtime_consistency acid
+52,6,Wie komplex sind die Lieferketten-Beziehungen (Lieferant -> Teil -> Produkt)?,relational supply_chain
+53,6,Benötigen Sie geografische Abfragen (z.B. nächstes Lager)?,geospatial spatial_index
+54,6,Müssen Chargen und Verfallsdaten lückenlos rückverfolgbar sein?,traceability lineage
+55,6,Wie werden Konflikte bei gleichzeitigen Buchungen gelöst?,locking isolation_level
+56,6,Sollen Prognosen für Nachbestellungen direkt in der DB berechnet werden?,in_database_analytics forecasting
+57,6,Müssen Daten offline auf Handscannern verfügbar sein?,offline_sync replication
+58,6,Wie viele Standorte müssen synchronisiert werden?,multi_master distributed
+59,6,Ist die Historie aller Warenbewegungen für Audits notwendig?,event_sourcing history_table
+60,6,Müssen Hierarchien von Lagerplätzen abgebildet werden?,hierarchy recursive_query
+61,7,Müssen Mietverträge mit zeitlicher Gültigkeit abgebildet werden?,temporal_data validity_period
+62,7,Wie komplex sind die Abrechnungsregeln für Nebenkosten?,business_logic stored_procedure
+63,7,Benötigen Sie eine hierarchische Sicht (Portfolio -> Gebäude -> Einheit)?,tree_view hierarchy
+64,7,Müssen Dokumente (Verträge) direkt mit Objekten verknüpft werden?,document_linking metadata
+65,7,Sollen wiederkehrende Zahlungen automatisch generiert werden?,scheduled_jobs automation
+66,7,Ist eine Historisierung von Zustandsänderungen (Renovierung) nötig?,state_history lifecycle
+67,7,Müssen Mieterdaten streng isoliert gespeichert werden (Mandantenfähigkeit)?,multi_tenancy row_security
+68,7,Wie wichtig sind geografische Auswertungen des Portfolios?,geo_analytics visualization
+69,7,Sollen Wartungsaufträge in einem Workflow verwaltet werden?,workflow status_tracking
+70,7,Müssen Finanzdaten exportierbar für DATEV/SAP sein?,export integration
+71,8,Wie niedrig muss die Latenz für Lese-/Schreibzugriffe sein?,low_latency in_memory
+72,8,Müssen Highscores extrem schnell aktualisiert und sortiert werden?,sorted_set ranking
+73,8,Sollen Spielzustände bei Serverabsturz erhalten bleiben?,persistence snapshot
+74,8,Wie viele Spieler interagieren gleichzeitig in einer Session?,concurrency sharding
+75,8,Müssen Inventar-Items transaktional sicher getauscht werden?,transaction atomicity
+76,8,Ist das Datenmodell der Items sehr dynamisch (neue Attribute)?,schema_less json
+77,8,Benötigen Sie Matchmaking basierend auf komplexen Kriterien?,query_performance indexing
+78,8,Sollen Chat-Nachrichten dauerhaft gespeichert werden?,chat_log wide_column
+79,8,Müssen Events für Analysen (Balancing) gestreamt werden?,event_streaming analytics
+80,8,Ist globale Verfügbarkeit (Regionen) notwendig?,geo_replication cdn
+81,9,Ist Datenverlust unter allen Umständen inakzeptabel?,durability wal
+82,9,Müssen Transaktionen über mehrere Konten atomar sein?,two_phase_commit distributed_tx
+83,9,Wie schnell müssen Betrugsmuster erkannt werden?,realtime_detection stream_processing
+84,9,Benötigen Sie einen unveränderlichen Audit-Log aller Aktionen?,ledger blockchain_concept
+85,9,Wie hoch ist das Volumen historischer Marktdaten?,big_data partitioning
+86,9,Müssen komplexe Zeitreihenanalysen durchgeführt werden?,financial_analytics time_series
+87,9,Ist das System strikt konsistent (CP im CAP-Theorem)?,consistency cp_system
+88,9,Wie werden Währungsumrechnungen präzise gehandhabt?,decimal_precision fixed_point
+89,9,Müssen regulatorische Reports (BaFin) schnell generiert werden?,reporting aggregation
+90,9,Sollen Kundenprofile mit externen Daten angereichert werden?,data_enrichment integration
+91,10,Müssen Vektoren (Embeddings) effizient durchsucht werden?,vector_search ann_index
+92,10,Sollen Suchergebnisse nach Metadaten gefiltert werden (Pre-Filtering)?,metadata_filtering hybrid_search
+93,10,Wie oft werden neue Dokumente in den Index aufgenommen?,ingest_rate indexing_speed
+94,10,Müssen die Originaltexte zusammen mit den Vektoren gespeichert werden?,payload_storage document_store
+95,10,Ist die semantische Ähnlichkeit wichtiger als exakte Keywords?,semantic_match dense_retrieval
+96,10,Sollen verschiedene Embedding-Modelle unterstützt werden?,multi_model dimensionality
+97,10,Wie wichtig ist die Skalierbarkeit bei Millionen von Vektoren?,horizontal_scaling sharding
+98,10,Müssen Chunks (Textschnipsel) logisch miteinander verknüpft sein?,chunk_linking graph_rag
+99,10,Sollen alte Embeddings automatisch aktualisiert werden?,reindexing maintenance
+100,10,Ist eine Kombination aus Keyword- und Vektorsuche nötig?,hybrid_search bm25
