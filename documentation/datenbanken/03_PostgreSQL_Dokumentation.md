@@ -213,7 +213,7 @@ CREATE INDEX idx_audit_log_timestamp ON audit_log(timestamp DESC);
 ```
 
 #### 11. `scenarios`
-Szenarien mit Beschreibung, Kategorie und 384-dimensionalem Embedding für Similarity Search sowie flexiblen Metadaten.[web:41][web:48]
+Szenarien mit Beschreibung, Kategorie und 384-dimensionalem Embedding für Similarity Search sowie flexiblen Metadaten.
 ```
 CREATE TABLE scenarios (
 id BIGSERIAL PRIMARY KEY,
@@ -231,7 +231,7 @@ updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW() -- Letzte Änderung
 ```
 
 #### 12. `scenario_questions`
-Einzelne Fragen zu Szenarien mit Text, Antwort, 384-dimensionalem Embedding und Metadaten, referenziert auf `scenarios`.[web:41][web:48]
+Einzelne Fragen zu Szenarien mit Text, Antwort, 384-dimensionalem Embedding und Metadaten, referenziert auf `scenarios`.
 ```
 CREATE TABLE scenario_questions (
 id BIGSERIAL PRIMARY KEY,
