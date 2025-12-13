@@ -1,0 +1,9 @@
+services:
+  db-pgvector:
+    image: pgvector/pgvector:0.8.1-pg18-trixie
+    container_name: db-pgvector
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: rag

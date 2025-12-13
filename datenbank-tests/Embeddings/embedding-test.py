@@ -9,6 +9,66 @@ import psycopg2
 from psycopg2.extensions import connection as PsycopgConnection
 from sentence_transformers import SentenceTransformer
 
+from pgvector.psycopg2 import register_vector
+from pgvector.psycopg2.vector import Vector
+
+
+vvvvvvvvraw: dict[str, str] = {
+        "scenario_name": "Kundendaten",
+        "scenario_description": "",
+        "data_type": "structured",
+        "access_method": "read/write heavy",
+        "tags": [
+            "CONSISTENCY",
+            "CRITICAL"
+        ]
+    }
+
+
+def load_data() -> list[dict[str, any]]:
+    with open(Path(__file__).with_name("raw_data.json"), "rb") as file:
+        return json.load(file)
+
+def build_embed_vector_phrase(data: dict[str, any]) -> str:
+    scenario_name: str = data["scenario_name"]
+    scenario_description: str = data["scenario_description"]
+    data_type: str = data["data_type"]
+    access_method: str = data["access_method"]
+    tags: list[str] = data["tags"]
+    
+    joined_tags: str = ",".join(tags)
+
+    #query: str = f"scenario_name:'{scenario_name}';scenario_description:'{scenario_description}';data_type:'{data_type}';access_method:'{access_method}';tags:'{joined_tags}';"
+    #query: str = f"scenario_name:'{scenario_name}';scenario_description:'{scenario_description}';tags:'{joined_tags}';"
+    query: str = f"{scenario_name};{scenario_description}"
+    return query
+
+def insert_embedddddddd(
+        conn: PsycopgConnection,
+        model: SentenceTransformer,
+        data: dict[str, any]
+    ) -> None:
+    register_vector(conn)
+    query_string: str = build_embed_vector_phrase(data)
+    with conn.cursor() as cursor:
+        ensure_faq_table(cursor)
+        cursor.execute("SELECT 1 FROM scenarios WHERE name = %s", (data["scenario_name"],))
+        if cursor.fetchone():
+            logger.info("Skipping existing question: %s", data["scenario_name"])
+            return
+
+        vector = model.encode(query_string)
+        embedding = [float(value) for value in vector]
+
+        cursor.execute(
+            "INSERT INTO scenarios (name, description, data_type, access_method, tags, embedding) VALUES (%s, %s, %s, %s, %s, %s)",
+            (data["scenario_name"], data["scenario_description"], data["data_type"], data["access_method"], data["tags"], embedding),
+        )
+
+        logger.info("Inserted question '%s' (embedding length %d)", data["scenario_name"], len(embedding))
+
+    conn.commit()
+
 DEFAULT_QUESTIONS = (
     "How do I reset my password?",
     "How to change my billing plan?",
@@ -77,6 +137,19 @@ def load_questions(path: Path) -> List[str]:
 
 def ensure_faq_table(cursor: psycopg2.extensions.cursor) -> None:
     """Create the target table if it does not already exist."""
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS scenarios (
+            id SERIAL PRIMARY KEY,
+            name TEXT NOT NULL,
+            description TEXT NOT NULL,
+            embedding vector(384) NOT NULL,
+            data_type TEXT,
+            access_method TEXT,
+            tags TEXT[]
+        )
+        """
+    )
 
     cursor.execute(
         """
@@ -121,6 +194,83 @@ def insert_embeddings(
     return inserted
 
 
+def get_embed(
+    conn: PsycopgConnection,
+    question: str,
+    model: SentenceTransformer,
+) -> any:
+    """Insert embeddings for the provided questions, returning the number of new rows."""
+    register_vector(conn)
+    with conn.cursor() as cursor:
+        ensure_faq_table(cursor)
+        # cursor.execute("SELECT 1 FROM faq WHERE question = %s", (question,))
+        # i = cursor.fetchone()
+        # if i:
+        #     logger.info("Found existing question: %s", question)
+        #     return i
+
+        #vector = model.encode(question)
+        #embedding = [float(value) for value in vector]
+
+        vector = model.encode(question).tolist()
+        embedding = Vector(vector)
+
+        cursor.execute(
+            "SELECT id, name, (1 - (embedding <-> %s) + 1 - (embedding <-> %s)) AS similarity FROM scenarios ORDER BY similarity DESC LIMIT 3;", (embedding,embedding,)
+        )
+
+        i = cursor.fetchall()
+        return i
+
+        inserted += 1
+        logger.info("Inserted question '%s' (embedding length %d)", question, len(embedding))
+
+    return None
+
+def search() -> int:
+    args = parse_args()
+
+    try:
+        model = SentenceTransformer(args.model_name)
+    except Exception as exc:  # pylint: disable=broad-except
+        logger.exception("Failed to load model '%s'", args.model_name)
+        return 1
+
+    #question: str = "Wie kann ich ein System zum Austauschen von Texten nutzen, damit alle Mitarbeiter diese bekommen"
+    #question: str = "Ich möchte ein System, welches die Sitzungen meines Webservers managed"
+    try:
+        with psycopg2.connect(args.dsn) as conn:
+            inserted = get_embed(conn, question, model)
+            logger.info(str(inserted))
+    except Exception as exc:  # pylint: disable=broad-except
+        logger.exception("Database operation failed: %s", exc)
+        return 1
+
+    #logger.info("Embedding test completed. Inserted %d new rows.", inserted)
+    return 0
+
+def scenarios_insert_test() -> int:
+    args = parse_args()
+
+    try:
+        model = SentenceTransformer(args.model_name)
+    except Exception as exc:  # pylint: disable=broad-except
+        logger.exception("Failed to load model '%s'", args.model_name)
+        return 1
+
+    question: str = "What is my password?"
+    data = load_data()
+    try:
+        with psycopg2.connect(args.dsn) as conn:
+            for dt in data:
+                insert_embedddddddd(conn, model, dt)
+    except Exception as exc:  # pylint: disable=broad-except
+        logger.exception("Database operation failed: %s", exc)
+        return 1
+
+    #logger.info("Embedding test completed. Inserted %d new rows.", inserted)
+    return 0
+
 def main() -> int:
     args = parse_args()
 
@@ -153,5 +303,17 @@ def main() -> int:
     return 0
 
 
+
+question: str = "Vertraulich"
+
 if __name__ == "__main__":
-    sys.exit(main())
+    print("HIER GANZ UNTEN NUR DAS AUSSUCHEN; WAS UAUCH GENUTZT WERDEN SOLL!! (embedding-test.py ganz unten)")
+    print("Das hierige Docker compose sollte laufen (user -> postgres, password -> password)")
+    # main() -> fügt die testfargen ein
+    # search() -> Sucht nach der Frage, welche in der Methode angegeben ist (aber in scenarios-tabelle)
+    # scenarios_insert_test() -> Fügt die in raw_data.json angegebenen Scenarien in die DB ein
+
+    
+    #sys.exit(main())
+    #sys.exit(search())
+    sys.exit(scenarios_insert_test())

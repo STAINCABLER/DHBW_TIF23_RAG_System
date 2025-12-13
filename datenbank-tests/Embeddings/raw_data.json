@@ -1,0 +1,102 @@
+[
+    {
+        "scenario_name": "Kundendaten",
+        "scenario_description": "Speicherung von vertraulichen, personenbezogenen Kundendaten wie Adresse, Email und Name, welche regelmäßig gelesen und geändert werden",
+        "data_type": "structured",
+        "access_method": "read-write-heavy",
+        "tags": [
+            "CONSISTENCY",
+            "CRITICAL"
+        ],
+        "questions": [
+            {
+                "question": "Wie müssen Kundendaten gespeichert werden?",
+                "response": "ACID-Konform",
+                "response_embedding": "[...]"
+            },
+            {
+                "question": "Wie müssen Kundendaten gespeichert werden?",
+                "response": "Relational",
+                "response_embedding": "[...]"
+            }
+        ]
+    },
+    {
+        "scenario_name": "Messwerte",
+        "scenario_description": "Ergebnisse von Messungen wie z.B. Temperatur oder Druck",
+        "data_type": "timeseries",
+        "access_method": "write-heavy",
+        "tags": [],
+        "keywords": [
+            ""
+        ]
+    },
+    {
+        "scenario_name": "Logging",
+        "scenario_description": "Speicherung von Logs zur Auswertung oder Monitoring",
+        "data_type": "timeseries",
+        "access_method": "write-heavy",
+        "tags": [],
+        "keywords": [
+            ""
+        ]
+    },
+    {
+        "scenario_name": "Produktbestände",
+        "scenario_description": "Tabelle zur Speicherung von Produkten und Ihrend Beständen",
+        "data_type": "structured",
+        "access_method": "read-write-heavy",
+        "tags": [
+            "CONSISTENCY",
+            "CRITICAL"
+        ],
+        "keywords": [
+            ""
+        ]
+    },
+    {
+        "scenario_name": "Dokumentchunks",
+        "scenario_description": "Dokumentchunks zur Verarbeitung von Dokumentteilen",
+        "data_type": "semi-structured",
+        "access_method": "read-heavy",
+        "tags": [],
+        "keywords": [
+            ""
+        ]
+    },
+    {
+        "scenario_name": "Chatverlauf",
+        "scenario_description": "Kommunikation zwischen zwei oder mehr Personen, welche nicht geändert werden kann",
+        "data_type": "semi-structured",
+        "access_method": "append-only",
+        "tags": [],
+        "keywords": [
+            ""
+        ]
+    },
+    {
+        "scenario_name": "Sessionmanagement",
+        "scenario_description": "Speicherung von Session-Tokens und sehr schnelle Validierung dieser",
+        "data_type": "ephemere",
+        "access_method": "ultra-low-latency-key-value-store",
+        "tags": [
+            "VERY_SHORT_LATENCY",
+            "CRITICAL"
+        ],
+        "keywords": [
+            ""
+        ]
+    },
+    {
+        "scenario_name": "Embeddings",
+        "scenario_description": "Vektoren aus Textgeneriertung zur Auffindung mithilfe von Vektoren",
+        "data_type": "embedding",
+        "access_method": "read-heavy",
+        "tags": [
+            "VECTOR_SEARCH"
+        ],
+        "keywords": [
+            ""
+        ]
+    }
+]
