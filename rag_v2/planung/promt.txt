@@ -1,0 +1,1 @@
+Auf grundlage der Tests die abgeschlossen sind, und den Anforderungen aus den Kursmaterialien. ERstelle bitte eine grßes detailiertes ANforderungsdokument für das RAG system, mit begründungen warum wir welche datenbanken genommen haben, warum wir redis nicht benutzen (hr. schenk, unser dozent hat gesagt kein redis benutzen im rag), warum wir diesen flow nehmen 
