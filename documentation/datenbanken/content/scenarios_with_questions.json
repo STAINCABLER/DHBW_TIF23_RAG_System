@@ -1,0 +1,574 @@
+{
+  "scenarios": [
+    {
+      "id": 1,
+      "name": "E-Commerce",
+      "description": "Ein Online-Marktplatz mit hohem Transaktionsvolumen, der Produktkataloge, Bestellungen und Zahlungen verwaltet. Das System muss Spitzenlasten während Verkaufsaktionen bewältigen und konsistente Bestandsdaten garantieren. Gleichzeitig sind komplexe Suchanfragen und personalisierte Empfehlungen erforderlich.",
+      "questions": [
+        {
+          "id": 1,
+          "question": "Erfordert das Produktdatenmodell ein flexibles Schema (z.B. JSON-Spalten) für unterschiedliche Attribute je Kategorie?",
+          "response": "schema_flexibility jsonb"
+        },
+        {
+          "id": 2,
+          "question": "Müssen Bestellungen und Bestandsupdates in einer atomaren Transaktion über mehrere Tabellen hinweg erfolgen?",
+          "response": "acid transaction_isolation"
+        },
+        {
+          "id": 3,
+          "question": "Benötigt der Warenkorb eine Key-Value-Struktur mit TTL für temporäre Persistenz?",
+          "response": "key_value ttl"
+        },
+        {
+          "id": 4,
+          "question": "Sollen historische Preisänderungen in einer separaten History-Tabelle oder via Temporal Tables gespeichert werden?",
+          "response": "temporal_tables history"
+        },
+        {
+          "id": 5,
+          "question": "Erfordert die Volltextsuche einen invertierten Index für Facetten-Filterung?",
+          "response": "inverted_index fulltext"
+        },
+        {
+          "id": 6,
+          "question": "Müssen Produktbeziehungen (Cross-Selling) als Fremdschlüssel oder Graphenkanten modelliert werden?",
+          "response": "foreign_keys graph_edges"
+        },
+        {
+          "id": 7,
+          "question": "Ist eine Sharding-Strategie basierend auf User-ID oder Region für die Skalierung der Bestelldaten notwendig?",
+          "response": "sharding partitioning"
+        },
+        {
+          "id": 8,
+          "question": "Müssen Zahlungsdaten verschlüsselt in einer separaten, zugriffsgeschützten Tabelle liegen?",
+          "response": "encryption column_security"
+        },
+        {
+          "id": 9,
+          "question": "Erfordert das Reporting komplexe Aggregationen (OLAP) auf den operativen Daten (OLTP)?",
+          "response": "olap_cube materialized_views"
+        },
+        {
+          "id": 10,
+          "question": "Sollen Produktbewertungen als denormalisiertes Dokument im Produkt-Datensatz eingebettet werden?",
+          "response": "denormalization embedding"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "IoT-Sensorik",
+      "description": "Ein Netzwerk aus Millionen von Sensoren, die kontinuierlich Zeitreihendaten wie Temperatur und Vibration senden. Die Architektur muss extrem hohe Schreibgeschwindigkeiten unterstützen und effiziente Aggregationen für Dashboards ermöglichen. Alte Rohdaten werden regelmäßig archiviert oder gelöscht.",
+      "questions": [
+        {
+          "id": 11,
+          "question": "Ist das Datenmodell für Zeitreihen optimiert (Time-Bucket-Pattern) um Speicherplatz zu sparen?",
+          "response": "time_bucket compression"
+        },
+        {
+          "id": 12,
+          "question": "Erfordert die Schreiblast eine Log-Structured Merge-Tree (LSM) Speicher-Engine?",
+          "response": "lsm_tree write_throughput"
+        },
+        {
+          "id": 13,
+          "question": "Sollen alte Datenpartitionen automatisch via \"Drop Partition\" gelöscht werden?",
+          "response": "partitioning retention"
+        },
+        {
+          "id": 14,
+          "question": "Müssen Metadaten (Sensor-ID) und Messwerte in einem Wide-Column-Format gespeichert werden?",
+          "response": "wide_column clustering_key"
+        },
+        {
+          "id": 15,
+          "question": "Erfordert die Abfrage von Zeitfenstern eine kontinuierliche Aggregation (Continuous Aggregates)?",
+          "response": "continuous_aggregates materialization"
+        },
+        {
+          "id": 16,
+          "question": "Sollen fehlende Messwerte durch \"Last Observation Carried Forward\" (LOCF) im Query gefüllt werden?",
+          "response": "gap_filling locf"
+        },
+        {
+          "id": 17,
+          "question": "Ist eine Geodaten-Indizierung für die Standortverfolgung der Sensoren notwendig?",
+          "response": "spatial_index geo_hashing"
+        },
+        {
+          "id": 18,
+          "question": "Müssen Alarme durch Datenbank-Trigger oder Change Data Capture (CDC) ausgelöst werden?",
+          "response": "triggers cdc"
+        },
+        {
+          "id": 19,
+          "question": "Sollen Rohdaten in einem Cold-Storage (z.B. Parquet) und aktuelle Daten im Hot-Storage liegen?",
+          "response": "tiered_storage data_lifecycle"
+        },
+        {
+          "id": 20,
+          "question": "Ist das Schema der Sensordaten starr oder müssen neue Metriken dynamisch hinzugefügt werden?",
+          "response": "schema_evolution dynamic_columns"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "CMS",
+      "description": "Ein Content-Management-System für Medienunternehmen, das Artikel, Bilder und Videos versioniert speichert. Es erfordert flexible Schemata für unterschiedliche Inhaltstypen und hierarchische Strukturen für Kategorien. Kollaboratives Bearbeiten und schnelle Volltextsuche sind zentrale Anforderungen.",
+      "questions": [
+        {
+          "id": 21,
+          "question": "Erfordert die Baumstruktur der Seiten eine \"Materialized Path\" oder \"Nested Set\" Modellierung?",
+          "response": "tree_model hierarchy"
+        },
+        {
+          "id": 22,
+          "question": "Sollen Dokumentversionen als Delta-Diffs oder vollständige Snapshots gespeichert werden?",
+          "response": "versioning delta_storage"
+        },
+        {
+          "id": 23,
+          "question": "Müssen Inhalte als unstrukturierte BLOBs oder durchsuchbare JSON-Dokumente abgelegt werden?",
+          "response": "document_store json_indexing"
+        },
+        {
+          "id": 24,
+          "question": "Erfordert die Suche eine linguistische Analyse (Stemming, Stopwords) direkt in der Datenbank?",
+          "response": "linguistic_analysis text_search"
+        },
+        {
+          "id": 25,
+          "question": "Sollen Relationen zwischen Artikeln (Tags, Autoren) als Many-to-Many Verknüpfungstabellen modelliert werden?",
+          "response": "m2m_relation normalization"
+        },
+        {
+          "id": 26,
+          "question": "Müssen Zugriffrechte (ACLs) auf Zeilenebene (Row-Level Security) durchgesetzt werden?",
+          "response": "rls security_policy"
+        },
+        {
+          "id": 27,
+          "question": "Ist eine optimistische Sperrung (Optimistic Locking) für gleichzeitige Edits ausreichend?",
+          "response": "optimistic_locking version_column"
+        },
+        {
+          "id": 28,
+          "question": "Sollen Medien-Metadaten getrennt von den Binärdaten (File-System/S3) gespeichert werden?",
+          "response": "metadata_separation external_storage"
+        },
+        {
+          "id": 29,
+          "question": "Erfordert die Mehrsprachigkeit separate Spalten oder eine Übersetzungstabelle (Translation Table)?",
+          "response": "localization translation_table"
+        },
+        {
+          "id": 30,
+          "question": "Müssen Workflow-Statusübergänge durch Constraints oder State-Machine-Logik validiert werden?",
+          "response": "check_constraints state_validation"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Social-Graph",
+      "description": "Eine Plattform für soziale Vernetzung, die Beziehungen zwischen Nutzern, Gruppen und Inhalten abbildet. Der Fokus liegt auf der schnellen Traversierung tiefer Graphenstrukturen, um Freunde von Freunden oder Interessencluster zu finden. Echtzeit-Updates von Feeds und Benachrichtigungen sind essenziell.",
+      "questions": [
+        {
+          "id": 31,
+          "question": "Ist eine Adjazenzliste oder eine native Graph-Speicherung für die Beziehungen effizienter?",
+          "response": "adjacency_list native_graph"
+        },
+        {
+          "id": 32,
+          "question": "Müssen Kanten (Beziehungen) eigene Eigenschaften (z.B. \"befreundet seit\") besitzen?",
+          "response": "edge_properties property_graph"
+        },
+        {
+          "id": 33,
+          "question": "Erfordert die Traversierung von \"Freunden von Freunden\" rekursive CTEs oder Graph-Algorithmen?",
+          "response": "recursive_cte graph_traversal"
+        },
+        {
+          "id": 34,
+          "question": "Sollen Feeds durch \"Fan-Out on Write\" in User-Timelines vorbrechnet werden?",
+          "response": "fan_out pre_computation"
+        },
+        {
+          "id": 35,
+          "question": "Müssen bidirektionale Beziehungen als ein oder zwei Datensätze gespeichert werden?",
+          "response": "directed_edges undirected"
+        },
+        {
+          "id": 36,
+          "question": "Erfordert die Community-Erkennung komplexe analytische Graph-Algorithmen (z.B. PageRank)?",
+          "response": "graph_analytics pagerank"
+        },
+        {
+          "id": 37,
+          "question": "Sollen \"Super-Nodes\" (Influencer) speziell partitioniert werden, um Hotspots zu vermeiden?",
+          "response": "partitioning hotspot_mitigation"
+        },
+        {
+          "id": 38,
+          "question": "Ist eine Denormalisierung von User-Profilen in den Kanten für schnellere Abfragen sinnvoll?",
+          "response": "denormalization edge_caching"
+        },
+        {
+          "id": 39,
+          "question": "Müssen Sichtbarkeitsregeln (Privacy) dynamisch im Query-Pfad ausgewertet werden?",
+          "response": "dynamic_filtering privacy_rules"
+        },
+        {
+          "id": 40,
+          "question": "Sollen kürzeste Pfade zwischen Nutzern in Echtzeit berechnet werden?",
+          "response": "shortest_path pathfinding"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Healthcare",
+      "description": "Ein System für elektronische Patientenakten, das hochsensible medizinische Daten und Diagnosehistorien speichert. Strikte Compliance-Vorgaben, Audit-Trails und komplexe Zugriffskontrollen stehen im Vordergrund. Die Datenstruktur ist oft heterogen und muss über lange Zeiträume unveränderbar archiviert werden.",
+      "questions": [
+        {
+          "id": 41,
+          "question": "Erfordert das Datenmodell eine strikte Trennung von identifizierenden Daten (PII) und medizinischen Daten?",
+          "response": "pseudonymization data_separation"
+        },
+        {
+          "id": 42,
+          "question": "Müssen Audit-Logs in einer unveränderlichen \"Append-Only\" Tabelle geführt werden?",
+          "response": "append_only ledger"
+        },
+        {
+          "id": 43,
+          "question": "Sollen medizinische Befunde (HL7/FHIR) als strukturierte JSONB-Objekte gespeichert werden?",
+          "response": "jsonb fhir_structure"
+        },
+        {
+          "id": 44,
+          "question": "Erfordert die Historie eine bitemporale Modellierung (Gültigkeitszeit vs. Transaktionszeit)?",
+          "response": "bitemporal_data validity_time"
+        },
+        {
+          "id": 45,
+          "question": "Müssen Zugriffsrichtlinien (Consent) als komplexe Prädikate in Views oder RLS abgebildet werden?",
+          "response": "complex_policies views"
+        },
+        {
+          "id": 46,
+          "question": "Sollen Bilddaten (DICOM) via Referenz und Metadaten-Tabelle eingebunden werden?",
+          "response": "external_reference metadata"
+        },
+        {
+          "id": 47,
+          "question": "Ist eine Verschlüsselung einzelner Spalten (Column-Level Encryption) notwendig?",
+          "response": "encryption crypto_functions"
+        },
+        {
+          "id": 48,
+          "question": "Müssen Laborwerte für Trendanalysen in einem spaltenorientierten Format vorliegen?",
+          "response": "columnar_store analytics"
+        },
+        {
+          "id": 49,
+          "question": "Erfordert die Interoperabilität Mapping-Tabellen zu Standard-Katalogen (ICD-10, SNOMED)?",
+          "response": "mapping_tables standards"
+        },
+        {
+          "id": 50,
+          "question": "Sollen Datenarchivierungen auf schreibgeschützte Tablespaces ausgelagert werden?",
+          "response": "tablespaces archiving"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Logistik",
+      "description": "Eine Supply-Chain-Lösung zur Echtzeitverfolgung von Warenbeständen, Lieferanten und Transportrouten. Das System muss Standortdaten verarbeiten und Bestandsänderungen transaktional sicher über mehrere Lager hinweg synchronisieren. Vorhersagemodelle für Nachschub benötigen Zugriff auf historische Bewegungsdaten.",
+      "questions": [
+        {
+          "id": 51,
+          "question": "Erfordert die Bestandsführung eine pessimistische Sperrung (Row-Locking) zur Vermeidung von Überbuchungen?",
+          "response": "pessimistic_locking concurrency"
+        },
+        {
+          "id": 52,
+          "question": "Sollen Lagerhierarchien (Lager -> Gang -> Regal -> Fach) rekursiv modelliert werden?",
+          "response": "recursive_model hierarchy"
+        },
+        {
+          "id": 53,
+          "question": "Müssen Geokoordinaten für Umkreissuchen (Nearest Neighbor) indiziert werden?",
+          "response": "gist_index spatial_query"
+        },
+        {
+          "id": 54,
+          "question": "Erfordert die Rückverfolgbarkeit eine lückenlose Event-Sourcing-Tabelle aller Warenbewegungen?",
+          "response": "event_sourcing audit_log"
+        },
+        {
+          "id": 55,
+          "question": "Sollen Lieferantenkataloge als externe Tabellen (Foreign Data Wrappers) eingebunden werden?",
+          "response": "fdw external_data"
+        },
+        {
+          "id": 56,
+          "question": "Müssen Prognosemodelle direkt auf den operativen Daten via Stored Procedures laufen?",
+          "response": "in_db_processing stored_proc"
+        },
+        {
+          "id": 57,
+          "question": "Ist eine Partitionierung der Bewegungsdaten nach Zeit (Monat/Jahr) für die Performance nötig?",
+          "response": "time_partitioning performance"
+        },
+        {
+          "id": 58,
+          "question": "Sollen Transportrouten als Graphenstruktur (Knoten = Orte, Kanten = Wege) gespeichert werden?",
+          "response": "graph_model routing"
+        },
+        {
+          "id": 59,
+          "question": "Müssen Offline-Scans via Replikation und Konfliktauflösung synchronisiert werden?",
+          "response": "replication conflict_resolution"
+        },
+        {
+          "id": 60,
+          "question": "Erfordert das Chargenmanagement Constraints für eindeutige Chargennummern pro Produkt?",
+          "response": "unique_constraints integrity"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Immobilien",
+      "description": "Eine Verwaltungssoftware für Mietverträge, Instandhaltung und Abrechnungen von Immobilienportfolios. Zeitbasierte Vertragsdaten und wiederkehrende Zahlungsströme müssen exakt abgebildet werden. Hierarchische Strukturen von Gebäuden und Einheiten erfordern flexible Abfragemöglichkeiten.",
+      "questions": [
+        {
+          "id": 61,
+          "question": "Erfordert die Vertragsverwaltung \"Validity Period\" Datentypen (Range Types) für Zeiträume?",
+          "response": "range_types temporal"
+        },
+        {
+          "id": 62,
+          "question": "Sollen Hierarchien (Portfolio -> Objekt) über Fremdschlüssel oder Nested Sets abgebildet werden?",
+          "response": "foreign_keys nested_sets"
+        },
+        {
+          "id": 63,
+          "question": "Müssen wiederkehrende Zahlungen durch Datenbank-Jobs (Scheduler) generiert werden?",
+          "response": "db_scheduler automation"
+        },
+        {
+          "id": 64,
+          "question": "Erfordert die Nebenkostenabrechnung komplexe Berechnungslogik in Views oder Functions?",
+          "response": "computed_columns functions"
+        },
+        {
+          "id": 65,
+          "question": "Sollen Dokumente (Verträge) als BLOBs oder Dateipfade mit Metadaten gespeichert werden?",
+          "response": "blob_vs_path metadata"
+        },
+        {
+          "id": 66,
+          "question": "Müssen Statusänderungen von Tickets in einer State-History-Tabelle protokolliert werden?",
+          "response": "history_table auditing"
+        },
+        {
+          "id": 67,
+          "question": "Erfordert die Mandantenfähigkeit separate Schemata oder eine Tenant-ID Spalte?",
+          "response": "multi_tenancy schema_separation"
+        },
+        {
+          "id": 68,
+          "question": "Sollen Geodaten der Immobilien für Kartenvisualisierungen indiziert werden?",
+          "response": "spatial_index visualization"
+        },
+        {
+          "id": 69,
+          "question": "Müssen Finanzdaten für den Export in temporären Staging-Tabellen aufbereitet werden?",
+          "response": "staging_tables etl"
+        },
+        {
+          "id": 70,
+          "question": "Erfordert die Suche nach Ausstattungsmerkmalen eine EAV-Struktur oder JSON-Arrays?",
+          "response": "eav json_array"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Gaming",
+      "description": "Ein Backend für Multiplayer-Spiele, das Spielerprofile, Bestenlisten und In-Game-Items in Echtzeit verwaltet. Niedrige Latenzzeiten sind entscheidend für das Spielerlebnis, insbesondere bei Matchmaking und Status-Updates. Zustandsdaten müssen oft im Speicher gehalten werden, um die Performance zu maximieren.",
+      "questions": [
+        {
+          "id": 71,
+          "question": "Erfordert das Leaderboard eine \"Sorted Set\" Datenstruktur für O(log N) Ranglisten-Updates?",
+          "response": "sorted_set ranking_algo"
+        },
+        {
+          "id": 72,
+          "question": "Sollen Spieler-Sessions in einem In-Memory Key-Value Store für minimale Latenz liegen?",
+          "response": "in_memory key_value"
+        },
+        {
+          "id": 73,
+          "question": "Müssen Inventar-Transaktionen (Item-Tausch) atomar und konsistent (ACID) sein?",
+          "response": "acid atomicity"
+        },
+        {
+          "id": 74,
+          "question": "Erfordert das Matchmaking komplexe Abfragen auf dynamischen Spieler-Attributen (JSON)?",
+          "response": "json_query dynamic_attributes"
+        },
+        {
+          "id": 75,
+          "question": "Sollen Chat-Logs in einer Wide-Column Store mit Time-To-Live (TTL) gespeichert werden?",
+          "response": "wide_column ttl"
+        },
+        {
+          "id": 76,
+          "question": "Müssen Spielzustände asynchron auf die Festplatte (Snapshotting) persistiert werden?",
+          "response": "persistence snapshotting"
+        },
+        {
+          "id": 77,
+          "question": "Erfordert die Skalierung ein Sharding der Spielerdaten basierend auf der User-ID?",
+          "response": "sharding horizontal_scale"
+        },
+        {
+          "id": 78,
+          "question": "Sollen Events für Analysen in einen Append-Only Stream geschrieben werden?",
+          "response": "append_only stream"
+        },
+        {
+          "id": 79,
+          "question": "Müssen globale Bestenlisten über Regionen hinweg repliziert werden (CRDTs)?",
+          "response": "replication crdt"
+        },
+        {
+          "id": 80,
+          "question": "Erfordert die Item-Definition ein schema-loses Format für schnelle Updates?",
+          "response": "schemaless flexibility"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Fintech",
+      "description": "Eine Banking-Plattform für Hochfrequenzhandel und Betrugserkennung in Echtzeit. Absolute Datenkonsistenz (ACID) und Transaktionssicherheit sind nicht verhandelbar. Gleichzeitig müssen riesige Datenströme analysiert werden, um Anomalien sofort zu erkennen.",
+      "questions": [
+        {
+          "id": 81,
+          "question": "Erfordert das Ledger-Design Double-Entry-Bookkeeping Constraints auf Tabellenebene?",
+          "response": "constraints double_entry"
+        },
+        {
+          "id": 82,
+          "question": "Müssen Kontostände durch pessimistisches Locking vor Race Conditions geschützt werden?",
+          "response": "pessimistic_locking concurrency"
+        },
+        {
+          "id": 83,
+          "question": "Sollen Transaktionshistorien auf unveränderlichen WORM-Speichern (Write Once Read Many) liegen?",
+          "response": "worm_storage immutability"
+        },
+        {
+          "id": 84,
+          "question": "Erfordert die Betrugserkennung eine Echtzeit-Analyse von Datenströmen (Stream Processing)?",
+          "response": "stream_processing realtime"
+        },
+        {
+          "id": 85,
+          "question": "Müssen Währungsbeträge als DECIMAL/NUMERIC Typen gespeichert werden, um Rundungsfehler zu vermeiden?",
+          "response": "decimal_type precision"
+        },
+        {
+          "id": 86,
+          "question": "Sollen Marktdaten in partitionierten Zeitreihen-Tabellen für Analysen liegen?",
+          "response": "partitioning time_series"
+        },
+        {
+          "id": 87,
+          "question": "Erfordert die Konsistenz über Microservices hinweg ein Two-Phase-Commit (2PC) Protokoll?",
+          "response": "2pc distributed_tx"
+        },
+        {
+          "id": 88,
+          "question": "Müssen regulatorische Reports auf Read-Replicas generiert werden, um die Master-DB zu entlasten?",
+          "response": "read_replicas load_balancing"
+        },
+        {
+          "id": 89,
+          "question": "Sollen Kundenprofile mit externen Bonitätsdaten in einer NoSQL-Struktur angereichert werden?",
+          "response": "nosql enrichment"
+        },
+        {
+          "id": 90,
+          "question": "Erfordert das Audit-Log eine kryptographische Verkettung (Blockchain-Ansatz) der Einträge?",
+          "response": "crypto_chaining integrity"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Wissensgraph",
+      "description": "Eine RAG-Wissensdatenbank, die unstrukturierte Dokumente mit semantischen Vektoren und Metadaten verknüpft. Das System muss effiziente Ähnlichkeitssuchen auf Embeddings durchführen und gleichzeitig präzise Filterung nach Tags erlauben. Die Datenbasis wächst kontinuierlich durch neue Ingest-Prozesse.",
+      "questions": [
+        {
+          "id": 91,
+          "question": "Erfordert der Vektor-Index eine HNSW-Struktur für schnelle Approximate Nearest Neighbor (ANN) Suche?",
+          "response": "hnsw ann_search"
+        },
+        {
+          "id": 92,
+          "question": "Sollen Metadaten-Filter (Tags) als Pre-Filtering oder Post-Filtering auf den Vektor-Index angewendet werden?",
+          "response": "filtering hybrid_search"
+        },
+        {
+          "id": 93,
+          "question": "Müssen Dokument-Chunks und ihre Embeddings in derselben oder getrennten Tabellen liegen?",
+          "response": "data_locality normalization"
+        },
+        {
+          "id": 94,
+          "question": "Erfordert die semantische Suche eine Speicherung der Embeddings als Array-Typ (z.B. vector(1536))?",
+          "response": "vector_type embedding_storage"
+        },
+        {
+          "id": 95,
+          "question": "Sollen Beziehungen zwischen Chunks (z.B. \"nächstes Kapitel\") als Graphenkanten modelliert werden?",
+          "response": "graph_rag linking"
+        },
+        {
+          "id": 96,
+          "question": "Müssen alte Embeddings bei Modell-Updates effizient re-indiziert oder ausgetauscht werden?",
+          "response": "reindexing bulk_update"
+        },
+        {
+          "id": 97,
+          "question": "Erfordert die Skalierung eine Partitionierung des Vektor-Index nach Themen oder Mandanten?",
+          "response": "partitioning scalability"
+        },
+        {
+          "id": 98,
+          "question": "Sollen Originaltexte für das Reranking direkt im Datenbank-Cluster verfügbar sein?",
+          "response": "retrieval reranking"
+        },
+        {
+          "id": 99,
+          "question": "Müssen hybride Suchanfragen (Keyword + Vektor) durch einen kombinierten Index unterstützt werden?",
+          "response": "hybrid_index bm25_vector"
+        },
+        {
+          "id": 100,
+          "question": "Erfordert die Deduplizierung von Inhalten einen LSH (Locality Sensitive Hashing) Index?",
+          "response": "lsh deduplication"
+        }
+      ]
+    }
+  ]
+}
