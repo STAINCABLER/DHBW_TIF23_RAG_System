@@ -1,0 +1,51 @@
+[
+    {
+        "name": "Kundendaten",
+        "description": "Speicherung von vertraulichen, personenbezogenen Kundendaten wie Adresse, Email und Name, welche regelmäßig gelesen und geändert werden",
+        "questions": [
+            {
+                "question": "Wie müssen Kundendaten gespeichert werden?",
+                "response": "ACID-Konform"
+            },
+            {
+                "question": "Wie müssen Kundendaten gespeichert werden?",
+                "response": "Konsistent"
+            }
+        ]
+    },
+    {
+        "name": "Messwerte",
+        "description": "Ergebnisse von Messungen wie z.B. Temperatur oder Druck",
+        "questions": []
+    },
+    {
+        "name": "Logging",
+        "description": "Speicherung von Logs zur Auswertung oder Monitoring",
+        "questions": []
+    },
+    {
+        "name": "Produktbestände",
+        "description": "Tabelle zur Speicherung von Produkten und Ihrend Beständen",
+        "questions": []
+    },
+    {
+        "name": "Dokumentchunks",
+        "description": "Dokumentchunks zur Verarbeitung von Dokumentteilen",
+        "questions": []
+    },
+    {
+        "name": "Chatverlauf",
+        "description": "Kommunikation zwischen zwei oder mehr Personen, welche nicht geändert werden kann",
+        "questions": []
+    },
+    {
+        "name": "Sessionmanagement",
+        "description": "Speicherung von Session-Tokens und sehr schnelle Validierung dieser",
+        "questions": []
+    },
+    {
+        "name": "Embeddings",
+        "description": "Vektoren aus Textgeneriertung zur Auffindung mithilfe von Vektoren",
+        "questions": []
+    }
+]
