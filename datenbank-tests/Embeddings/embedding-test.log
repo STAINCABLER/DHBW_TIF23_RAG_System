@@ -18,3 +18,71 @@ psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 
 connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
 	Is the server running on that host and accepting TCP/IP connections?
 
+2025-12-13 22:45:38,780 | INFO | Use pytorch device_name: cpu
+2025-12-13 22:45:38,810 | INFO | Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-12-13 22:45:43,259 | ERROR | Database operation failed: connection to server at "localhost" (::1), port 5432 failed: FATAL:  password authentication failed for user "postgres"
+Traceback (most recent call last):
+  File "d:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\datenbank-tests\Embeddings\embedding-test.py", line 265, in scenarios_insert_test
+    with psycopg2.connect(args.dsn) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\backend\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  password authentication failed for user "postgres"
+
+2025-12-13 22:46:35,423 | INFO | Use pytorch device_name: cpu
+2025-12-13 22:46:35,423 | INFO | Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-12-13 22:46:38,249 | ERROR | Database operation failed: connection to server at "localhost" (::1), port 5432 failed: FATAL:  database "test" does not exist
+Traceback (most recent call last):
+  File "d:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\datenbank-tests\Embeddings\embedding-test.py", line 265, in scenarios_insert_test
+    with psycopg2.connect(args.dsn) as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\backend\.venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: FATAL:  database "test" does not exist
+
+2025-12-13 22:47:14,901 | INFO | Use pytorch device_name: cpu
+2025-12-13 22:47:14,901 | INFO | Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-12-13 22:47:17,577 | ERROR | Database operation failed: vector type not found in the database
+Traceback (most recent call last):
+  File "d:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\datenbank-tests\Embeddings\embedding-test.py", line 267, in scenarios_insert_test
+    insert_embedddddddd(conn, model, dt)
+  File "d:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\datenbank-tests\Embeddings\embedding-test.py", line 52, in insert_embedddddddd
+    register_vector(conn)
+  File "D:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\backend\.venv\Lib\site-packages\pgvector\psycopg2\register.py", line 19, in register_vector
+    raise psycopg2.ProgrammingError('vector type not found in the database')
+psycopg2.ProgrammingError: vector type not found in the database
+2025-12-13 22:49:48,596 | INFO | Use pytorch device_name: cpu
+2025-12-13 22:49:48,609 | INFO | Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-12-13 22:49:52,473 | ERROR | Database operation failed: vector type not found in the database
+Traceback (most recent call last):
+  File "d:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\datenbank-tests\Embeddings\embedding-test.py", line 275, in scenarios_insert_test
+    insert_embedddddddd(conn, model, dt)
+  File "d:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\datenbank-tests\Embeddings\embedding-test.py", line 52, in insert_embedddddddd
+    register_vector(conn)
+  File "D:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\backend\.venv\Lib\site-packages\pgvector\psycopg2\register.py", line 19, in register_vector
+    raise psycopg2.ProgrammingError('vector type not found in the database')
+psycopg2.ProgrammingError: vector type not found in the database
+2025-12-13 22:51:04,182 | INFO | Use pytorch device_name: cpu
+2025-12-13 22:51:04,182 | INFO | Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-12-13 22:51:08,078 | ERROR | Database operation failed: current transaction is aborted, commands ignored until end of transaction block
+Traceback (most recent call last):
+  File "d:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\datenbank-tests\Embeddings\embedding-test.py", line 275, in scenarios_insert_test
+    insert_embedddddddd(conn, model, dt)
+  File "d:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\datenbank-tests\Embeddings\embedding-test.py", line 55, in insert_embedddddddd
+    ensure_faq_table(cursor)
+  File "d:\Schulzeug\Studium\Datenbanken\DHBW_TIF23_RAG_System\datenbank-tests\Embeddings\embedding-test.py", line 149, in ensure_faq_table
+    cursor.execute(
+psycopg2.errors.InFailedSqlTransaction: current transaction is aborted, commands ignored until end of transaction block
+
+2025-12-13 22:51:41,944 | INFO | Use pytorch device_name: cpu
+2025-12-13 22:51:41,944 | INFO | Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-12-13 22:51:46,704 | INFO | Inserted question 'Kundendaten' (embedding length 384)
+2025-12-13 22:51:46,793 | INFO | Inserted question 'Messwerte' (embedding length 384)
+2025-12-13 22:51:46,859 | INFO | Inserted question 'Logging' (embedding length 384)
+2025-12-13 22:51:46,926 | INFO | Inserted question 'Produktbestände' (embedding length 384)
+2025-12-13 22:51:46,994 | INFO | Inserted question 'Dokumentchunks' (embedding length 384)
+2025-12-13 22:51:47,066 | INFO | Inserted question 'Chatverlauf' (embedding length 384)
+2025-12-13 22:51:47,134 | INFO | Inserted question 'Sessionmanagement' (embedding length 384)
+2025-12-13 22:51:47,218 | INFO | Inserted question 'Embeddings' (embedding length 384)

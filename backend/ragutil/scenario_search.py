@@ -13,7 +13,7 @@ import util.embedding
 import util.scenario
 
 
-def match_keywords(keywords: list[str]) -> list[util.scenario.Scenario]:
+def match_keywords(keywords: list[str], number_of_scenarios: int = 3) -> list[util.scenario.Scenario]:
     keyword_vectors: list[pgvector.psycopg2.vector.Vector] = []
 
     query_parts: list[str] = []
@@ -36,13 +36,16 @@ def match_keywords(keywords: list[str]) -> list[util.scenario.Scenario]:
         pgvector.psycopg2.register_vector(conn)
 
         cursor.execute(
-            "SELECT "
-                "id, "
-                "name, "
-                "description, "
-                f"({similarity_filter}) AS similarity "
-            "FROM scenarios "
-            "ORDER BY similarity DESC LIMIT 3;",
+            f"""
+            SELECT
+                id,
+                name,
+                description,
+                ({similarity_filter}) AS similarity
+            FROM scenarios
+            ORDER BY similarity DESC
+            LIMIT {number_of_scenarios}
+            """,
             tuple(keyword_vectors)
         )
 

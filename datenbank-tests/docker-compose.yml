@@ -7,3 +7,8 @@ services:
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: rag
+  db-mongo2:
+    image: mongo:latest
+    container_name: db-mongo2
+    ports:
+      - "27017:27017"

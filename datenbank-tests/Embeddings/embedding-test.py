@@ -76,7 +76,7 @@ DEFAULT_QUESTIONS = (
 )
 
 DEFAULT_MODEL = "all-MiniLM-L6-v2"
-DEFAULT_DSN = "dbname=test user=postgres password=postgres"
+DEFAULT_DSN = "dbname=rag user=postgres password=password"
 
 LOG_FILE = Path(__file__).with_name("embedding-test.log")
 LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
