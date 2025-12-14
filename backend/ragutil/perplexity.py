@@ -1,14 +1,15 @@
 import requests
+import os
 
 class PerplexityQuerier:
     """Beantwortet Fragen - Spezialist für intelligente Fragen + Synthese"""
     
-    def __init__(self, api_key: str):
-        self.api_key = api_key
+    def __init__(self):
+        self.api_key = os.getenv("PERPLEXITY_API_KEY", "")
         self.base_url = 'https://api.perplexity.ai'
     
     def prompt(self, prompt: str) -> str:
-        model: str = ""
+        model: str = "sonar"
 
         headers = {
             'Authorization': f'Bearer {self.api_key}',

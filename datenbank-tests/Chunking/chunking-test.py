@@ -145,20 +145,20 @@ def run_experiment(query: str, configurations: list):
 
 if __name__ == "__main__":
     experiment_configs = [
-        {
-            "name": "Naive (Schlecht)",
-            "strategy": strategy_fixed_size,
-            "size": 150,
-            "overlap": 0,
-            "k": 5
-        },
-        {
-            "name": "Rekursiv (Standard)",
-            "strategy": strategy_recursive,
-            "size": 300,
-            "overlap": 60,
-            "k": 5
-        },
+        # {
+        #     "name": "Naive (Schlecht)",
+        #     "strategy": strategy_fixed_size,
+        #     "size": 150,
+        #     "overlap": 0,
+        #     "k": 5
+        # },
+        # {
+        #     "name": "Rekursiv (Standard)",
+        #     "strategy": strategy_recursive,
+        #     "size": 300,
+        #     "overlap": 60,
+        #     "k": 5
+        # },
         {
             "name": "Heading Aware (Strukturiert)",
             "strategy": strategy_heading_aware,

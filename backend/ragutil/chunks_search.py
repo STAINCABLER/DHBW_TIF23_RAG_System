@@ -122,7 +122,7 @@ def convert_raw_chunks(raw_chunks: list[dict[str, any]]) -> list[util.chunk.Docu
     
     return chunks
 
-def search_chunks_for_scenario_with_reduction(scenario: util.scenario.Scenario) -> list:
+def search_chunks_for_scenario_with_reduction(scenario: util.scenario.Scenario) -> list[util.chunk.DocumentChunk]:
     similarity_map: dict[bson.objectid.ObjectId, float] = {}
 
     questions: list[util.scenario.ScenarioQuestion] = scenario.get_scenario_questions()
@@ -142,13 +142,13 @@ def search_chunks_for_scenario_with_reduction(scenario: util.scenario.Scenario) 
     reduced_chunks: list = []
 
     if len(sorted_chunks) <= 10:
-        reduced_chunks = sorted_chunks
+        reduced_chunks = sorted_chunks.keys()
     else:
-        reduced_chunks = sorted_chunks[0:10]
+        reduced_chunks = sorted_chunks.keys()[0:10]
     
     chunks: list[util.chunk.DocumentChunk] = [
         util.chunk.DocumentChunk.load_from_id(key)
-        for key in sorted_chunks.keys()
+        for key in reduced_chunks
     ]
 
     return chunks

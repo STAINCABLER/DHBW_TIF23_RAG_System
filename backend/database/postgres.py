@@ -27,12 +27,12 @@ def execute(query: str, database_name: str = "rag") -> None:
         connection.commit()
 
 
-def fetch_one(query: str, database_name: str = "rag") -> dict[str, any]:
+def fetch_one(query: str, database_name: str = "rag", args: tuple[any] = None) -> dict[str, any]:
     result = []
 
     with create_connection(database_name=database_name) as connection:
         cursor = connection.cursor()
-        cursor.execute(query)
+        cursor.execute(query, args)
 
         results = cursor.fetchone()
         column_names = [col[0] for col in cursor.description]
@@ -42,12 +42,12 @@ def fetch_one(query: str, database_name: str = "rag") -> dict[str, any]:
     
     return result
 
-def fetch_all(query: str, database_name: str = "rag") -> list[dict[str, any]]:
+def fetch_all(query: str, database_name: str = "rag", args: tuple[any] = None) -> list[dict[str, any]]:
     result = []
 
     with create_connection(database_name=database_name) as connection:
         cursor = connection.cursor()
-        cursor.execute(query)
+        cursor.execute(query, args)
 
         results = cursor.fetchall()
         column_names = [col[0] for col in cursor.description]

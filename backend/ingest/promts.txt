@@ -1,6 +1,7 @@
 # Promt 1
 Folgendes ist ein User Promt, dieser Soll auf ALLE möglichen Stichworte die auf dessen Szenario zutreffen, runtergrebrochen werden.
 MAXIMAL aber 40 Stichworte. In der AUSGABE von DIR, sollen NUR diese Stichworte rauskommen, KEINERLEI ERKLÄRUNG oder sonstiges.
+Diese Stichworte bitte als JSON-Parsable Array. Sonst keinen Text!
 
 
 # Promt 2

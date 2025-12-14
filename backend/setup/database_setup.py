@@ -9,9 +9,7 @@ def setup_tables() -> None:
             id BIGSERIAL PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             description TEXT,
-            category VARCHAR(100),
-            embedding VECTOR(384),
-            metadata JSONB
+            embedding VECTOR(384)
         )
         """
     )
@@ -24,8 +22,7 @@ def setup_tables() -> None:
             scenario_id BIGINT NOT NULL REFERENCES scenarios(id) ON DELETE CASCADE,
             question TEXT NOT NULL,
             answer TEXT,
-            embedding VECTOR(384),
-            metadata JSON
+            embedding VECTOR(384)
         )
         """
     )

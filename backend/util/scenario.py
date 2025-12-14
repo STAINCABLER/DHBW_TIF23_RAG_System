@@ -12,7 +12,7 @@ class ScenarioQuestion(object):
     id: int
     scenario_id: int
     question: str
-    response: str
+    answer: str
     embedding: list[float]
 
     @classmethod
@@ -48,6 +48,7 @@ class Scenario(object):
             SELECT * FROM scenario_questions
             WHERE scenario_id = %s
             """,
+            "rag",
             (self.id,)
         )
         return [

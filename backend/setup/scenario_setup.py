@@ -18,7 +18,7 @@ def setup_scenarios() -> None:
     scenarios: list[dict[str, any]] = load_scenarios_from_file()
     print("Starting Inserting Scenarios")
     start_time: float = time.perf_counter()
-    for scenario in scenarios:
+    for scenario in scenarios["scenarios"]:
         scenario_id: int = insert_scenario(scenario)
 
         questions: list[dict[str, any]] = scenario["questions"]
@@ -33,14 +33,16 @@ def setup_scenarios() -> None:
 
 
 
+
 def load_scenarios_from_file() -> list[dict[str, any]]:
+
     with open(os.path.join(pathlib.Path(__file__).parent, FILE_LOCATION), "rb") as file:
-        return json.load(file)
+       return json.load(file)
 
 
 def insert_scenario(data: dict[str, any]) -> int:
-    scenario_name: str = data["scenario_name"]
-    scenario_description: str = data["scenario_description"]
+    scenario_name: str = data["name"]
+    scenario_description: str = data["description"]
     scenario_embedding_string: str = f"{scenario_name};{scenario_description}"
 
     tensor: torch.Tensor = util.embedding.build_embedding(scenario_embedding_string)
@@ -57,7 +59,7 @@ def insert_scenario(data: dict[str, any]) -> int:
                 (name, description, embedding)
             VALUES (%s, %s, %s)
             """,
-            (data["scenario_name"], data["scenario_description"], embedding),
+            (data["name"], data["description"], embedding),
         )
 
         conn.commit()
@@ -66,9 +68,10 @@ def insert_scenario(data: dict[str, any]) -> int:
         """
         SELECT id FROM scenarios
         WHERE name = %s
-        ORDER BY ID DESC
+        ORDER BY id DESC
         LIMIT 1
         """,
+        "rag",
         (scenario_name,)
     )["id"]
 
@@ -90,7 +93,7 @@ def insert_scenario_questions(scenario_id: int, questions: list[dict[str, any]])
                 """
                 INSERT INTO scenario_questions
                     (scenario_id, question, answer, embedding)
-                VALUES (%s, %s, %s)
+                VALUES (%s, %s, %s, %s)
                 """,
                 (scenario_id, question["question"], question["response"], embedding),
             )
