@@ -1,47 +1,44 @@
 import sys
 sys.dont_write_bytecode = True
 import flask
-import endpoints.accounts
-import endpoints.chats
-import endpoints.debug
+import rag
 
+import dotenv
+
+dotenv.load_dotenv()
+
+import logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(message)s",
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+    ],
+)
 
 app = flask.app.Flask(__name__)
 app.secret_key = "hallo welt"
 
-api_blueprint: flask.Blueprint = flask.Blueprint("api", "api", url_prefix="/api")
 
 
-api_blueprint.register_blueprint(endpoints.accounts.accounts_blueprint)
-api_blueprint.register_blueprint(endpoints.chats.chats_blueprint)
+@app.get("/")
+def get_all_endpoints() -> str:
+    with open("backend/index.html", "rb") as file:
+        return file.read()
 
+@app.post("/api")
+def post_api() -> str:
+    body = flask.request.get_json()
+    if "user_input" not in body:
+        return "", 400
+    user_input: str = body["user_input"]
 
+    return rag.rag_process(user_input)
 
-@api_blueprint.get("/")
-def get_all_endpoints() -> list[dict[str, any]]:
-    endpoints: list[dict[str, any]]= []
-    for i in app.url_map._rules:
-        #endpoints.append(f"{", ".join(i.methods):<25} {i.rule:<30} {i.endpoint}")
-        methods: list[str] = list(i.methods)
-        if "HEAD" in methods:
-            methods.remove("HEAD")
-        if "OPTIONS" in methods:
-            methods.remove("OPTIONS")
-
-        for method in methods:
-            endpoints.append({
-                "path": i.rule,
-                "method": method,
-                "parameter": list(i.arguments)
-            })
-    return endpoints
 
 @app.get("/health")
 def get_health() -> tuple[str, int]:
     return "", 200
 
-
-app.register_blueprint(api_blueprint)
-app.register_blueprint(endpoints.debug.debug_blueprint)
 
 app.run("0.0.0.0", 8001, True)

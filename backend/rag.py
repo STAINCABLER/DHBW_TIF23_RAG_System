@@ -42,7 +42,6 @@ def rag_process(user_input: str) -> str:
 
     # 3. Chunks Vektorsuche
     total_blocks: list[str] = []
-    total_blocks.append(f"Nutzerangabe: {user_input}")
 
     for scenario in scenarios:
         total_chunks: list[util.chunk.DocumentChunk] = []
@@ -93,7 +92,7 @@ def rag_process(user_input: str) -> str:
     query_part: str = "\n\n".join(total_blocks)
     
     # 4. LLM Aufbereitung
-    result = process_final_results(perplexity_client, query_part)
+    result = process_final_results(perplexity_client, user_input, query_part)
     logging.info("Returning results")
 
     return result
@@ -138,9 +137,11 @@ def extract_keywords(perplexity_client: ragutil.perplexity.PerplexityQuerier, us
     return json.loads(response)
 
 
-def process_final_results(perplexity_client: ragutil.perplexity.PerplexityQuerier, query_part: str) -> str:
+def process_final_results(perplexity_client: ragutil.perplexity.PerplexityQuerier, user_input: str, query_part: str) -> str:
     response = perplexity_client.prompt(
         f"""
+        {user_input}
+
         Du bist ein DATENBANKEN ENGINEER Experte.
         Deine Aufgabe ist es, eine optimierte Datenbanksystem für ein neues Projekt zu entwerfen.
         Berücksichtige dabei die folgenden Anforderungen:

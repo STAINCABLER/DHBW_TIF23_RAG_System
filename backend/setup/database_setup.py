@@ -2,6 +2,14 @@ import database.postgres
 
 
 def setup_tables() -> None:
+    try:
+        database.postgres.execute(
+            """
+            CREATE EXTENSION IF NOT EXISTS vector
+            """
+        )
+    except:
+        pass
     # Scenarios-Tabelle
     database.postgres.execute(
         """

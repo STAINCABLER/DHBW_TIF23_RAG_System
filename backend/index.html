@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>DHBW Rag</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+
+            justify-content: center;
+        }
+        #content {
+            display: flex;
+            flex-direction: column;
+            height: 550px;
+            gap: 30px;
+            border: #3338 1px solid;
+
+            overflow-y: scroll;
+
+            padding: 20px;
+        }
+
+        #user-input {
+            min-height: 100px;
+            border: #3338 2px solid;
+        }
+
+        #submit {
+            width: 200px;
+            justify-self: center;
+            margin: auto;
+        }
+
+        .user-response {
+            border: gray 1px solid;
+            border-radius: 5px;
+            padding: 5px;
+            margin-left: 75px;
+
+        }
+
+        .rag-response {
+            border: gray 1px solid;
+            border-radius: 5px;
+            padding: 5px;
+            margin-right: 50px;
+
+        }
+    </style>
+</head>
+<body>
+    <h1>DHBW Ragsystem</h1>
+
+    <div id="content">
+        <div class="user-response">Ich hätte gerne ein System zum Verwalten von Backrezepten in einer Datenbank. Das beeinhaltet sowas wie Anleitung und Zutaten.</div>
+        <div class="rag-response">Ich hätte gerne ein System zum Verwalten von Backrezepten in einer Datenbank. Das beeinhaltet sowas wie Anleitung und Zutaten.</div>
+    </div>
+    <div style="height: 5px; background-color: #3338; margin: 20px 0px"></div>
+
+    <textarea type="" id="user-input"></textarea>
+
+    <br>
+    <button id="submit">Abschicken</button>
+
+    
+    <script>
+        let is_running = false;
+
+        function on_press() {
+            let userInputTag = document.querySelector("#user-input");
+
+            let userInput = userInputTag.value;
+
+            console.log(userInput);
+
+            let usertag = document.createElement("div");
+            usertag.innerText = userInput;
+            usertag.classList.add("user-response")
+
+                document.querySelector("#content").appendChild(usertag);
+            if(is_running) return;
+            is_running = true;
+            fetch("./api", {
+                method: "POST",
+                body: JSON.stringify({
+                    user_input: userInput
+                }),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            })
+            .then((response) => response.text()
+            .then((content) => {
+                let tag = document.createElement("div");
+                tag.innerText = content;
+
+                document.querySelector("#content").appendChild(tag);
+                is_running = true;
+
+            }))
+        }
+
+
+        document.querySelector("#submit").addEventListener(
+            "click", (event) => {
+                on_press()
+            }
+        )
+
+        
+    </script>
+</body>
+</html>

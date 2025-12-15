@@ -106,6 +106,8 @@ prompt: str = "Ich möchte eine Datenbank haben. Hierfür habe ich im Wald über
 
 prompt = "Ich verwalte viele Server als DDos Schutz. Alle meine Kunden benötigen sehr schnell eine Überprüfung, ob ein Client eine Verbindung aufbauen darf. Des Weiteren benötige ich eine Datenbank über meine Kunden."
 prompt = "Wir möchten als Projekt ein Datenbank RAG bauen, welches Informationen über Datenbanken ausgeben kann. Die Nutzereingabe wird hierbei so verarbeitet, dass aus dem RAG passende Daten gefunden werden. Diese sollen zusammen mit der Nutzereingabe an ein LLm geschickt werden zur Textverarbeitung."
+
+prompt = "Wie würdest du ein RAG Datenbanksystem machen?"
 szf = rag.rag_process(prompt)
 
 
