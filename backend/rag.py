@@ -140,7 +140,11 @@ def extract_keywords(perplexity_client: ragutil.perplexity.PerplexityQuerier, us
 def process_final_results(perplexity_client: ragutil.perplexity.PerplexityQuerier, user_input: str, query_part: str) -> str:
     response = perplexity_client.prompt(
         f"""
+        DER USER PROMT:
         {user_input}
+
+        VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+        DEIN SINN DER EXISTENZ:
 
         Du bist ein DATENBANKEN ENGINEER Experte.
         Deine Aufgabe ist es, eine optimierte Datenbanksystem für ein neues Projekt zu entwerfen.
@@ -152,7 +156,11 @@ def process_final_results(perplexity_client: ragutil.perplexity.PerplexityQuerie
         - Erstelle ein detailliertes Datenbankschema, das die Struktur und Beziehungen der Daten klar definiert.
         - Berücksichtige Skalierbarkeit, Leistung und Sicherheit in deinem Design. Solange sie den ANFORDERUNGEN des USER PROMTS entsprechen.
         - Gib eine Begründung für deine Designentscheidungen und die gewählten Technologien.
+        DU BEARBEITEST DIE AUFGABE IN DEUTSCHER SPRACHE, ABER ENGLISCHE TECHNISCHE BEGRIFFE SIND ERLAUBT.
+        DU ANTWORTEST NUR AUF DEN USER INPUT DES USERS, DER REST IST NUR DEINE WISSENSGRUNDLAGE. NICHTS AUF DAS DU ANTWORTEN SOLLST, ODER DARFST!
 
+        VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+        DEINE WISSENSDATENBANK:
 
         {query_part}
         """
