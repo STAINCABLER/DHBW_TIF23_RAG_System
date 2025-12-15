@@ -1,8 +1,8 @@
-# Portfolio: Mini-RAG-System für Datenbankberatung
+# Portfolio: Datenbank Design Assistant
 
 **Projekt:** DHBW TIF23 RAG-System  
 **Datum:** Dezember 2025  
-**Thema:** Retrieval-Augmented Generation für Datenbanken, NoSQL und Indexierung
+**Thema:** Retrieval-Augmented Generation für Datenbankberatung bei Startups und KMU
 
 ---
 
@@ -21,26 +21,47 @@
 
 ## 1. Ziel & Use Case
 
-### 1.1 Zielsetzung des Mini-RAG-Systems
+### 1.1 Zielsetzung: Der Datenbank Design Assistant
 
-Das entwickelte RAG-System dient als **intelligenter Beratungsassistent für Datenbankfragen**. Es soll Studierenden und Entwicklern ermöglichen, fachspezifische Fragen zu Datenbanktechnologien, NoSQL-Modellen, Indexierung und Workload-Design zu stellen und relevante, kontextbezogene Antworten zu erhalten.
+Das entwickelte RAG-System – der **„Datenbank Design Assistant"** – dient als intelligenter Beratungsassistent für **Startups und kleine lokale Unternehmen (KMU)**, die ihre IT-Infrastruktur erstmalig aufbauen oder erweitern möchten. Diese Zielgruppe verfügt häufig über begrenzte Ressourcen und fehlendes Fachwissen im Bereich Datenbankarchitektur, benötigt aber dennoch fundierte Entscheidungsgrundlagen.
 
 **Primäres Ziel:**
-- Beantwortung von Fachfragen zu Datenbankthemen durch semantische Suche in kuratierten Lehrmaterialien
-- Demonstration eines vollständigen RAG-Pipelines: Dokument → Chunking → Embedding → Retrieval → Antwort
+- Unterstützung von Gründern und technischen Leitern bei der Auswahl und Gestaltung einer passenden Datenbankarchitektur
+- Bereitstellung von Best Practices und Entscheidungshilfen durch semantische Suche in kuratierten Fachmaterialien
+- Demokratisierung von Datenbankwissen: Komplexe Konzepte verständlich für Nicht-Experten aufbereiten
 
-### 1.2 Art der zu beantwortenden Fragen
+### 1.2 Zielgruppe und deren Herausforderungen
 
-Das System ist optimiert für folgende Fragetypen:
+| Zielgruppe | Typische Herausforderung | Wie der Assistant hilft |
+|------------|--------------------------|-------------------------|
+| **Tech-Startups** | Schnelle Skalierung, unklare Anforderungen | Empfehlungen zu skalierbaren NoSQL-Lösungen |
+| **Lokale Einzelhändler** | Kundendaten, Inventar, wenig IT-Budget | Einfache, kosteneffiziente Datenbankmodelle |
+| **Handwerksbetriebe** | Auftragsverwaltung, Terminplanung | Relationale Grundlagen und Normalisierung |
+| **Freiberufler/Agenturen** | Projektdaten, Kundenverwaltung | Flexible Schema-Optionen (Document Stores) |
+
+### 1.3 Art der zu beantwortenden Fragen
+
+Das System ist optimiert für praxisorientierte Fragetypen, die typisch für Infrastruktur-Einsteiger sind:
 
 | Fragetyp | Beispiel |
 |----------|----------|
-| **Konzepterklärung** | „Was ist der Unterschied zwischen Key-Value und Document Store?" |
-| **Anwendungsempfehlung** | „Welche Datenbank eignet sich für Zeitreihendaten?" |
-| **Technische Details** | „Wie funktioniert ein B-Baum-Index?" |
-| **Architekturentscheidung** | „Wann ist eventual consistency akzeptabel?" |
+| **Grundlagenverständnis** | „Was ist der Unterschied zwischen SQL und NoSQL?" |
+| **Technologieauswahl** | „Welche Datenbank eignet sich für meinen Online-Shop?" |
+| **Skalierungsfragen** | „Wie bereite ich meine Datenbank auf Wachstum vor?" |
+| **Kostenoptimierung** | „Brauche ich wirklich eine separate Vektor-Datenbank?" |
+| **Best Practices** | „Wie strukturiere ich Kundendaten richtig?" |
+| **Architekturentscheidung** | „Wann ist eventual consistency für mein Startup akzeptabel?" |
 
-**Begründung:** Diese Fragetypen entsprechen typischen Lernszenarien im Datenbankumfeld und erfordern semantisches Verständnis statt exakter Keyword-Matches. Gemäß Modul 6 der Kursmaterialien folgt das Chunking-Design dem Access Path: „LLM braucht funktionale Abschnitte" → Chunk = Abschnitt [vgl. Modul 6, Abschnitt 2].
+### 1.4 Warum RAG für diesen Use Case?
+
+Startups und KMU haben spezifische Anforderungen, die ein RAG-System ideal adressiert:
+
+1. **Kontextbezogene Antworten:** Statt generischer Ratschläge liefert das System Empfehlungen basierend auf kuratierten Fachtexten
+2. **Aktualität:** Die Wissensbasis kann ohne Modell-Neutraining aktualisiert werden
+3. **Nachvollziehbarkeit:** Quellenangaben ermöglichen Verifizierung der Empfehlungen
+4. **Domänenfokus:** Spezialisierung auf Datenbankthemen statt allgemeinem Weltwissen
+
+**Begründung:** Diese Fragetypen entsprechen realen Entscheidungssituationen bei Infrastrukturaufbau und erfordern semantisches Verständnis statt exakter Keyword-Matches. Gemäß Modul 6 der Kursmaterialien folgt das Chunking-Design dem Access Path: „LLM braucht funktionale Abschnitte" → Chunk = Abschnitt [vgl. Modul 6, Abschnitt 2].
 
 ---
 
@@ -427,9 +448,11 @@ result = perplexity_client.query(
 
 ## 7. Tests & Beispiele
 
-### 7.1 Beispiel-Frage
+### 7.1 Beispiel-Frage (Startup-Szenario)
 
-**Eingabe:** „Was ist der Unterschied zwischen einem B-Baum-Index und einem Hash-Index?"
+**Kontext:** Ein Startup-Gründer plant einen Online-Shop und möchte verstehen, wie die Datenbank schnelle Produktsuchen ermöglicht.
+
+**Eingabe:** „Welche Datenbank-Indexierung brauche ich für schnelle Produktsuchen in meinem Online-Shop?"
 
 ### 7.2 Top-3 gefundene Chunks
 
@@ -442,7 +465,7 @@ result = perplexity_client.query(
 | `source_file` | `db_indexing_query_processing.md` |
 | `chunk_text` | „B-Bäume sind balancierte Suchbäume mit folgenden Eigenschaften: Alle Blätter liegen auf derselben Höhe. Jeder Knoten enthält eine sortierte Menge von Schlüsseln und Kindzeigern. Suchen, Einfügen und Löschen laufen in O(log n). Vorteile: Sehr gut für Bereichsanfragen (>, <, BETWEEN) und für ORDER BY geeignet." |
 
-**Relevanz:** Direkter Treffer für B-Baum-Konzept, enthält Definition und Stärken.
+**Relevanz für Startup:** Erklärt, warum B-Baum-Indizes für Preisfilter („Produkte unter 50€") und sortierte Produktlisten ideal sind.
 
 #### Chunk 2 (Similarity: 0.84)
 
@@ -453,7 +476,7 @@ result = perplexity_client.query(
 | `source_file` | `db_indexing_query_processing.md` |
 | `chunk_text` | „Hash-Indizes verwenden eine Hash-Funktion, um einen Suchschlüssel direkt auf einen Bucket abzubilden. Eigenschaften: Sehr schnell für exakte Gleichheitsabfragen (=). Nicht geeignet für Bereichsanfragen oder ORDER BY." |
 
-**Relevanz:** Komplementärer Treffer für Hash-Index, ermöglicht direkten Vergleich.
+**Relevanz für Startup:** Zeigt, dass Hash-Indizes für exakte Produktsuchen (SKU, Artikelnummer) geeignet sind, aber nicht für Preisfilter.
 
 #### Chunk 3 (Similarity: 0.71)
 
@@ -464,7 +487,7 @@ result = perplexity_client.query(
 | `source_file` | `db_indexing_query_processing.md` |
 | `chunk_text` | „Ein Index ist eine zusätzliche Datenstruktur, die den Zugriff auf Zeilen einer Tabelle beschleunigt, indem sie Suchattribute sortiert speichert. RDBMS setzen standardmäßig häufig B-Baum-Varianten (B+ Bäume) ein." |
 
-**Relevanz:** Kontextueller Treffer, liefert Hintergrund für beide Index-Typen.
+**Relevanz für Startup:** Liefert Grundlagenwissen, das der Gründer für die Gespräche mit Entwicklern braucht.
 
 ### 7.3 Metriken und Evaluation
 
@@ -570,6 +593,10 @@ result = perplexity_client.query(
    - Die Performance-Tests haben gezeigt, dass MongoDB Vector Search ungeeignet ist
    - Ohne Messungen wäre diese Erkenntnis nicht möglich gewesen
 
+4. **Zielgruppenorientierung zahlt sich aus**
+   - Die Fokussierung auf Startups und KMU ermöglicht präzisere Fragetypen
+   - Praxisnahe Beispiele (Online-Shop, Kundenverwaltung) verbessern die Retrieval-Qualität
+
 ---
 
 ## Anhang: Technische Referenzen
@@ -593,4 +620,5 @@ result = perplexity_client.query(
 
 ---
 
+*Datenbank Design Assistant – Ein RAG-System für Startups und KMU*  
 *Dokument erstellt im Rahmen der DHBW Portfolioprüfung, Dezember 2025*
