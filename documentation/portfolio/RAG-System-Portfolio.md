@@ -28,16 +28,15 @@ Das entwickelte RAG-System – der **„Datenbank Design Assistant"** – dient 
 **Primäres Ziel:**
 - Unterstützung von Gründern und technischen Leitern bei der Auswahl und Gestaltung einer passenden Datenbankarchitektur
 - Bereitstellung von Best Practices und Entscheidungshilfen durch semantische Suche in kuratierten Fachmaterialien
-- Demokratisierung von Datenbankwissen: Komplexe Konzepte verständlich für Nicht-Experten aufbereiten
 
 ### 1.2 Zielgruppe und deren Herausforderungen
 
-| Zielgruppe | Typische Herausforderung | Wie der Assistant hilft |
-|------------|--------------------------|-------------------------|
-| **Tech-Startups** | Schnelle Skalierung, unklare Anforderungen | Empfehlungen zu skalierbaren NoSQL-Lösungen |
-| **Lokale Einzelhändler** | Kundendaten, Inventar, wenig IT-Budget | Einfache, kosteneffiziente Datenbankmodelle |
-| **Handwerksbetriebe** | Auftragsverwaltung, Terminplanung | Relationale Grundlagen und Normalisierung |
-| **Freiberufler/Agenturen** | Projektdaten, Kundenverwaltung | Flexible Schema-Optionen (Document Stores) |
+| Zielgruppe | Typische Herausforderung |
+|------------|--------------------------|
+| **Tech-Startups** | Schnelle Skalierung, unklare Anforderungen |
+| **Lokale Einzelhändler** | Kundendaten, Inventar, wenig IT-Budget |
+| **Handwerksbetriebe** | Auftragsverwaltung, Terminplanung |
+| **Freiberufler/Agenturen** | Projektdaten, Kundenverwaltung |
 
 ### 1.3 Art der zu beantwortenden Fragen
 
@@ -52,44 +51,50 @@ Das System ist optimiert für praxisorientierte Fragetypen, die typisch für Inf
 | **Best Practices** | „Wie strukturiere ich Kundendaten richtig?" |
 | **Architekturentscheidung** | „Wann ist eventual consistency für mein Startup akzeptabel?" |
 
-### 1.4 Warum RAG für diesen Use Case?
-
-Startups und KMU haben spezifische Anforderungen, die ein RAG-System ideal adressiert:
-
-1. **Kontextbezogene Antworten:** Statt generischer Ratschläge liefert das System Empfehlungen basierend auf kuratierten Fachtexten
-2. **Aktualität:** Die Wissensbasis kann ohne Modell-Neutraining aktualisiert werden
-3. **Nachvollziehbarkeit:** Quellenangaben ermöglichen Verifizierung der Empfehlungen
-4. **Domänenfokus:** Spezialisierung auf Datenbankthemen statt allgemeinem Weltwissen
-
-**Begründung:** Diese Fragetypen entsprechen realen Entscheidungssituationen bei Infrastrukturaufbau und erfordern semantisches Verständnis statt exakter Keyword-Matches. Gemäß Modul 6 der Kursmaterialien folgt das Chunking-Design dem Access Path: „LLM braucht funktionale Abschnitte" → Chunk = Abschnitt [vgl. Modul 6, Abschnitt 2].
-
 ---
 
 ## 2. Dokumentenauswahl + Datenbasis
 
-### 2.1 Verwendete Dokumente
+### 2.1 Unterstützte Dokumentformate
 
-Die Datenbasis besteht aus **eigenen Zusammenfassungen und Lehrtexten** zu Datenbankthemen. Folgende Dokumentkategorien wurden verwendet:
+Das System unterstützt **vier Dokumentformate**, die jeweils unterschiedliche Anwendungsfälle und Strukturierungsgrade abdecken:
 
-| Dokument | Format | Thema | Quelle |
-|----------|--------|-------|--------|
-| `db_nosql_models_overview.md` | Markdown | NoSQL-Datenmodelle (Key-Value, Document, Wide-Column, Graph) | Eigene Zusammenfassung |
-| `db_indexing_query_processing.md` | Markdown | B-Baum-Indizes, Hash-Indizes, Anfrageoptimierung | Eigene Zusammenfassung |
-| `db_transactions_acid_isolation.txt` | Text | ACID-Eigenschaften, Isolation Levels | Vorlesungsmitschriften |
-| `db_normalization_anomalies.txt` | Text | Normalformen, Anomalien | Vorlesungsmitschriften |
-| `db_sql_qa_pairs.json` | JSON | Q&A-Paare zu SQL-Grundlagen | Strukturierte Lernkarten |
-| `db_isolation_levels_matrix.csv` | CSV | Isolation-Level-Matrix | Tabellarische Zusammenfassung |
+| Format | Dateiendung | Typischer Inhalt | Chunking-Strategie |
+|--------|-------------|------------------|-------------------|
+| **Markdown** | `.md` | Strukturierte Fachtexte mit Überschriften | Heading-Aware (##) |
+| **JSON** | `.json` | Strukturierte Key-Value-Daten, Glossare | Top-Level-Key-Split |
+| **CSV** | `.csv` | Tabellarische Daten, Vergleichsmatrizen | Zeilen-Batching (5er) |
+| **Text** | `.txt` | Unstrukturierte Fließtexte | (in Planung) |
 
-### 2.2 Auswahlkriterien
+#### Begründung der Formatauswahl
 
-Die Dokumentenauswahl folgt den Prinzipien aus dem Kursmaterial:
+**Markdown (.md):**
+- Ideal für Fachdokumentation mit natürlicher Gliederung
+- `##`-Überschriften definieren semantische Einheiten
+- Ermöglicht automatische Extraktion von Abschnittstiteln als Metadaten
+
+**JSON (.json):**
+- Geeignet für strukturierte Wissensdaten (Glossare, Q&A-Paare, Regelsätze)
+- Jeder Top-Level-Key repräsentiert ein abgeschlossenes Konzept
+- Maschinenlesbar und eindeutig parsbar
+
+**CSV (.csv):**
+- Optimal für tabellarische Vergleichsdaten (z.B. Isolation-Level-Matrix)
+- Zeilen enthalten zusammengehörige Datensätze
+- Batch-Verarbeitung erhält tabellarischen Kontext
+
+**Text (.txt):**
+- Fallback für unstrukturierte Inhalte
+- Erfordert alternative Chunking-Strategien (z.B. Token-basiert)
+
+### 2.2 Auswahlkriterien für Dokumente
+
+Die Dokumentenauswahl folgt folgenden Prinzipien:
 
 1. **Semantische Kohärenz:** Jedes Dokument behandelt ein abgeschlossenes Themengebiet
-2. **Keine KI-generierten Texte:** Ausschließlich eigene Zusammenfassungen und Vorlesungsinhalte
-3. **Strukturierte Abschnitte:** Markdown-Überschriften ermöglichen heading-aware Chunking
-4. **Variabilität der Formate:** CSV, JSON, Markdown und Text decken verschiedene Chunking-Strategien ab
-
-**Wichtig:** Im Gegensatz zum „SZI-Sekretariat-Beispiel" aus dem Kursmaterial, bei dem unstrukturierte Fließtexte problematisch sind, nutzen wir explizit strukturierte Dokumente mit klaren Abschnittsgrenzen. Dies erhöht die Retrieval-Qualität signifikant [vgl. Modul 6, Abschnitt 3.1].
+2. **Strukturierte Abschnitte:** Markdown-Überschriften ermöglichen Heading-Aware Chunking
+3. **Variabilität der Formate:** Verschiedene Formate decken unterschiedliche Chunking-Strategien ab
+4. **Domänenrelevanz:** Inhalte müssen zum Beratungskontext (Datenbankdesign für KMU) passen
 
 ---
 
@@ -107,9 +112,7 @@ Markdown-Dokumente werden anhand ihrer Überschriftenhierarchie in Chunks zerleg
 
 ```python
 headers_to_split_on = [
-    ("#", "Header 1"),
     ("##", "Header 2"),
-    ("###", "Header 3"),
 ]
 markdown_splitter = langchain_text_splitters.MarkdownHeaderTextSplitter(
     headers_to_split_on=headers_to_split_on
@@ -117,9 +120,15 @@ markdown_splitter = langchain_text_splitters.MarkdownHeaderTextSplitter(
 ```
 
 **Funktionsweise:**
-- Jeder Abschnitt (definiert durch `#`, `##`, `###`) wird ein eigenständiger Chunk
-- Die Überschrift wird automatisch als `heading`-Metadatum extrahiert
-- Das Embedding wird aus der Kombination `{heading}: {content}` erzeugt, um semantische Relevanz zu erhöhen
+- Jeder Abschnitt (definiert durch `##`) wird ein eigenständiger Chunk
+- Der Text zwischen zwei `##`-Überschriften bildet einen zusammenhängenden Chunk
+- Die Überschrift wird automatisch als `Header 2`-Metadatum extrahiert
+- Das Embedding wird aus der Kombination `{heading}: {content}` erzeugt
+
+**Begründung für Header-2-only:**
+- H1 (`#`) dient typischerweise als Dokumenttitel – kein sinnvoller Chunk-Trenner
+- H2 (`##`) repräsentiert in unseren Dokumenten die thematischen Hauptabschnitte
+- H3 (`###`) würde zu kleine, fragmentierte Chunks erzeugen
 
 **Vorteile:**
 - Chunks entsprechen natürlichen semantischen Einheiten
@@ -190,7 +199,7 @@ def chunk_csv(content: list[dict[str, any]], file_name: str) -> None:
 
 | Format | Strategie | Chunk-Einheit | Metadaten-Quelle | Overlap |
 |--------|-----------|---------------|------------------|---------|
-| **Markdown** | Heading-Aware | Abschnitt (H1/H2/H3) | Überschrift | 0% |
+| **Markdown** | Heading-Aware | Abschnitt (##) | Header 2 | 0% |
 | **JSON** | Key-Value | Top-Level-Key | Key-Name | 0% |
 | **CSV** | Batching | 5 Zeilen pro Chunk | Dateiname | 0% |
 
@@ -279,7 +288,7 @@ chunk: dict[str, any] = {
 
 | Format | Strategie | Chunk-Einheit | Metadaten-Quelle | Embedding-Kontext | Overlap |
 |--------|-----------|---------------|------------------|-------------------|---------|
-| **Markdown** | Heading-Aware | Abschnitt (H1/H2/H3) | Überschrift (Header 2) | `{heading}: {content}` | 0% |
+| **Markdown** | Heading-Aware | Abschnitt (##) | Header 2 | `{heading}: {content}` | 0% |
 | **JSON** | Key-Value | Top-Level-Key | Key-Name | `{key}: {content}` | 0% |
 | **CSV** | Batching | 5 Zeilen pro Chunk | Dateiname | `{content}` | 0% |
 
@@ -784,13 +793,6 @@ result = perplexity_client.query(
 | Chunking-Library | langchain-text-splitters | 0.x |
 | LLM-API | Perplexity | - |
 | Backend | Python/Flask | 3.12 |
-
-### Quellenverweise (Kursmaterialien)
-
-- **Modul 6:** Chunking ist Datenmodellierung, nicht Textschneiden
-- **Modul 7:** Embeddings als Datentyp mit eigenem Workload
-- **Modul 8:** Workload-Isolation durch Polyglot Persistence
-- **Portfolioprüfung:** Anforderungsspezifikation und Bewertungskriterien
 
 ---
 
