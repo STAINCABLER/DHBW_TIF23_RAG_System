@@ -95,11 +95,16 @@ Die Dokumentenauswahl folgt den Prinzipien aus dem Kursmaterial:
 
 ## 3. Chunking-Design
 
-### 3.1 Chunking-Strategie
+### 3.1 Chunking-Strategien
 
-Das System verwendet **Heading-Aware Chunking** basierend auf Markdown-Überschriften. Diese Strategie folgt der Erkenntnis aus Modul 6: „Chunking folgt nie der Wortanzahl. Chunking folgt immer dem Retrieval-Verhalten."
+Das System implementiert **drei formatspezifische Chunking-Strategien**, die jeweils auf die Struktur der Eingabedokumente abgestimmt sind. Jede Strategie erzeugt semantisch kohärente Chunks mit vollständigen Metadaten.
 
-**Implementierung (md_chunker.py):**
+#### 3.1.1 Markdown-Chunking: Heading-Aware Strategie
+
+**Datei:** `setup/chunks/md_chunker.py`
+
+Markdown-Dokumente werden anhand ihrer Überschriftenhierarchie in Chunks zerlegt. Diese Strategie nutzt den `MarkdownHeaderTextSplitter` aus LangChain:
+
 ```python
 headers_to_split_on = [
     ("#", "Header 1"),
@@ -111,35 +116,204 @@ markdown_splitter = langchain_text_splitters.MarkdownHeaderTextSplitter(
 )
 ```
 
-### 3.2 Chunk-Größe
+**Funktionsweise:**
+- Jeder Abschnitt (definiert durch `#`, `##`, `###`) wird ein eigenständiger Chunk
+- Die Überschrift wird automatisch als `heading`-Metadatum extrahiert
+- Das Embedding wird aus der Kombination `{heading}: {content}` erzeugt, um semantische Relevanz zu erhöhen
+
+**Vorteile:**
+- Chunks entsprechen natürlichen semantischen Einheiten
+- Keine willkürliche Fragmentierung von Erklärungen
+- Überschriften liefern wertvolle Metadaten für das Retrieval
+
+#### 3.1.2 JSON-Chunking: Key-Value Strategie
+
+**Datei:** `setup/chunks/json_chunker.py`
+
+JSON-Dokumente werden auf oberster Ebene nach Schlüsseln aufgeteilt – jeder Key wird zu einem eigenständigen Chunk:
+
+```python
+def chunk_json(data: dict[str, any], file_name: str) -> None:
+    for i, key in enumerate(data):
+        value = data[key]
+        content: str = json.dumps(value)
+        # Embedding aus Key + Value für bessere Semantik
+        tensor = util.embedding.build_embedding(f"{key}: {content}")
+```
+
+**Funktionsweise:**
+- Iteration über alle Top-Level-Keys des JSON-Objekts
+- Jeder Key-Value-Paar wird ein Chunk
+- Der Key wird als `heading`-Metadatum gespeichert
+- Das Embedding kombiniert Key und Value für kontextreichere Vektoren
+
+**Anwendungsfall:**
+Ideal für strukturierte Daten wie `db_glossary_relational.json`, wo jeder Eintrag (z.B. „PRIMARY_KEY", „FOREIGN_KEY") ein abgeschlossenes Konzept darstellt.
+
+#### 3.1.3 CSV-Chunking: Batch-Strategie
+
+**Datei:** `setup/chunks/csv_chunker.py`
+
+CSV-Dateien werden zeilenweise eingelesen und in Batches von 5 Zeilen gruppiert:
+
+```python
+def batching(data, batch_size):
+    current_datas: list = []
+    current_size: int = 0
+    for i in data:
+        current_datas.append(i)
+        current_size += 1
+        if current_size >= batch_size:
+            yield current_datas
+            current_datas = []
+            current_size = 0
+    if current_size > 0:
+        yield current_datas
+
+def chunk_csv(content: list[dict[str, any]], file_name: str) -> None:
+    for i, batch in enumerate(batching(content, 5)):
+        content: str = json.dumps(batch)
+        tensor = util.embedding.build_embedding(content)
+```
+
+**Funktionsweise:**
+- CSV wird als Liste von Dictionaries eingelesen (`csv.DictReader`)
+- Zeilen werden in Batches à 5 Einträge gruppiert
+- Jeder Batch wird als JSON-String serialisiert und embeddet
+- Der Dateiname dient als `heading`-Metadatum
+
+**Begründung der Batch-Größe:**
+- **Batch-Size 5:** Verhindert zu kleine Chunks bei tabellarischen Daten (z.B. Isolation-Level-Matrix mit wenigen Zeilen)
+- Tabellarische Daten sind oft nur im Zusammenhang verständlich (z.B. Vergleich mehrerer Join-Typen)
+
+### 3.2 Übersicht der Chunking-Strategien
+
+| Format | Strategie | Chunk-Einheit | Metadaten-Quelle | Overlap |
+|--------|-----------|---------------|------------------|---------|
+| **Markdown** | Heading-Aware | Abschnitt (H1/H2/H3) | Überschrift | 0% |
+| **JSON** | Key-Value | Top-Level-Key | Key-Name | 0% |
+| **CSV** | Batching | 5 Zeilen pro Chunk | Dateiname | 0% |
+
+### 3.3 Embedding-Umsetzung
+
+#### 3.3.1 Embedding-Modell
+
+**Datei:** `util/embedding.py`
+
+Das System verwendet das Sentence-Transformer-Modell `all-MiniLM-L6-v2` zur Vektorisierung:
+
+```python
+import sentence_transformers
+import torch
+
+DEFAULT_MODEL = "all-MiniLM-L6-v2"
+
+model: sentence_transformers.SentenceTransformer = sentence_transformers.SentenceTransformer(DEFAULT_MODEL)
+
+def build_embedding(content: str) -> torch.Tensor:
+    return model.encode(content)
+```
+
+#### 3.3.2 Modellcharakteristik
+
+| Eigenschaft | Wert | Bedeutung |
+|-------------|------|-----------|
+| **Dimensionalität** | 384 | Kompakter Vektor, speichereffizient |
+| **Modellgröße** | ~22 MB | Schnelles Laden, geringer Ressourcenbedarf |
+| **Max. Sequenzlänge** | 256 Tokens | Ausreichend für unsere Chunk-Größen |
+| **Trainingsgrundlage** | Sentence-Pairs | Optimiert für semantische Ähnlichkeit |
+
+**Begründung der Modellwahl:**
+- **Geschwindigkeit:** Das Modell ist klein genug für lokale Inferenz ohne GPU
+- **Qualität:** Trotz geringer Größe liefert es gute semantische Repräsentationen für Fachtexte
+- **Mehrsprachigkeit:** Unterstützt Deutsch und Englisch, was für unsere gemischten Dokumente relevant ist
+
+#### 3.3.3 Kontext-Anreicherung beim Embedding
+
+Die drei Chunking-Strategien unterscheiden sich in der Embedding-Generierung:
+
+| Strategie | Embedding-Input | Begründung |
+|-----------|-----------------|------------|
+| **Markdown** | `f"{header_info}: {content}"` | Die Überschrift (Header 2) liefert semantischen Kontext |
+| **JSON** | `f"{key}: {content}"` | Der Key beschreibt den Inhalt des Values |
+| **CSV** | `content` (nur Batch-Inhalt) | Kein eindeutiger Kontext-Identifier verfügbar |
+
+**Implementierungsdetail Markdown:**
+```python
+header_info = raw_chunk.metadata.get('Header 2', 'N/A')
+tensor = util.embedding.build_embedding(f"{header_info}: {content}")
+```
+
+Der `MarkdownHeaderTextSplitter` extrahiert automatisch die Überschriftenhierarchie. Die Implementierung nutzt primär `Header 2` als Kontext, da diese Ebene in den verwendeten Dokumenten die thematische Gliederung repräsentiert.
+
+**Implementierungsdetail JSON:**
+```python
+tensor = util.embedding.build_embedding(f"{key}: {content}")
+```
+
+Der JSON-Key wird dem serialisierten Value vorangestellt. Dadurch wird beispielsweise aus dem Key `"PRIMARY_KEY"` und seinem Value ein Embedding erzeugt, das den Begriff „PRIMARY_KEY" semantisch mit der Definition verknüpft.
+
+**Implementierungsdetail CSV:**
+```python
+tensor = util.embedding.build_embedding(content)
+```
+
+Bei CSV-Daten fehlt ein natürlicher Kontext-Identifier. Der Batch wird als JSON-Array serialisiert und direkt embeddet. Die semantische Kohärenz ergibt sich aus der Zusammengehörigkeit der Tabellenzeilen.
+
+#### 3.3.4 Vektor-Speicherung
+
+Die generierten Embeddings werden als Float-Array direkt im Chunk-Dokument gespeichert:
+
+```python
+vector: pgvector.psycopg2.vector.Vector = pgvector.psycopg2.vector.Vector(tensor)
+
+chunk: dict[str, any] = {
+    # ... andere Felder ...
+    "embedding": vector.to_list(),  # 384-dimensionaler Float-Vektor
+}
+```
+
+**Hinweis:** Die Verwendung von `pgvector.psycopg2.vector.Vector` als Zwischenschritt ist ein Implementierungsdetail – die Vektoren werden letztlich als Python-Liste in MongoDB gespeichert, nicht in PostgreSQL.
+
+### 3.4 Übersicht der Chunking-Strategien
+
+| Format | Strategie | Chunk-Einheit | Metadaten-Quelle | Embedding-Kontext | Overlap |
+|--------|-----------|---------------|------------------|-------------------|---------|
+| **Markdown** | Heading-Aware | Abschnitt (H1/H2/H3) | Überschrift (Header 2) | `{heading}: {content}` | 0% |
+| **JSON** | Key-Value | Top-Level-Key | Key-Name | `{key}: {content}` | 0% |
+| **CSV** | Batching | 5 Zeilen pro Chunk | Dateiname | `{content}` | 0% |
+
+### 3.5 Chunk-Größen im Detail
+
+Die Chunk-Größe variiert je nach Strategie und Dokumentstruktur:
+
+| Strategie | Typische Chunk-Größe | Bestimmungsfaktor |
+|-----------|---------------------|-------------------|
+| **Markdown** | 50–400 Wörter | Länge des Abschnitts zwischen Überschriften |
+| **JSON** | 20–200 Wörter | Größe des Value-Objekts pro Key |
+| **CSV** | 5 Zeilen (~100–300 Zeichen) | Feste Batch-Size von 5 |
+
+**Keine feste Wortanzahl:** Die Implementierung verwendet bewusst keine starre Wortgrenze. Die Chunk-Größe ergibt sich aus der natürlichen Struktur der Dokumente (Abschnitte, Keys, Zeilen-Batches).
+
+### 3.6 Overlap
 
 | Parameter | Wert | Begründung |
 |-----------|------|------------|
-| **Ziel-Chunk-Größe** | 150–300 Wörter | Optimal für erklärende Fragen mit Kontext [Modul 6, Abschnitt 3.2] |
-| **Minimum** | 50 Wörter | Vermeidet semantisch leere Chunks |
-| **Maximum** | 500 Wörter | Verhindert Kontextverlust bei komplexen Erklärungen |
+| **Overlap** | **0%** | Alle Strategien nutzen strukturelle Grenzen (Überschriften, Keys, Zeilen) |
 
-**Begründung:** Gemäß den Kursmaterialien sind Medium Chunks (150–300 Wörter) „gut für erklärende Fragen mit Kontext". Da unser Use Case primär Konzepterklärungen umfasst, ist diese Größe ideal.
+**Begründung:** Da alle drei Chunking-Strategien auf expliziten Strukturgrenzen basieren (Markdown-Überschriften, JSON-Keys, CSV-Zeilen), ist kein Overlap notwendig. Die semantischen Einheiten sind durch die Dokumentstruktur bereits sauber getrennt.
 
-### 3.3 Overlap
+### 3.7 Anzahl der Chunks
 
-| Parameter | Wert | Begründung |
-|-----------|------|------------|
-| **Overlap** | **0%** | Markdown-Abschnitte haben klare semantische Grenzen |
+| Dokumenttyp | Anzahl Dokumente | Strategie | Chunks pro Dokument (Ø) | Gesamt-Chunks |
+|-------------|------------------|-----------|-------------------------|---------------|
+| Markdown | 6 | Heading-Aware | ~8 | ~48 |
+| JSON | 3 | Key-Value | ~12 | ~36 |
+| CSV | 3 | Batching (5) | ~3 | ~9 |
+| Text | 5 | (noch nicht impl.) | - | - |
+| **Gesamt** | **17** | - | - | **~93** |
 
-**Begründung:** Die Kursmaterialien empfehlen „0% für technische Doku mit klaren Abschnitten" [Modul 6, Abschnitt 3.3]. Da unsere Dokumente durch Überschriften klar strukturiert sind, ist kein Overlap notwendig. Overlap wäre nur sinnvoll bei narrativen Texten, wo Information „nicht genau an Abschnittsgrenzen steht".
-
-### 3.4 Anzahl der Chunks
-
-| Dokumenttyp | Anzahl Dokumente | Chunks pro Dokument (Ø) | Gesamt-Chunks |
-|-------------|------------------|-------------------------|---------------|
-| Markdown | 6 | ~8 | ~48 |
-| JSON | 3 | ~12 | ~36 |
-| CSV | 3 | ~5 | ~15 |
-| Text | 5 | ~6 | ~30 |
-| **Gesamt** | **17** | - | **~129** |
-
-### 3.5 Beispiel: Guter vs. Schlechter Chunk
+### 3.8 Beispiel: Guter vs. Schlechter Chunk
 
 #### ✅ Guter Chunk
 
