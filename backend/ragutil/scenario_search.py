@@ -1,9 +1,3 @@
-"""
-Docstring for backend.rag.scenario_search
-
-Input: Keywords from se LLM
-Output: 3 Szenarios
-"""
 import pgvector.psycopg2
 import pgvector.psycopg2.vector
 import torch
