@@ -5,7 +5,6 @@ import ragutil.perplexity
 import ragutil.scenario_search
 import util.chunk
 import util.scenario
-import util.user
 
 
 
@@ -17,21 +16,19 @@ perplexity_client: ragutil.perplexity.PerplexityQuerier = ragutil.perplexity.Per
 
 def rag_process(user_input: str) -> str:
     logging.info(f"Started RAG Process for `{user_input}`")
-    # 1. KI-Keyword extraktion
 
+
+    # 1. KI-Keyword extraktion
     keywords: list[str] = extract_keywords(perplexity_client, user_input)
-    # keywords = [
-    #     "Finanzmanagement",
-    #     "Kundenverwaltung",
-    #     "Gesundheitswesen"
-    # ]
+
+    if not keywords:
+        return "Perplexity hat nicht geantworte [Keywords]"
+
     joined_keywords: str = ",".join(keywords)
     logging.info(f"Retrieved Keywords: `{joined_keywords}`")
 
+
     # 2. Szenarien Vektorsuche
-    #   Mit den Keywords wird eine Vektorsuche gemacht
-    #   Die Top-3 Szenarien werden dabei ausgegeben
-   
     scenarios: list[util.scenario.Scenario] = ragutil.scenario_search.match_keywords(keywords, 2)
     names: list[str] = [
         scenario.name
@@ -40,56 +37,17 @@ def rag_process(user_input: str) -> str:
     joined_names: str = ", ".join(names)
     logging.info(f"Mapped Scenarios: `{joined_names}`")
 
+
     # 3. Chunks Vektorsuche
-    total_blocks: list[str] = []
+    logging.info("Retrieved chunks")
+
+    total_prompt_blocks: list[str] = []
 
     for scenario in scenarios:
-        total_chunks: list[util.chunk.DocumentChunk] = []
-        questions: list[util.scenario.ScenarioQuestion] = scenario.get_scenario_questions()
+        prompt_block: str = process_scenario(scenario)
+        total_prompt_blocks.append(prompt_block)
 
-        scenario_blocks: list[str] = []
-
-        scenario_blocks.append(scenario.description)
-
-        if DEBUG:
-            print(scenario.name)
-
-        for question in questions:
-            chunks: list[util.chunk.DocumentChunk] = ragutil.chunks_search.retrieve_chunks_for_scenario_question(question, 2)
-
-            reduced_chunks: list[util.chunk.DocumentChunk] = [
-                i
-                for i in chunks
-                if i not in total_chunks
-            ]
-
-            
-
-            for i in reduced_chunks:
-                total_chunks.append(i)
-            
-            if DEBUG:
-                print("\t- " + question.question)
-                print("\t   " + question.answer)
-                r = [
-                    chunk.metadata.source_file
-                    for chunk in reduced_chunks
-                ]
-                print("\t\t" + " ".join(r))
-                print("")
-
-            question_block: str = build_question_block(question, reduced_chunks)
-            scenario_blocks.append(question_block)
-
-        
-        
-        
-        total_blocks.append(
-            "\n\n".join(scenario_blocks)
-        )
-    logging.info("Retrievd chunks")
-
-    query_part: str = "\n\n".join(total_blocks)
+    query_part: str = "\n\n".join(total_prompt_blocks)
     
     # 4. LLM Aufbereitung
     result = process_final_results(perplexity_client, user_input, query_part)
@@ -97,6 +55,47 @@ def rag_process(user_input: str) -> str:
 
     return result
 
+
+
+def process_scenario(scenario: util.scenario.Scenario) -> str:
+    total_chunks: list[util.chunk.DocumentChunk] = []
+    questions: list[util.scenario.ScenarioQuestion] = scenario.get_scenario_questions()
+
+    scenario_blocks: list[str] = []
+
+    scenario_blocks.append(scenario.description)
+
+    if DEBUG:
+        print(scenario.name)
+
+    for question in questions:
+        chunks: list[util.chunk.DocumentChunk] = ragutil.chunks_search.retrieve_chunks_for_scenario_question(question, 2)
+
+        reduced_chunks: list[util.chunk.DocumentChunk] = [
+            i
+            for i in chunks
+            if i not in total_chunks
+        ]
+
+        
+
+        for i in reduced_chunks:
+            total_chunks.append(i)
+        
+        if DEBUG:
+            print("\t- " + question.question)
+            print("\t   " + question.answer)
+            r = [
+                chunk.metadata.source_file
+                for chunk in reduced_chunks
+            ]
+            print("\t\t" + " ".join(r))
+            print("")
+
+        question_block: str = build_question_block(question, reduced_chunks)
+        scenario_blocks.append(question_block)
+    
+    return "\n\n".join(scenario_blocks)
 
 
 def build_question_block(question: util.scenario.ScenarioQuestion, chunks: list[util.chunk.DocumentChunk]) -> str:
@@ -124,22 +123,24 @@ def build_question_block(question: util.scenario.ScenarioQuestion, chunks: list[
 
 
 def extract_keywords(perplexity_client: ragutil.perplexity.PerplexityQuerier, user_input: str) -> list[str]:
-    response = perplexity_client.prompt(
-        f"""
+    prompt: str = f"""
         Folgendes ist ein User Promt, dieser Soll auf ALLE möglichen Stichworte die auf dessen Szenario zutreffen, runtergrebrochen werden.
         MAXIMAL aber 10 Stichworte. In der AUSGABE von DIR, sollen NUR diese Stichworte rauskommen, KEINERLEI ERKLÄRUNG oder sonstiges.
         Diese Stichworte bitte als JSON-Parsable Array. Sonst keinen Text!
 
         {user_input}
         """
-    )
+    
+    try:
+        response = perplexity_client.prompt(prompt)
 
-    return json.loads(response)
+        return json.loads(response)
+    except:
+        return None
 
 
 def process_final_results(perplexity_client: ragutil.perplexity.PerplexityQuerier, user_input: str, query_part: str) -> str:
-    response = perplexity_client.prompt(
-        f"""
+    prompt: str = f"""
         DER USER PROMT:
         {user_input}
 
@@ -164,10 +165,8 @@ def process_final_results(perplexity_client: ragutil.perplexity.PerplexityQuerie
 
         {query_part}
         """
-    )
-    #return query_part
-    return response
-
-
-def process_input(user: util.user.User, input: str) -> str:
-    return "Placeholder"
+    try:
+        response = perplexity_client.prompt(prompt)
+        return response
+    except:
+        return "Perplexity hat nicht geantwortet [Zusammenfassung]"
