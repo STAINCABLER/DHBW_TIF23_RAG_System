@@ -1,5 +1,7 @@
 import json
 import logging
+import time
+
 import ragutil.chunks_search
 import ragutil.perplexity
 import ragutil.scenario_search
@@ -17,12 +19,13 @@ perplexity_client: ragutil.perplexity.PerplexityQuerier = ragutil.perplexity.Per
 def rag_process(user_input: str) -> str:
     logging.info(f"Started RAG Process for `{user_input}`")
 
-
+    start_time_1: float = time.perf_counter()
     # 1. KI-Keyword extraktion
     keywords: list[str] = extract_keywords(perplexity_client, user_input)
 
     if not keywords:
         return "Perplexity hat nicht geantworte [Keywords]"
+    start_time_2: float = time.perf_counter()
 
     joined_keywords: str = ",".join(keywords)
     logging.info(f"Retrieved Keywords: `{joined_keywords}`")
@@ -37,7 +40,7 @@ def rag_process(user_input: str) -> str:
     joined_names: str = ", ".join(names)
     logging.info(f"Mapped Scenarios: `{joined_names}`")
 
-
+    start_time_3: float = time.perf_counter()
     # 3. Chunks Vektorsuche
     logging.info("Retrieved chunks")
 
@@ -49,11 +52,22 @@ def rag_process(user_input: str) -> str:
 
     query_part: str = "\n\n".join(total_prompt_blocks)
     
+    start_time_4: float = time.perf_counter()
+
     # 4. LLM Aufbereitung
     result = process_final_results(perplexity_client, user_input, query_part)
     logging.info("Returning results")
 
-    return result
+    end_time: float = time.perf_counter()
+
+    delta_perflexity_1: float = start_time_2 - start_time_1
+    delta_scenarios: float = start_time_3 - start_time_2
+    delta_chunks: float = start_time_4 - start_time_3
+    delta_perflexity_2: float = end_time - start_time_4
+    rag_delta: float = start_time_4 - start_time_2
+    delta: float = end_time - start_time_1
+
+    return result + f"\n\n---------------------------------------------------------\n# Rag hat {delta:.3f}s benötigt! ({rag_delta:.3f}s ohne AI)\n# - Perplexity 1: {delta_perflexity_1:.3f}s\n# - ScenarioSearch 1: {delta_scenarios:.3f}s\n# - ChunkSearch 1: {delta_chunks:.3f}s\n# - Perplexity 2: {delta_perflexity_2:.3f}s\n---------------------------------------------------------"
 
 
 

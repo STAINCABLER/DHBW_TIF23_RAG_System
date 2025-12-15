@@ -20,9 +20,7 @@ def read_file_content_json(file_path: str) -> list | dict:
 
 def strategy_heading_aware(text: str, chunk_size: int = 0, overlap: int = 0) -> list[langchain_core.documents.Document]:
     headers_to_split_on = [
-        ("#", "Header 1"),
         ("##", "Header 2"),
-        ("###", "Header 3"),
     ]
     markdown_splitter = langchain_text_splitters.MarkdownHeaderTextSplitter(headers_to_split_on=headers_to_split_on)
     return markdown_splitter.split_text(text)
