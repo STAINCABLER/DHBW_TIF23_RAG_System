@@ -1,6 +1,6 @@
 MongoDB
 
-Basisdaten
+Basisdaten MongoDB
 Entwickler	MongoDB, Inc.
 Erscheinungsjahr	2009
 Aktuelle Version	8.1.2[1]

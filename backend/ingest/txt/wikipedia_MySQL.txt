@@ -1,7 +1,6 @@
 MySQL
 
-Überprüft
-MySQL
+Überprüft MySQL
 Logo von MySQL
 Basisdaten
 Entwickler	Oracle Corporation (bis Februar 2008: MySQL AB, bis Januar 2010: Sun Microsystems)

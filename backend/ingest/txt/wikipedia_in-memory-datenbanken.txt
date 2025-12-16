@@ -1,5 +1,6 @@
 In-Memory-Datenbank
 
+In-Memory-Datenbank
 Eine In-Memory-Datenbank (IMDB) ist ein Datenbankmanagementsystem, das den Arbeitsspeicher eines Computers als Datenspeicher nutzt. Damit unterscheidet es sich von herkömmlichen Datenbankmanagementsystemen, die dazu Festplattenlaufwerke verwenden.
 Der Arbeitsspeicher eines Rechners bietet wesentlich höhere Zugriffsgeschwindigkeiten als Festplattenlaufwerke und die Algorithmen für den Zugriff sind einfacher. Deshalb sind In-Memory-Datenbanken wesentlich schneller und ihre Zugriffszeiten sind besser vorhersagbar als die von auf Festplatten zugreifenden Datenbankmanagementsystemen. Jedoch ist Arbeitsspeicher sehr viel teurer als Festplattenspeicher, der einzelne Rechner hat deshalb üblicherweise sehr viel weniger davon. Wenn eine Datenbank hohe Speicherkapazität braucht, kann jedoch durch Grid-Computing diese Schranke für In-Memory-Datenbanken überwunden werden.
 

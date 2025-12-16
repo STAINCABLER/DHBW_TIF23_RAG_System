@@ -1,5 +1,6 @@
 NoSQL
 
+NoSQL
 NoSQL (englisch für Not only SQL deutsch: „Nicht nur SQL“) bezeichnet Datenbanken, die einen nicht-relationalen Ansatz verfolgen und damit mit der langen Geschichte relationaler Datenbanken brechen. Diese Datenspeicher benötigen keine festgelegten Tabellenschemata und versuchen Joins zu vermeiden. Sie skalieren dabei horizontal. Im akademischen Umfeld werden sie häufig als „strukturierte Datenspeicher“ (engl. structured storage) bezeichnet.[1][2][3][4]
 Bekannte Implementierungen sind Riak, Apache Cassandra, CouchDB, MongoDB und Redis.
 

@@ -1,6 +1,6 @@
 Redis
 
-Basisdaten
+Redis Basisdaten
 Entwickler	Salvatore Sanfilippo[1]
 Erscheinungsjahr	10. April 2009
 Aktuelle Version	8.4.0[2]
