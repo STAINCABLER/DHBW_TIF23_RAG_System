@@ -1,5 +1,0 @@
-normal_form,key_condition,eliminated_anomalies
-1NF,Alle Attribute atomar; keine Wiederholungsgruppen,"Mehrfachspeicherung in Spalten, schlechte Filterbarkeit"
-2NF,1NF und keine partiellen Abhängigkeiten von zusammengesetzten Schlüsseln,"Redundanzen durch Attribute, die nur von Teil-Schlüsseln abhängen"
-3NF,2NF und keine transitiven Abhängigkeiten von Schlüsseln auf Nichtschlüsselattribute,"Redundanzen durch abgeleitete Attribute, Update-/Löschanomalien"
-BCNF,Für jede nicht-triviale FD X->Y ist X Superschlüssel,Verbleibende Anomalien trotz 3NF bei speziellen FDs

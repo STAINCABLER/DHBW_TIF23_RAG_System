@@ -1,0 +1,3 @@
+Call notes,Call direction,Call source,Call status,Call title,Activity date,First Name,Last Name,Email
+Called to prospect but went to voicemail. Will try again next week.,Outbound,VoIP,Busy,Prospecting call,10/12/2022 10:30,John,Smith,jsmith@example.com
+Held a zoom meeting to follow up on proposal.,Inbound,Zoom,Completed,Follow-up call,10/14/2022 14:30,Ann,Smith,asmith@test.com

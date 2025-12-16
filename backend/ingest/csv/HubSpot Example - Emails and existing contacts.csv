@@ -1,0 +1,4 @@
+﻿Record ID - Contacts,Email subject,Email send status,Email body,Email direction,,
+12345,Checking in about contract,Sent,Hi there! Wanted to check in and see if you had a chance to view the contract.,Outgoing,,
+67891,Following up on support ticket,Sent,"Hello, Following up on our conversation last week. Have you had a chance to look at my ticket?",Incoming,,
+11121,Onboarding information,Scheduled,Thank you for choosing out company! In this email we've included information to help you get started using our product.,Outgoing,,
