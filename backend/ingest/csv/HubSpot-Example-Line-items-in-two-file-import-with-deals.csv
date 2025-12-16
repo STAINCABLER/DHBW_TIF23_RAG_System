@@ -1,0 +1,5 @@
+Name,Quantity,Price,Deal Name,Currency Code,Product ID,Term
+Line item 1,1,500,Deal 1,USD,1234,P12M
+Line item 2,2,450,Deal 1,USD,1234,P12M
+Line item 3,2,30,Deal 2,INR,5567,P24M
+Line item 4,3,45,Deal 3,XUA,4321,P24M

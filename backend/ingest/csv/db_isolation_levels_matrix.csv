@@ -1,5 +1,0 @@
-isolation_level,dirty_reads,non_repeatable_reads,phantom_reads,notes
-READ UNCOMMITTED,ja,ja,ja,"Höchste Parallelität, aber schwächste Garantien; in vielen DBMS nicht explizit unterstützt."
-READ COMMITTED,nein,ja,ja,Standard in vielen Systemen; guter Kompromiss zwischen Konsistenz und Performance.
-REPEATABLE READ,nein,nein,abhängig von Implementierung,"Stärkere Garantien, ggf. mit Sperren oder MVCC-Snapshots umgesetzt."
-SERIALIZABLE,nein,nein,nein,Formal äquivalent zu serieller Ausführung; geringere Parallelität.

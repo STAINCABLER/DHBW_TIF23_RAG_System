@@ -1,0 +1,4 @@
+﻿Deal name,Deal pipeline,Deal stage,Associated deal record ID
+Deal 1,Sales pipeline,Appointment schedued,12345; 78910
+Deal 2,Partner pipeline,Closed Won,55874
+Deal 3,Sales pipeline,Contract sent,25469; 46685; 12589
