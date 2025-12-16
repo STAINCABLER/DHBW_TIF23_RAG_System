@@ -6,7 +6,6 @@ Der Arbeitsspeicher eines Rechners bietet wesentlich höhere Zugriffsgeschwindig
 Nicht-Persistenz
 Da In-Memory-Datenbanken ihre Daten in flüchtigem Arbeitsspeicher speichern, der sie bei Systemabstürzen verliert, erfüllen sie nicht ohne Weiteres die Anforderung der dauerhaften Speicherung (Persistenz) erfolgreich abgeschlossener Transaktionen.
 Viele In-Memory-Datenbanken helfen dem ab und erreichen weniger oder mehr Persistenz bei der Datenspeicherung mit folgenden Methoden:
-
 Schnappschuss-Dateien speichern den Zustand der Datenbank zu bestimmten Zeitpunkten, beispielsweise in geplanten Abständen oder beim kontrollierten Abschalten der Datenbank. Alle Veränderungen seit dem jüngsten Schnappschuss können bei diesem Verfahren allerdings nach wie vor verloren gehen.
 In zusätzlichen Protokolldateien werden kürzlich erfolgte Änderungen an der Datenbank ebenfalls niedergelegt. Aus dem jüngsten Schnappschuss und dem Protokoll der inzwischen getätigten Änderungen kann der letzte gültige Zustand der Datenbank automatisch wiederhergestellt werden.
 Benutzung von nichtflüchtigem RAM-Speicher, üblicherweise realisiert als Kombination eines herkömmlichen flüchtigen RAM-Speichers mit einem Energiespeicher, garantiert den Erhalt der Daten auch bei Neustart des Systems.
@@ -18,7 +17,6 @@ Hybride In-Memory-Datenbanken sind Datenbanksysteme, welche Daten sowohl im Haup
 
 Produkte
 Es gibt eine Reihe von kommerziellen und Open-Source-Implementierungen von In-Memory-Datenbanken. Dazu gehören unter anderem (alphabetisch geordnet):
-
 Apache Derby – kann als reine In-Memory-Datenbank konfiguriert werden
 Berkeley DB – kann als reine In-Memory-Datenbank konfiguriert werden
 H2 Database – Java-Datenbank, neues Projekt vom HSQLDB Initiator, kann als reine In-Memory-Datenbank konfiguriert werden
@@ -34,14 +32,15 @@ Raima – In-Memory-Datenbank mit Optionen für High Availability und SQL.
 Redis – ein Schlüssel-Werte-Datenbanksystem[4]
 SAP HANA – Hauptspeicherdatenbank der HANA-Plattform
 SQLite – kann Hauptspeicher und Festplatten gemeinsam nutzen
+
 Kritik
 Der Begriff „In-Memory-Datenbank“ ist wenig trennscharf. Auch herkömmliche Datenbanken nutzen in der Regel den Arbeitsspeicher, um langsame I/O-Zugriffe wie auf eine Festplatte zu vermeiden. Dabei kann je nach Konfiguration des Systems auch die gesamte Datenbank im Arbeitsspeicher gehalten werden. Weiterhin ist für die Geschwindigkeit eines Datenbanksystems in der Regel die Daten- oder Indexstruktur wichtiger als die Zugriffsgeschwindigkeit des Speichermediums. Erst die Optimierung dieser Datenstrukturen auf den Arbeitsspeicher ohne Strukturen für den I/O-Zugriff stellt einen Unterschied zu herkömmlichen Datenbank dar.[5]
-
 Hohe Geschwindigkeiten bei „In-Memory-Datenbanken“ kommen zum Teil auch dadurch zu Stande, dass man die Fähigkeiten zur Persistenz und Konsistenz einschränkt. Das ist bei vorwiegend für Lesezugriffe gedachten Datenbanken vollkommen legitim, für andere Anwendungsfälle allerdings problematisch. Um diese Probleme auszugleichen, werden einige Produkte wie zum Beispiel Redis und MySQL auch häufig kombiniert und „In-Memory-Datenbanken“ erfüllen dann den Zweck eines Cache.[6]
 
 Siehe auch
 Grid-Computing – Möglichkeit der Verteilung von In-Memory-Datenbanken
 NoSQL – Weitere Alternative zu Datenbankmanagementsystemen
+
 Literatur
 Jack Belzer: Very Large Data Base Systems to Zero-Memory and Markov Information Source. In: Albert G. Holzman (Hrsg.): Encyclopedia of Computer Science and Technology. Band 14. Marcel Dekker Inc, 1980, ISBN 978-0-8247-2214-2 (englisch).
 Hasso Plattner, Alexander Zeier: In-Memory Data Management: An Inflection Point for Enterprise Applications. 1. Auflage. Springer, 2011, ISBN 978-3-642-19362-0 (englisch).

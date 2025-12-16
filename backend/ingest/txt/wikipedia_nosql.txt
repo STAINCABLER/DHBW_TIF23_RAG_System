@@ -30,6 +30,7 @@ Multivalue-Datenbanken	OpenQM, Rocket U2
 Objektdatenbanken	Db4o, ZODB, Objectivity/DB
 Spaltenorientierte Datenbanken	Apache Cassandra, Google BigTable, HBase, SimpleDB, Scylla
 Datenstrom	Apache Kafka, RethinkDB, PipelineDB
+
 Leistung
 Nach Ben Scofield kann die Leistung von NoSQL-Datenbanken wie folgt bewertet werden:[12]
 
@@ -39,6 +40,7 @@ Spaltenorientiert	hoch	hoch	mittel	gering	minimal
 Dokumentenorientiert	hoch	unterschiedlich (hoch)	hoch	gering	unterschiedlich (gering)
 Graphbasiert	unterschiedlich	unterschiedlich	hoch	hoch	Graphentheorie
 Relational	unterschiedlich	unterschiedlich	gering	mittel	Relationale Algebra
+
 Literatur
 Stefan Edlich, Achim Friedland, Jens Hampe, Benjamin Brauer, Markus Brückner: NoSQL: Einstieg in die Welt nichtrelationaler Web 2.0 Datenbanken. 2., aktualisierte und erweiterte Auflage. Hanser Verlag, München 2011, ISBN 978-3-446-42753-2.
 Pramodkumar J. Sadalage, Martin Fowler: NoSQL Distilled: A Brief Guide to the Emerging World of Polyglot Persistence. Addison-Wesley, Amsterdam 2012, ISBN 978-0-321-82662-6 (englisch).

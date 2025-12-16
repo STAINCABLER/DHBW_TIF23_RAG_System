@@ -5,7 +5,6 @@ Das zugehörige Datenbankmanagementsystem wird als relationales Datenbankmanagem
 Das relationale Datenbankmodell wurde 1970 von Edgar F. Codd erstmals vorgeschlagen und ist bis heute trotz einiger Kritikpunkte ein etablierter Standard für Datenbanken.
 
 Grundlegende Konzepte
-
 Begriffe relationaler Datenbanken
 Eine relationale Datenbank kann man sich als eine Sammlung von Tabellen (den Relationen) vorstellen, in welchen Datensätze abgespeichert sind. Jede Zeile (Tupel) in einer Tabelle ist ein Datensatz (record). Jedes Tupel besteht aus einer Reihe von Attributwerten (Attribute = Eigenschaften), den Spalten der Tabelle. Das Relationenschema legt dabei die Anzahl und den Typ der Attribute für eine Relation fest. Das Bild illustriert die Relation R mit Attributen A1 bis An in den Spalten.
 Zum Beispiel wird ein Buch in einer Bibliothek durch den Datensatz (Buch-ID, Autor, Verlag, Verlagsjahr, Titel, Datum der Aufnahme) beschrieben. Ein Datensatz muss eindeutig identifizierbar sein. Das geschieht über einen oder mehrere Schlüssel (englisch key). In diesem Fall enthält Buch-ID die Schlüssel. Ein Schlüssel darf sich niemals ändern. Er bezieht sich auf den Datensatz und nicht auf die Position in der Tabelle.
@@ -17,11 +16,11 @@ Buch-ID	Autor	Verlag	Verlagsjahr	Titel	Datum
 300	G. I. Caesar	Handschriftverlag	−44	Mein Leben mit Asterix	16.03.−44
 400	Galileo Galilei	Inquisition International	1640	Eppur si muove	1641
 500	Charles Darwin	Vatikan-Verlag	1860	Adam und Eva	1862
+
 Beziehungen zwischen Tabellen
 Weiterhin können Verknüpfungen genutzt werden, um die Beziehungen zwischen Tabellen auszudrücken. Eine Bibliothekdatenbank könnte damit etwa folgendermaßen mit drei Tabellen implementiert werden:
 
 Tabelle Buch, die für jedes Buch eine Zeile enthält:
-
 Jede Zeile besteht aus den Spalten der Tabelle (Attributen): Buch-ID, Autor, Verlag, Verlagsjahr, Titel, Datum der Aufnahme.
 Als Schlüssel dient die Buch-ID, da sie jedes Buch eindeutig identifiziert.
 Tabelle Nutzer, die die Daten von allen registrierten Bibliotheksnutzern enthält:
@@ -90,7 +89,6 @@ Die relationale Algebra bietet keine Unterstützung zur Berechnung von rekursive
 Mit der Einführung von SQL-99 wurde jedoch auch eine erweiterte relationale Algebra eingeführt, die eine Operation zur Berechnung der transitiven Hülle erlaubt.
 
 Datenbankschema und Modellierung
-
 Ein ER-Diagramm in Chen-Notation
 Wichtiger Bestandteil einer relationalen Datenbank ist ihr Schema. Das Schema legt fest, welche Daten in der Datenbank gespeichert werden und wie diese Daten in Beziehung zueinander stehen. Der Vorgang zum Erstellen eines Schemas nennt sich Datenmodellierung.
 Zur Modellierung von relationalen Datenbanken wird auch das Entity-Relationship-Modell verwendet. Es dient zum Entwurf eines konzeptuellen Schemas, welches unter Verwendung eines Datenbankmanagementsystems (DBMS) implementiert werden kann. Dieser Schritt wird als logischer Entwurf oder auch Datenmodellabbildung bezeichnet und hat als Ergebnis ein Datenbankschema im Implementierungsdatenmodell des DBMS.
@@ -117,6 +115,7 @@ Tabelle	Relation	Entitätsmenge(-set)	Objektmenge, Instanzmenge, Klasse
 Spaltenüberschrift(en)	Fremdschlüssel	funktionale Beziehung (Relationship)	Assoziation
 Zeile	Tupel	Entität	Objekt, Instanz
 Zelle	Attributwert
+
 Siehe auch
 Relationale Entwurfstheorie
 Datenbank-Muster
@@ -130,9 +129,11 @@ Literatur
 Edgar F. Codd: The Relational Model for Database Management. Version 2. Addison-Wesley, Reading u. a. 1990, ISBN 0-201-14192-2.
 Alfons Kemper, André Eickler: Datenbanksysteme. Eine Einführung. R. Oldenbourg Verlag, München 2004, ISBN 3-486-27392-2.
 Andreas Meier: Relationale und postrelationale Datenbanken. 7. Auflage. Springer-Verlag, Heidelberg 2010, ISBN 978-3-642-05255-2 (online).
+
 Weblinks
 Kriterien für relationale Datenbanksysteme mit ausführlicher Beschreibung der 12 Regeln
 RDBMS. In: Datenbanken Online Lexikon, FH Köln
 Datenbanken-verstehen – Umfangreiches Portal
+
 Einzelnachweise
  Edgar F. Codd: A Relational Model of Data for Large Shared Data Banks. In: Communications of the ACM. ACM Press, 13. Juni 1970, ISSN 0001-0782, S. 377–387 (englisch, acm.org).

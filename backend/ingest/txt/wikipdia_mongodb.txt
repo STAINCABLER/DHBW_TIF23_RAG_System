@@ -73,7 +73,6 @@ MongoDB Management Service (MMS) ist eine cloud-basierte Monitoring-Lösung und 
 
 Grafische Oberflächen
 Es gibt einige grafische Oberflächen (GUIs) zur Sichtung und Bearbeitung der Daten. Dazu gehören:
-
 Name	Beschreibung	Lizenz	Linux	Windows	Mac
 MongoDB Compass	offizielle plattformübergreifende GUI für MongoDB[27]	Server Side Public License[28]	ja	ja	ja
 Studio 3T (ehemals MongoChef)	eine plattformübergreifende MongoDB GUI[29]	freie Lizenz und proprietär	ja	ja	ja
@@ -89,6 +88,7 @@ Robo 3T (ehemals Robomongo)	eine plattformübergreifende MongoDB-GUI[38]	GNU GPL
 UMongo (JMongoBrowser)	eine plattformübergreifende Management-GUI, geschrieben in Java[40]	verschiedene OpenSource-Lizenzen[41]	—	—	—
 DBHawk	ein webbasiertes MongoDB-Tool[42]	proprietär	ja	ja	ja
 DataGrip (und weitere professionelle JetBrains IDEs)[43]	professionelle Datenbank-Entwicklungsumgebung mit Unterstützung für viele verschiedene Datenbanksysteme wie unter anderem MongoDB. Geschrieben in Java. Basiert auf der quelloffenen IntelliJ-Plattform.[44]	proprietär	ja	ja	ja
+
 Replikation
 Um Ausfälle einzelner Server zu kompensieren und die Last der Lesezugriffe auf mehrere Server zu verteilen, bietet MongoDB zwei Arten der Replikation an:
 
@@ -109,13 +109,12 @@ Bei Lese- und Schreibzugriffen werden die Daten zunächst im RAM abgelegt und er
 Aufgrund der Nutzung von mmap ist auf 32-Bit-Rechnern die Datengröße auf 2 GB begrenzt (bei 64-Bit-Rechnern liegt die Obergrenze entsprechend sehr viel höher).[47] Der MongoDB-Server kann nur auf Little-Endian-Systemen benutzt werden, obwohl die meisten Treiber sowohl auf Little-Endian- als auch auf Big-Endian-Systemen laufen.
 
 Weitere Merkmale sind:
-
 UTF-8-Kodierung der Dokumente. Nicht-UTF-8-Daten können mittels eines speziellen Binärdatentyps gespeichert, angefragt und abgerufen werden.
 Unterstützung von Datum, regulären Ausdrücken, Code und binären Daten (allesamt BSON-Kategorien).
 Server-seitige JavaScript-Ausführung: JavaScript ist die Verkehrssprache von MongoDB und kann für Abfragen und Aggregationsfunktionen (wie beispielsweise MapReduce) verwendet werden, außerdem kann JavaScript direkt zur Datenbank geschickt und dort ausgeführt werden.
+
 Lizenzierung und Unterstützung
 MongoDB war bis Oktober 2018 unter der GNU Affero General Public License (AGPL) frei erhältlich. Die Sprachtreiber sind erhältlich unter einer Apache-Lizenz.[48]
-
 Im Oktober 2018 wechselten die Entwickler der Datenbank MongoDB zur proprietären Server Side Public License (SSPL), damit Cloud-Provider die Datenbank nicht nutzen, ohne Code zurückzugeben.
 Die SSPL erfordert, dass jeder, der den MongoDB-Service anbietet, auch den Quellcode des Services unter dieser Lizenz veröffentlicht, auch den Code aller Programme für das Management, für Nutzerinterfaces, für Monitoring und für Backups. MongoDB legte die Lizenz der Open Source Initiative (OSI) vor, wo diese abgelehnt wurde[49]. Eine neue Version 2 der Lizenz wurde erneut der OSI vorgelegt[50], dann aber zurückgezogen, nachdem klar wurde, dass diese nicht akzeptiert werden würde.[51] MongoDB ist derzeit nur unter der abgelehnten Version 1 verfügbar. Dem voraus ging eine ähnliche Lizenzänderung durch Entwickler der Datenbank Redis.[52]
 Aufgrund der Lizenzänderung wurde MongoDB aus den Linux-Distributionen Debian, Fedora und Red Hat Enterprise Linux entfernt. Das Fedora-Projekt entschied, dass die SSPL version 1 keine Freie-Software-Lizenz ist.[53][54]

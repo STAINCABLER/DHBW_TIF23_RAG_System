@@ -16,10 +16,9 @@ Kategorie	Datenbankmanagementsystem
 Lizenz	GNU General Public License, Version 2[5], proprietäre Lizenz[6]
 deutschsprachig	ja
 www.mysql.com
+
 MySQL [ˌmaɪɛskjuːˈɛl][7] ist eines der weltweit verbreitetsten[8] relationalen Datenbankverwaltungssysteme. Es ist als Open-Source-Software sowie als proprietäre Enterpriseversion für verschiedene Betriebssysteme verfügbar.
-
 MySQL wurde seit 1994 vom schwedischen Unternehmen MySQL AB entwickelt. Im Februar 2008 wurde MySQL AB vom Unternehmen Sun Microsystems übernommen, das seinerseits im Januar 2010 von Oracle gekauft wurde.
-
 Der Name MySQL setzt sich zusammen aus dem Vornamen My, den die Tochter des MySQL-AB-Mitbegründers Michael Widenius trägt, und SQL.[9][10]
 
 Einsatzgebiete und Verbreitung
@@ -125,7 +124,6 @@ Die BDB-Speicher-Engine wird ab Version 5.1 nicht mehr weiter unterstützt.
 
 FEDERATED
 Die FEDERATED-Engine bietet Zugriff auf Tabellen, die auf einem anderen Server liegen. Wenn man eine Tabelle vom Typ FEDERATED erstellt, dann muss die entfernte Tabelle auf dem anderen Server bereits existieren. Der lokale Server verhält sich wie ein Client, der auf den entfernten Server zugreift. Die FEDERATED-Engine verhält sich wie ein föderiertes Informationssystem, das bedeutet, dass sie die Daten selber nicht speichert, sondern Zugriff auf den fernen Server gewährt, während auf diesem ebenfalls auf die Daten zugegriffen werden kann. Bei der Version 5.0 kann nur auf andere MySQL-Server zugegriffen werden.
-
 Die Zugangsdaten zu dem entfernten Datenbankserver werden dabei unverschlüsselt in der lokalen frm-Datei gespeichert. Der Zugriff auf das Datenverzeichnis muss auf der Betriebssystemebene eingeschränkt werden um das Auslesen der Zugriffsrechte durch Unbefugte zu verhindern.
 
 ARCHIVE
@@ -138,7 +136,6 @@ Bei der CSV-Engine werden die Daten im CSV-Format gespeichert: Zahlen werden nic
 
 BLACKHOLE
 BLACKHOLE wurde entwickelt, um die Syntax von SQL-Statements zu prüfen und ein Binärlog zu schreiben. Die Daten werden nicht gespeichert. Dadurch können Syntaxprüfungen von SQL-Statements ausgeführt werden, ohne dass Speicherplatz zum Speichern der Daten bereitgestellt werden muss. Die Ausgabe des Binärlogs kann über einen Parameter aktiviert und deaktiviert werden.
-
 Die BLACKHOLE-Engine ist ideal für die folgenden Aufgaben:
 
 Syntaxprüfung von Dump-Dateien
@@ -313,6 +310,7 @@ Einzelnachweise
  Neuerungen in MySQL 5.6 (Memento des Originals vom 23. April 2011 im Internet Archive)  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis. (englisch), abgerufen am 23. Juni 2012
  MariaDB versus MySQL – Kompatibilität. In: MariaDB KnowledgeBase. (mariadb.com [abgerufen am 8. Februar 2017]).
  Press Release: Oracle Announces General Availability of MySQL 5.7 (englisch), abgerufen am 30. August 2017
+ 
  Doku
  MySQL :: MySQL 9.0 Reference Manual :: 1.4 What Is New in MySQL 9.0. Abgerufen am 9. Dezember 2024.
  Oracle Lifetime Support Policy. Abgerufen am 10. Oktober 2019 (englisch).

@@ -5,7 +5,6 @@ Während eine relationale Datenbank aus Datenbanktabellen besteht, die einem fes
 In aktuellen Datenbanksystemen wie CouchDB und MongoDB enthalten diese Dokumente semistrukturierte Daten wie JSON, YAML oder XML (siehe auch XML-Datenbank). Dies ermöglicht das Speichern komplexer Datenstrukturen in der Datenbank sowie deren Abfrage anhand bestimmter Eigenschaften. Im Gegensatz zu relationalen Datenbanken müssen diese Strukturen nicht auf Tabellen abgebildet werden, was die Vorgänge des Speicherns und des Auslesens weniger komplex macht. Jedoch können aufgrund der fehlenden Möglichkeiten zur Normalisierung Redundanzen in den Daten entstehen und die Anwendung, die die Daten nutzen soll, wird komplexer, da sie unter Umständen selbst dafür sorgen muss, dass die Daten konsistent sind.[3]
 
 Weitere dokumentenorientierte Datenbankmanagementsysteme sind:
-
 BaseX
 Elasticsearch
 eXist
