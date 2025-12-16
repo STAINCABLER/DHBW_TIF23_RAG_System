@@ -1,0 +1,26 @@
+Dokumentenorientierte Datenbank
+
+Eine dokumentenorientierte Datenbank ist eine Datenbank, bei der Dokumente die Grundeinheit zur Speicherung der Daten bilden. Als das am weitesten verbreitete Datenbanksystem mit einer dokumentenorientierten Datenbank gilt HCL Notes (vor 2019 IBM bzw. Lotus Notes). Da sie keinen relationalen Ansatz verfolgen und auf SQL verzichten, zählen dokumentenorientierte Datenbanken zu den NoSQL-Datenbanken.
+
+Während eine relationale Datenbank aus Datenbanktabellen besteht, die einem festen Datenbankschema unterliegen, enthält eine dokumentenorientierte Datenbank einzelne Dokumente mit einem eindeutigen Identifikator. Hierbei entspricht ein Dokument einer Zeile in einer Datenbanktabelle. Diese Dokumente können nun strukturierte Dateien mit einem Standard-Dateiformat sein (wie eine Textverarbeitungsprogrammdatei), aber auch Binary Large Objects sind möglich, die im Sinne eines Datenbankzugriffs nicht weiter strukturiert sind (wie ein Videofilm im mpeg-Format).[1] Da die Dokumente schemafrei sind, kann eine Datenbank unterschiedliche Arten von Dokumenten enthalten. Durch die Zuordnung der Dokumente zu einem eindeutigen Schlüssel sind dokumentenorientierte Datenbanken Schlüssel-Werte-Datenbanken sehr ähnlich. Während Schlüssel-Werte-Datenbanken den dem Schlüssel zugeordneten Wert nicht weiter betrachten, bieten dokumentenorientierte Datenbanken Möglichkeiten, die Dokumente direkt auszuwerten oder inhaltlich zu verändern.[2]
+
+In aktuellen Datenbanksystemen wie CouchDB und MongoDB enthalten diese Dokumente semistrukturierte Daten wie JSON, YAML oder XML (siehe auch XML-Datenbank). Dies ermöglicht das Speichern komplexer Datenstrukturen in der Datenbank sowie deren Abfrage anhand bestimmter Eigenschaften. Im Gegensatz zu relationalen Datenbanken müssen diese Strukturen nicht auf Tabellen abgebildet werden, was die Vorgänge des Speicherns und des Auslesens weniger komplex macht. Jedoch können aufgrund der fehlenden Möglichkeiten zur Normalisierung Redundanzen in den Daten entstehen und die Anwendung, die die Daten nutzen soll, wird komplexer, da sie unter Umständen selbst dafür sorgen muss, dass die Daten konsistent sind.[3]
+
+Weitere dokumentenorientierte Datenbankmanagementsysteme sind:
+
+BaseX
+Elasticsearch
+eXist
+MarkLogic Server
+RavenDB
+Zusätzlich bieten relationale Datenbanksysteme wie PostgreSQL und MySQL Möglichkeiten an, semistrukturierte Daten in den Tabellen zu speichern und diese ähnlich wie bei einer dokumentenorientierten Datenbank auszuwerten.[4][5] Dies ermöglicht das Verbinden des relationalen und des dokumentenorientierten Ansatzes.
+
+Literatur
+Wassilios Kazakos, Andreas Schmidt, Peter Tomczyk, D. Gündisch, T. Marz, Guido Moerkotte, A. Valikov: Datenbanken und XML: Konzepte, Anwendungen, Systeme (Xpert.press). Springer, 2002, ISBN 978-3-540-41956-3.
+Peter Gluchowski, Roland Gabriel, Carsten Dittmar: Management Support Systeme und Business Intelligence: Computergestützte Informationssysteme für Fach- und Führungskräfte. Springer, 2008, ISBN 978-3-540-23543-9.
+Einzelnachweise
+ Rod Stephens: Beginning Database Design Solutions. Wiley-India, New Delhi 2008, S. 44. ISBN 81-265-1917-7.
+ Dokumentenorientierte Datenbanken.
+ MongoDB: erfolgreich ein dokumentenorientiertes Datenbanksystem einführen (Memento des Originals vom 17. Februar 2019 im Internet Archive)  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis..
+ JSON Types.
+ The JSON Data Type.

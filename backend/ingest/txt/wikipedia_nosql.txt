@@ -1,0 +1,71 @@
+NoSQL
+
+NoSQL (englisch für Not only SQL deutsch: „Nicht nur SQL“) bezeichnet Datenbanken, die einen nicht-relationalen Ansatz verfolgen und damit mit der langen Geschichte relationaler Datenbanken brechen. Diese Datenspeicher benötigen keine festgelegten Tabellenschemata und versuchen Joins zu vermeiden. Sie skalieren dabei horizontal. Im akademischen Umfeld werden sie häufig als „strukturierte Datenspeicher“ (engl. structured storage) bezeichnet.[1][2][3][4]
+
+Bekannte Implementierungen sind Riak, Apache Cassandra, CouchDB, MongoDB und Redis.
+
+Geschichte
+Der Begriff NoSQL, noch im Sinne von no SQL, wurde erstmals für eine 1998 erschienene einfache Open-Source-Datenbank verwendet, die keine SQL-Zugriffsmöglichkeit bereitstellte. Carlo Strozzi, der Entwickler dieser Datenbank, unterscheidet allerdings die NoSQL-Datenbank von der NoSQL-Bewegung insofern, als erstere eine Datenbank ist, welche auf die Verwendung der Sprache SQL verzichtet, während letztere ein Konzept ist, das vom relationalen Modell Abstand nimmt.[5]
+
+Der Begriff NoSQL im Sinne von Not only SQL wurde Anfang 2009 von Johan Oskarsson für ein Treffen über verteilte strukturierte Datenspeicher neu eingeführt.[6] Der Name war ein Versuch einer gemeinsamen Begriffsfindung für die wachsende Zahl an nicht relationalen, verteilten Datenspeichersystemen, die meist auch auf ACID-Eigenschaften verzichteten.
+
+Dieses Thema ist nicht ganz neu. Die Bestrebung, Daten ohne die Einschränkungen des relationalen Modells zu speichern, war bereits früher unter dem Titel dokumentenorientierte Datenbank bekannt. Insofern sind alle Vertreter dieser Thematik auch als NoSQL-Systeme zu betrachten.
+
+Obwohl sich NoSQL-Systeme kontinuierlich verbreiten, wird der Markt nach wie vor deutlich von relationalen Systemen dominiert (Stand 2025).[7]
+
+Architektur
+Relationale Datenbanken leiden üblicherweise unter Leistungsproblemen bei datenintensiven Applikationen wie Indexierung großer Dokumentmengen, Webseiten mit hohen Lastaufkommen sowie Streaming-Media-Applikationen. Relationale Datenbanken sind nur dann effizient, wenn sie für häufige, aber kleine Transaktionen oder für große Batch-Transaktionen mit seltenen Schreibzugriffen optimiert sind. Sie können aber schlecht mit gleichzeitig hohen Datenanforderungen und häufigen Datenänderungen umgehen.[8] NoSQL dagegen kann mit vielen Schreib-/Leseanfragen umgehen.[9]
+
+NoSQL-Architekturen bieten meist nur schwache Garantien hinsichtlich Konsistenz wie beispielsweise eventual consistency oder auf einzelne Datensätze eingeschränkte Transaktionen. Einige Systeme unterstützen auch ACID, beispielsweise durch Hinzufügung spezieller Middleware wie CloudTPS.[10]
+
+Viele NoSQL-Implementierungen unterstützen verteilte Datenbanken mit redundanter Datenhaltung auf vielen Servern, beispielsweise unter Nutzung einer verteilten Hashtabelle. Damit können die Systeme einfach erweitert werden sowie Ausfälle einzelner Server überstehen.[11]
+
+Unterscheidung nach Datenmodell
+NoSQL-Implementierungen können folgendermaßen gegliedert werden:
+
+Merkmal	Beispiele
+Dokumentenorientierte Datenbanken	Apache Jackrabbit, BaseX, CouchDB, eXist, HCL Notes, MongoDB, OrientDB
+Graphdatenbanken	Generisch	Neo4j, OrientDB, Amazon Neptune, InfoGrid, HyperGraphDB, Core Data, DEX, Gremlin
+RDF-Zentriert	AllegroGraph, 4store
+Verteilte ACID-Datenbanken	MySQL Cluster
+Key-Value-Datenbanken	Festplattenspeicher	Chordless, Google BigTable, GT.M, InterSystems Caché, etcd
+Caches im RAM	Membase, memcached, Redis, Aerospike
+Eventually-consistente Speicher	Amazon Dynamo, Project Voldemort, Riak
+Sortierte Key-Value-Speicher	Berkeley DB, memcached
+Multivalue-Datenbanken	OpenQM, Rocket U2
+Objektdatenbanken	Db4o, ZODB, Objectivity/DB
+Spaltenorientierte Datenbanken	Apache Cassandra, Google BigTable, HBase, SimpleDB, Scylla
+Datenstrom	Apache Kafka, RethinkDB, PipelineDB
+Leistung
+Nach Ben Scofield kann die Leistung von NoSQL-Datenbanken wie folgt bewertet werden:[12]
+
+Datenmodell	Leistung	Skalierbarkeit	Flexibilität	Komplexität	Funktionalität
+Key–Value	hoch	hoch	hoch	keine	unterschiedlich (keine)
+Spaltenorientiert	hoch	hoch	mittel	gering	minimal
+Dokumentenorientiert	hoch	unterschiedlich (hoch)	hoch	gering	unterschiedlich (gering)
+Graphbasiert	unterschiedlich	unterschiedlich	hoch	hoch	Graphentheorie
+Relational	unterschiedlich	unterschiedlich	gering	mittel	Relationale Algebra
+Literatur
+Stefan Edlich, Achim Friedland, Jens Hampe, Benjamin Brauer, Markus Brückner: NoSQL: Einstieg in die Welt nichtrelationaler Web 2.0 Datenbanken. 2., aktualisierte und erweiterte Auflage. Hanser Verlag, München 2011, ISBN 978-3-446-42753-2.
+Pramodkumar J. Sadalage, Martin Fowler: NoSQL Distilled: A Brief Guide to the Emerging World of Polyglot Persistence. Addison-Wesley, Amsterdam 2012, ISBN 978-0-321-82662-6 (englisch).
+Weblinks
+Binärgewitter #1: NoSQL (Podcast bei RadioTux)
+NoSQL Databases (Links zu NoSQL-Themen, gepflegt durch Stefan Edlich)
+NoSQL Anwendergruppen in Deutschland
+Überblicksartikel zum Thema NoSQL (Heise online)
+Stefan Edlich: Ausblick zur Entwicklung von SQL zu NoSQL. Frankfurter Datenbanktage
+Roberto V. Zicari: Free Downloads/Artikel zu NoSQL ODBMS.org
+Prof. Dr. Oliver Hummel: Denormalisieren in NoSQL
+Einzelnachweise
+ Avinash Lakshman, Prashant Malik: Cassandra – A Decentralized Structured Storage System. (PDF, 133 kB) Cornell University, 2009, abgerufen am 24. Juni 2010 (englisch).
+ Fay Chang, Jeffrey Dean, Sanjay Ghemawat, Wilson C. Hsieh, Deborah A. Wallach, Mike Burrows, Tushar Chandra, Andrew Fikes, Robert E. Gruber: Bigtable: A Distributed Storage System for Structured Data. (PDF, 221 kB) Google, abgerufen am 22. April 2012 (englisch).
+ HBase: structured storage of sparse data for Hadoop (Memento vom 6. April 2012 im Internet Archive)
+ NoSQL-Datenbanken: Mehr als nur SQL. Abgerufen am 24. Februar 2023.
+ NoSQL: A Relational Database Management System. Strozzi.it, 2. Oktober 2007, abgerufen am 24. Juni 2010 (englisch): „While the former is a well-defined software package, is a relational database to all effects and just does intentionally not use SQL as a query language, the newcomer is mostly a concept (and by no means a novel one either), which departs from the relational model altogether and it should therefore have been called more appropriately “NoREL”, or something to that effect.“
+ Eric Evans: NOSQL 2009. 12. Mai 2009, archiviert vom Original (nicht mehr online verfügbar) am 16. Juli 2011; abgerufen am 24. Juni 2010 (englisch): „Johan Oskarsson has organized a meetup for folks interested in distributed structured data storage and is calling it NOSQL.“  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis.
+ DBMS Popularität pro Datenbankmodell. Abgerufen am 24. Januar 2025.
+ Rakesh Agrawal et al.: The Claremont report on database research. In: ACM (Hrsg.): SIGMOD Record. Band 37, Nr. 3, September 2008, ISSN 0163-5808, S. 9–19, doi:10.1145/1462571.1462573 (englisch).
+ Eric Lai: No to SQL? Anti-database movement gains steam. 1. Juli 2009, archiviert vom Original (nicht mehr online verfügbar) am 21. Juli 2014; abgerufen am 4. Dezember 2011 (englisch).  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis.
+ CloudTPS: Scalable Transactions for Web Applications in the Cloud. Globule.org, Februar 2010, abgerufen am 24. Juni 2010 (englisch): „CloudTPS is a scalable transaction manager to allow cloud database services to execute the ACID transactions of web applications, even in the presence of server failures and network partitions“
+ Avinash Lakshman, Prashant Malik: Cassandra: Structured Storage System over a P2P Network. (PDF, 410 kB) Last.fm.com, abgerufen am 24. Juni 2010 (englisch).
+ Ben Scofield: NoSQL – Death to Relational Databases(?). 14. Januar 2010, abgerufen am 26. Juni 2014.

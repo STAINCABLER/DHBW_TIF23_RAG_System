@@ -1,0 +1,64 @@
+In-Memory-Datenbank
+
+Eine In-Memory-Datenbank (IMDB) ist ein Datenbankmanagementsystem, das den Arbeitsspeicher eines Computers als Datenspeicher nutzt. Damit unterscheidet es sich von herkömmlichen Datenbankmanagementsystemen, die dazu Festplattenlaufwerke verwenden.
+
+Der Arbeitsspeicher eines Rechners bietet wesentlich höhere Zugriffsgeschwindigkeiten als Festplattenlaufwerke und die Algorithmen für den Zugriff sind einfacher. Deshalb sind In-Memory-Datenbanken wesentlich schneller und ihre Zugriffszeiten sind besser vorhersagbar als die von auf Festplatten zugreifenden Datenbankmanagementsystemen. Jedoch ist Arbeitsspeicher sehr viel teurer als Festplattenspeicher, der einzelne Rechner hat deshalb üblicherweise sehr viel weniger davon. Wenn eine Datenbank hohe Speicherkapazität braucht, kann jedoch durch Grid-Computing diese Schranke für In-Memory-Datenbanken überwunden werden.
+
+Nicht-Persistenz
+Da In-Memory-Datenbanken ihre Daten in flüchtigem Arbeitsspeicher speichern, der sie bei Systemabstürzen verliert, erfüllen sie nicht ohne Weiteres die Anforderung der dauerhaften Speicherung (Persistenz) erfolgreich abgeschlossener Transaktionen.
+
+Viele In-Memory-Datenbanken helfen dem ab und erreichen weniger oder mehr Persistenz bei der Datenspeicherung mit folgenden Methoden:
+
+Schnappschuss-Dateien speichern den Zustand der Datenbank zu bestimmten Zeitpunkten, beispielsweise in geplanten Abständen oder beim kontrollierten Abschalten der Datenbank. Alle Veränderungen seit dem jüngsten Schnappschuss können bei diesem Verfahren allerdings nach wie vor verloren gehen.
+In zusätzlichen Protokolldateien werden kürzlich erfolgte Änderungen an der Datenbank ebenfalls niedergelegt. Aus dem jüngsten Schnappschuss und dem Protokoll der inzwischen getätigten Änderungen kann der letzte gültige Zustand der Datenbank automatisch wiederhergestellt werden.
+Benutzung von nichtflüchtigem RAM-Speicher, üblicherweise realisiert als Kombination eines herkömmlichen flüchtigen RAM-Speichers mit einem Energiespeicher, garantiert den Erhalt der Daten auch bei Neustart des Systems.
+Hochverfügbare In-Memory-Datenbanken stellen die Dauerhaftigkeit durch Replikation und bei Ausfall Wechsel (Failover) auf eine herkömmliche Datenbank sicher.
+Einige In-Memory-Datenbanken können nach Wunsch Teile des Datenbestandes in mehr oder weniger starkem Maße persistent machen. Man kann sich damit den Aufwand für die Sicherung von Daten ersparen, die leicht wiederzuerzeugen oder die nach einem Systemabsturz ohnehin nutzlos sind.
+
+Hybride In-Memory-Datenbanken
+Hybride In-Memory-Datenbanken sind Datenbanksysteme, welche Daten sowohl im Hauptspeicher, als auch auf Festplatten speichern können. Diese ermöglichen es, im Betrieb die geeignete Balance zwischen Leistung, Kosten, Dauerhaftigkeit und Formfaktor zu erreichen.[1][2]
+
+Produkte
+Es gibt eine Reihe von kommerziellen und Open-Source-Implementierungen von In-Memory-Datenbanken. Dazu gehören unter anderem (alphabetisch geordnet):
+
+Apache Derby – kann als reine In-Memory-Datenbank konfiguriert werden
+Berkeley DB – kann als reine In-Memory-Datenbank konfiguriert werden
+H2 Database – Java-Datenbank, neues Projekt vom HSQLDB Initiator, kann als reine In-Memory-Datenbank konfiguriert werden
+HSQLDB – kann als reine In-Memory-Datenbank konfiguriert werden
+IBM Informix – Warehouse Accelerator[3]
+IBM Cognos TM1 – eine OLAP-Datenbank, eines der ersten Produkte in diesem Bereich, seit 1984 auf dem Markt
+InfoZoom
+Microsoft SQL Server (Hekaton)
+MySQL – kommt mit einem Cluster-Server für eine verteilte In-Memory-Datenbank
+Oracle TimesTen
+Oracle In-Memory-Option der Oracle Enterprise Edition
+Raima – In-Memory-Datenbank mit Optionen für High Availability und SQL.
+Redis – ein Schlüssel-Werte-Datenbanksystem[4]
+SAP HANA – Hauptspeicherdatenbank der HANA-Plattform
+SQLite – kann Hauptspeicher und Festplatten gemeinsam nutzen
+Kritik
+Der Begriff „In-Memory-Datenbank“ ist wenig trennscharf. Auch herkömmliche Datenbanken nutzen in der Regel den Arbeitsspeicher, um langsame I/O-Zugriffe wie auf eine Festplatte zu vermeiden. Dabei kann je nach Konfiguration des Systems auch die gesamte Datenbank im Arbeitsspeicher gehalten werden. Weiterhin ist für die Geschwindigkeit eines Datenbanksystems in der Regel die Daten- oder Indexstruktur wichtiger als die Zugriffsgeschwindigkeit des Speichermediums. Erst die Optimierung dieser Datenstrukturen auf den Arbeitsspeicher ohne Strukturen für den I/O-Zugriff stellt einen Unterschied zu herkömmlichen Datenbank dar.[5]
+
+Hohe Geschwindigkeiten bei „In-Memory-Datenbanken“ kommen zum Teil auch dadurch zu Stande, dass man die Fähigkeiten zur Persistenz und Konsistenz einschränkt. Das ist bei vorwiegend für Lesezugriffe gedachten Datenbanken vollkommen legitim, für andere Anwendungsfälle allerdings problematisch. Um diese Probleme auszugleichen, werden einige Produkte wie zum Beispiel Redis und MySQL auch häufig kombiniert und „In-Memory-Datenbanken“ erfüllen dann den Zweck eines Cache.[6]
+
+Siehe auch
+Grid-Computing – Möglichkeit der Verteilung von In-Memory-Datenbanken
+NoSQL – Weitere Alternative zu Datenbankmanagementsystemen
+Literatur
+Jack Belzer: Very Large Data Base Systems to Zero-Memory and Markov Information Source. In: Albert G. Holzman (Hrsg.): Encyclopedia of Computer Science and Technology. Band 14. Marcel Dekker Inc, 1980, ISBN 978-0-8247-2214-2 (englisch).
+Hasso Plattner, Alexander Zeier: In-Memory Data Management: An Inflection Point for Enterprise Applications. 1. Auflage. Springer, 2011, ISBN 978-3-642-19362-0 (englisch).
+Weblinks
+In-Memory Database Systems Questions and Answers
+H-store Project
+Martin Fowler: InMemoryTestDatabase. 22. November 2005, abgerufen am 4. Juli 2010 (englisch).
+Sprint Project
+Main Memory Database Systems: An Overview
+SAP HANA Appliance
+TIBCO Activspaces Enterprise Edition
+Einzelnachweise
+ Bernhard Cole: Hybrid embedded database merges on-disk and in-memory data management. Embedded.com, 2. Mai 2007, abgerufen am 6. Juli 2010 (englisch).
+ Steve Graves: Hybrid Data Management Gets Traction in Set-Top Boxes. Embedded.com, 28. Juli 2008, archiviert vom Original (nicht mehr online verfügbar) am 23. Mai 2016; abgerufen am 6. Juli 2010 (englisch).  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis.
+ IBM Informix Warehouse Accelerator. IBM.com, archiviert vom Original (nicht mehr online verfügbar) am 8. August 2011; abgerufen am 30. Juni 2012.  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis.
+ DB-Engines Ranking von Key-Value Stores
+ Craig S. Mullins: How to determine if an in-memory DBMS is right for your company. searchdatamanagement.techtarget.com, April 2015, abgerufen am 18. März 2019 (englisch).
+ Bryana Knight: Moving persistent data out of Redis. github.blog, 10. Januar 2017, abgerufen am 18. März 2019 (englisch).

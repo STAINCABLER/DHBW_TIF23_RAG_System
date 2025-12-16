@@ -1,0 +1,46 @@
+Redis
+
+Basisdaten
+Entwickler	Salvatore Sanfilippo[1]
+Erscheinungsjahr	10. April 2009
+Aktuelle Version	8.4.0[2]
+(18. November 2025)
+Aktuelle Vorabversion	6.0-rc4[3]
+(16. April 2020)
+Betriebssystem	plattformübergreifend
+Programmier­sprache	ANSI C
+Kategorie	datenstrukturorientierte Datenbank
+Lizenz	Redis Source Available License oder SSPL[4]
+redis.io
+Redis ist eine In-Memory-Datenbank mit einer einfachen Schlüssel-Werte-Datenstruktur (englisch key value store) und gehört zur Familie der NoSQL-Datenbanken (ist also nicht relational). Redis ist laut einer Erhebung von DB-Engines.com der verbreitetste Schlüssel-Werte-Speicher.[5]
+
+Die einfache Struktur der Datenbank eignet sich weniger für komplexe Datenstrukturen, die überwiegend in der Datenbank selbst abgebildet werden sollen. Dafür ist der große Vorteil von Redis, dass es schneller ist als relationale Datenbanken wie z. B. MySQL.
+
+Ab Version 2.6 werden Lua-Skripte unterstützt.[6] Ab Version 3.0 ist es möglich, Redis verteilt in Rechnerverbünden zu nutzen.[7] Die Version 3.2 führt eine GEO-API für Abfragen anhand von Längen- und Breitengrad ein.[8][9]
+
+Redis bietet Persistenz durch automatisiertes, regelmäßiges Abspeichern oder per Protokolldatei, wodurch bei entsprechender Konfiguration auch eine ACID-konforme Dauerhaftigkeit erreichbar ist.[10]
+
+Die Softwareveröffentlichungen bis 2024 standen unter der 3-Klausel-BSD-Lizenz. Am 20. März 2024 kündigte der Hersteller von Redis an, ab Version 7.4 ein duales Lizenzmodell mit der Redis Source Available License und Server Side Public License einzuführen.[4] Die Server Side Public License wird von der Open Source Initiative nicht als Open-Source-Lizenz anerkannt. Eine Woche nach Ankündigung des Lizenzwechsels initiierte die Linux Foundation einen Fork mit dem Namen Valkey mit dem Ziel, das Projekt unter der bisherigen 3-Klausel-BSD-Lizenz fortzuführen.[11]
+
+Name
+Der Name Redis entstand als Abkürzung für englisch remote dictionary server.[12]
+
+Weblinks
+Offizielle Website (englisch)
+GitHub Repository (englisch)
+GUI für Redis-Server
+Artikel über Redis bei Informatik Aktuell
+Artikel über Redis bei heise developer
+Einzelnachweise
+ Salvatore Sanfilippo. In: GitHub. Abgerufen am 3. Februar 2017 (englisch).
+ Release 8.4.0. 18. November 2025 (abgerufen am 20. November 2025).
+ github.com. 16. April 2020.
+ Rowan Trollope: Redis Adopts Dual Source-Available Licensing. Abgerufen am 29. März 2024.
+ DB-Engines Ranking von Key-Value Stores. DB-Engines, abgerufen am 4. April 2015.
+ EVAL script numkeys key [key ...] arg [arg ...]. Introduction to EVAL. In: redis.io. Abgerufen am 4. April 2015 (englisch).
+ Julia Schmidt: NoSQL-Datenbank Redis 3 bringt Clustering-Möglichkeit. In: Heise online. Abgerufen am 9. Mai 2016.
+ Redis 3.2.0 is out! In: antirez.com. Abgerufen am 9. Mai 2016 (englisch).
+ Julia Schmidt: In-Memory-Datenbank: Redis 3.2 mit GEO-API freigegeben. In: Heise online. Abgerufen am 9. Mai 2016.
+ Redis Persistence. In: redis.io. Abgerufen am 4. April 2015 (englisch).
+ Linux Foundation Launches Open Source Valkey Community. The Linux Foundation, 28. März 2024, abgerufen am 11. April 2024 (englisch).
+ FAQ. What Redis means actually? In: redis.io. Abgerufen am 4. April 2015 (englisch).

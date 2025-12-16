@@ -1,0 +1,225 @@
+MongoDB
+
+Basisdaten
+Entwickler	MongoDB, Inc.
+Erscheinungsjahr	2009
+Aktuelle Version	8.1.2[1]
+(2. Juli 2025)
+Aktuelle Vorabversion	8.2.0-rc0[2]
+(21. Juli 2025)
+Betriebssystem	Linux, macOS, Microsoft Windows, OpenBSD
+Programmier­sprache	C++[3], JavaScript, C, Python[4]
+Kategorie	Dokumentenorientierte Datenbank
+Lizenz	Server Side Public License[5][6]
+www.mongodb.com
+MongoDB (abgeleitet vom engl. humongous, „gigantisch“) ist ein dokumentenorientiertes NoSQL-Datenbankmanagementsystem, das in der Programmiersprache C++ geschrieben ist.[7][8] Sie kann Sammlungen von JSON-ähnlichen Dokumenten verwalten. So können viele Anwendungen Daten auf natürlichere Weise modellieren, da die Daten zwar in komplexen Hierarchien verschachtelt werden können, dabei aber immer abfragbar und indizierbar bleiben.
+
+Die Entwicklung von MongoDB begann im Oktober 2007 durch das Unternehmen 10gen, welches am 27. August 2013 in MongoDB, Inc. umbenannt wurde.[9] Die Erstveröffentlichung fand im Februar 2009 statt.[10] MongoDB wurde bis zum 15. Oktober 2018 als Freie Software veröffentlicht und ist seitdem unter der proprietären SSPL verfügbar.[11] Es ist die populärste NoSQL-Datenbank (Stand: Apr 2024).[12]
+
+Das Unternehmen MongoDB, Inc. ist im NASDAQ gelistet und wird unter dem Kürzel MDB gehandelt.
+
+Systemvoraussetzungen
+Die Binärdateien sind verfügbar für Windows, Linux, macOS und Solaris. MongoDB kann auf fast jedem Little-Endian-System kompiliert werden.
+
+Aufbau
+Datenbanken
+Ein MongoDB-Prozess kann mehrere Datenbanken verwalten, und eine Datenbank kann mehrere Collections enthalten. Datenbank und Collection ergeben, durch einen Punkt getrennt, einen Namespace. Für eine Datenbank, die die Daten einer Firma verwalten soll, und eine Collection, die alle Mitarbeiter enthalten soll, könnte man beispielsweise den Namespace firma.mitarbeiter wählen.
+
+Collections
+Eine Collection enthält Dokumente und ist mit einer Tabelle einer relationalen Datenbank vergleichbar. Ein wesentlicher Unterschied besteht darin, dass die Dokumente einer Collection völlig unterschiedlich aufgebaut sein können. Weder müssen sie einem Schema folgen, noch müssen die Werte desselben Schlüssels vom selben Datentyp sein.
+
+Capped Collections
+MongoDB unterstützt größenbeschränkte Dokumentensammlungen – auch capped collections genannt.[13] Eine capped collection wird mit einer bestimmten Größe und – je nach Bedarf – einer Anzahl an Elementen angelegt. Eine capped collection ist die einzige Art Dokumentensammlung, die die Ordnung einhält: Sobald die spezifizierte Größe erreicht ist, verhält sich die capped collection wie ein digitaler Ringspeicher.
+
+Eine besondere Art Cursor – genannt tailable cursor[14] – kann bei capped collections verwendet werden. Der Cursor wurde nach dem Unix-Befehl tail -f benannt. Er verschwindet nicht, sobald er die Wiedergabe der Ergebnisse beendet hat, sondern wartet und gibt neue Ergebnisse wieder, sobald neue Dokumente der Sammlung hinzugefügt werden.
+
+System Collections
+MongoDB legt automatisch System Collections an. Eine der System Collections beinhaltet alle Indizes der Datenbank, eine weitere alle Namespaces, eine JavaScript-Code und die übrigen Informationen zum Profiling und zu Benutzern.
+
+Abfragen
+Mongo erlaubt es, jedes Feld jederzeit abzufragen. Mongo unterstützt auch Bereichsabfragen, das Suchen nach regulären Ausdrücken und andere Spezialsuchabfragen zusätzlich zu Suchen anhand von Beispielen[15]. Diese Abfragen schließen auch benutzerdefinierte JavaScript-Funktionen ein. Abfragen können sowohl spezifische Dokumentenfelder wiedergeben (anstelle des gesamten Dokuments) als auch Ergebnisse sortieren, überspringen und einschränken. Abfragen können in eingebettete Objekte und Anordnungen hineinreichen.
+
+Jedes Abfrageergebnis wird als Cursor bereitgestellt.
+
+Indizierung
+Die Software unterstützt Indexstrukturen, beispielsweise B-Bäume und Geospatial-Indizes.[16] Verschachtelte Felder (so wie oben in der Ad-hoc-Abfrage beschrieben) können gleichfalls indiziert werden. Das Indizieren von Listen ergibt eine Indizierung jedes einzelnen Elements der Liste.
+
+Der Abfrage-Optimierer von MongoDB sucht während eines Abfragelaufs selbständig zwischen unterschiedlichen Auswertungsplänen aus und wählt den schnellsten; dabei findet periodisch eine Stichprobewiederholung statt. Entwickler können den verwendeten Index mittels der Funktion explain einsehen und einen anderen Index mit Hilfe der Funktion hint auswählen.
+
+Indizes können jederzeit angelegt und gelöscht werden.
+
+Aggregation
+Zusätzlich zu Ad-hoc-Abfragen unterstützt die Datenbank auch andere Werkzeuge für die Aggregation einschließlich MapReduce und einer Gruppierungsfunktion ähnlich dem GROUP BY von SQL.
+
+GridFS
+Um Dokumente speichern zu können, die die Größenbeschränkung von 16 MB überschreiten, kann GridFS („Grid File System“) verwendet werden.[17] Dieser Dateien-Speicher-Mechanismus wurde bei Plug-ins für Apache,[18] nginx[19] und lighttpd[20] eingesetzt.
+
+Abgrenzung zu relationalen (SQL-)Datenbanken
+MongoDB wird als NoSQL-Datenbank klassifiziert und grenzt sich als solche dadurch von traditionellen Datenbanken ab, dass sie eine weniger mächtige Abfragesprache anbietet. Dies ist Nachteil und Vorteil zugleich: Zum einen muss in der Anwendungsschicht mehr Logik vorhanden sein, um die gleichen Ergebnisse zu erzielen wie mit SQL-Datenbanken. Zum anderen kann MongoDB den Datenbestand und die Arbeitslast auf mehrere Server verteilen, was in monolithischen SQL-Datenbanken nicht möglich ist. Gleichwohl gibt es mittlerweile auch SQL-Datenbanken z. B. Exasol oder Greenplum, welche über mehrere Server verteilt sind. Nur auf den Mehrserversystemen sind große Join-Operationen in einer angemessenen Zeit zu bewerkstelligen.
+
+MongoDB zielt bei der Verteilung der Daten auf mehrere Server darauf ab, durch Replikation die Verfügbarkeit zu erhöhen und durch Sharding (siehe unten) die Arbeits- und Datenlast zu verteilen. Die Replikation bringt allerdings einen weiteren Nachteil mit sich: Wird ein Schreibzugriff von MongoDB bestätigt, dann gibt es standardmäßig ein Zeitfenster, in dem nachgelagerte Lesezugriffe den alten Datenbestand zurückliefern. Dieses Konsistenzmodell wird als Eventual Consistency bezeichnet.
+
+Ein weiteres Abgrenzungsmerkmal von MongoDB zu Relationalen Datenbanken ist die Schemafreiheit. Während in Relationalen Datenbanken die Struktur eines Datenbankeintrages durch die Definition der Tabelle fest vorgeschrieben ist, können sich die Datenbankeinträge in MongoDB frei voneinander unterscheiden (auch wenn sie derselben Collection angehören).[21] Dieser Freiheit wird zugesprochen, dass sie eine agile Softwareentwicklung unterstützt, da es einfacher ist, auf veränderte Anforderungen zu reagieren.[22]
+
+Allerdings müssen bei Analysen anschließend die Informationen ebenfalls strukturiert werden.
+
+Abgrenzung zu anderen NoSQL-Datenbanken
+Zwecks Klassifizierung von Datenbanken anhand ihrer Qualitätsmerkmale wird oft das CAP-Theorem herangezogen. Das CAP-Theorem besagt, dass im Falle einer Netzwerk-Partitionierung sich ein verteiltes System entscheiden muss, ob es weiterhin verfügbar bleiben oder Konsistenz gewährleisten soll.[23] MongoDB entscheidet sich hier für die Konsistenz, kann die Verfügbarkeit allerdings aufrechterhalten, solange die Mehrzahl der Knoten eines Replica Set miteinander kommunizieren können. CouchDB als Vergleich zu MongoDB mit ähnlichen Funktionalitäten stellt die Verfügbarkeit über die Konsistenz.
+
+Verwaltungswerkzeuge
+Offizielle Werkzeuge
+Mit einem laufenden MongoDB-Server kann auf verschiedenen Wegen eine Verbindung aufgebaut werden. Die Mongo Shell ist in der Distribution enthalten. Eine HTTP-basierte Administrationsoberfläche sowie eine REST-Schnittstelle sind nach vorheriger Aktivierung in einem Browser aufrufbar. Schließlich stehen Programmierern Treiber für zahlreiche Programmiersprachen zur Verfügung, um die Kommunikation ihrer Anwendungen mit MongoDB zu implementieren.
+
+Mongo Shell
+Die Mongo Shell ist ein Kommandozeilen-Client. Sie dient der Verwaltung von MongoDB und ermöglicht ihrem Benutzer Lese- wie Schreiboperationen. Dazu erhält man eine Eingabeaufforderung, auf dem man Befehle in der Sprache JavaScript ausführen kann.
+
+Treiber
+MongoDB ist mit offiziellen Treibern ausgestattet für C, C++, C#, Go, Java, JavaScript, PHP, Python, Ruby, Rust, Scala und Swift.[24]
+
+Es gibt auch zu einigen Programmiersprachen offiziell unterstützte ORMs für MongoDB, wie z. B. Mongoose für die Node.js-Plattform.[25]
+
+Cloud-basierter Monitoring-Dienst
+MongoDB Management Service (MMS) ist eine cloud-basierte Monitoring-Lösung und Alert-Dienst für MongoDB Server.[26]
+
+Grafische Oberflächen
+Es gibt einige grafische Oberflächen (GUIs) zur Sichtung und Bearbeitung der Daten. Dazu gehören:
+
+Name	Beschreibung	Lizenz	Linux	Windows	Mac
+MongoDB Compass	offizielle plattformübergreifende GUI für MongoDB[27]	Server Side Public License[28]	ja	ja	ja
+Studio 3T (ehemals MongoChef)	eine plattformübergreifende MongoDB GUI[29]	freie Lizenz und proprietär	ja	ja	ja
+Nucleon BI Studio	Business Intelligence Frontend für MongoDB	proprietär	—	ja	—
+Fang of Mongo	ein webbasiertes UI, erstellt mit Django und jQuery[30]	GNU AGPL v3.0[31]	ja	—	—
+Nucleon Database Master	eine Windows-basierte Datenbank-Client-Software, die auch RDMS unterstützt	proprietär	—	ja	—
+Futon4Mongo	ein Klon des CouchDB-Futon-Web-Interfaces für MongoDB[32]	—	—	—	—
+mms, Mongo Management Studio	sowohl plattformübergreifendes als auch webbasiertes GUI[33]	freie Lizenz und proprietär	ja	ja	ja
+Mongo3	ein Ruby-basiertes Interface[34]	Apache License 2.0	ja	ja	ja
+MongoHub	eine native OS-X-Anwendung für das Management von MongoDB[35], inaktiv seit April 2015[36]	—	nein	nein	ja
+Opricot	eine browserbasierte MongoDB-Shell, geschrieben mit PHP[37]	GNU GPL v3.0	ja	—	—
+Robo 3T (ehemals Robomongo)	eine plattformübergreifende MongoDB-GUI[38]	GNU GPL v3.0[39]	ja	ja	ja
+UMongo (JMongoBrowser)	eine plattformübergreifende Management-GUI, geschrieben in Java[40]	verschiedene OpenSource-Lizenzen[41]	—	—	—
+DBHawk	ein webbasiertes MongoDB-Tool[42]	proprietär	ja	ja	ja
+DataGrip (und weitere professionelle JetBrains IDEs)[43]	professionelle Datenbank-Entwicklungsumgebung mit Unterstützung für viele verschiedene Datenbanksysteme wie unter anderem MongoDB. Geschrieben in Java. Basiert auf der quelloffenen IntelliJ-Plattform.[44]	proprietär	ja	ja	ja
+Replikation
+Um Ausfälle einzelner Server zu kompensieren und die Last der Lesezugriffe auf mehrere Server zu verteilen, bietet MongoDB zwei Arten der Replikation an:
+
+Master-Slave-Replikation
+Die Master-Slave-Replikation ist veraltet und seit Version 4.0 nicht mehr verfügbar[45].
+
+Ein Master konnte Lese- („Reads“) und Schreibzugriffe („Writes“) ausführen. Ein Slave kopierte die Daten vom Master und konnte nur für Lesezugriffe oder die Datensicherung eingesetzt werden, nicht aber für Schreibzugriffe.
+
+Die Master-Slave-Replikation gestattete es Entwicklern, zu garantieren, dass auf einer Per-Ablauf-Basis zumindest ein Ablauf auf N Server repliziert wurde.
+
+Replica-Sets
+Replica-Sets ähneln dem Master-Slave-Verhältnis, enthalten aber die Möglichkeit für die Slaves, einen neuen Master zu wählen, wenn der derzeitige ausfällt.
+
+Sharding
+MongoDB skaliert horizontal unter Verwendung eines Systems, welches als horizontale Fragmentierung bezeichnet wird und das dem Bigtable- und PNUTS-Skalierungssystem sehr ähnlich ist. Der Entwickler wählt einen Fragmentierungsschlüssel, der festlegt, wie die Daten in einer Ansammlung verteilt werden. Die Daten werden in Bereiche aufgeteilt (unter Zugrundelegung des Fragmentierungsschlüssels) und über mehrere Instanzen verteilt.
+
+Die Anwendung bzw. ihr Entwickler muss wissen, dass die Kommunikation bei bestimmten Abläufen mit einem fragmentierten Cluster erfolgt. So muss eine „findAndModify“-Abfrage den Fragmentierungsschlüssel zum Beispiel beinhalten, wenn die angefragte Sammlung horizontal fragmentiert ist. Die Anwendung kommuniziert mit einem speziellen Routing-Prozess, der „mongos“ genannt wird und der genauso wie ein einzelner MongoDB-Server aussieht. Dieser „mongos“-Prozess weiß, welche Daten von welcher Instanz verwaltet werden, und routet die Abfrage dementsprechend. Alle Abfragen fließen durch diesen Prozess: Dieser leitet nicht nur die Abfragen und Antworten weiter, sondern führt auch alle notwendigen, finalen Datenver- und -entflechtungen durch. Jede beliebige Anzahl an „mongos“-Prozessen kann gestartet werden, allerdings wird gewöhnlich nur eine pro Anwendungsserver empfohlen.
+
+Technische Grundlagen
+Bei Lese- und Schreibzugriffen werden die Daten zunächst im RAM abgelegt und erst nach einer bestimmten Zeit (per Voreinstellung alle 60 Sekunden) vom Betriebssystemdienst mmap auf Disk synchronisiert. Dies ergibt einen Geschwindigkeitsvorteil, da auf den RAM in Nanosekunden zugegriffen werden kann, auf Dateien hingegen im dreistelligen Millisekundenbereich. Ein Nachteil ist, dass etwa bei einem Serverabsturz alle nur im RAM vorhandenen Daten verlorengehen. MongoDB begegnet diesem Nachteil mit dem Journaling-Verfahren.[46]
+
+Aufgrund der Nutzung von mmap ist auf 32-Bit-Rechnern die Datengröße auf 2 GB begrenzt (bei 64-Bit-Rechnern liegt die Obergrenze entsprechend sehr viel höher).[47] Der MongoDB-Server kann nur auf Little-Endian-Systemen benutzt werden, obwohl die meisten Treiber sowohl auf Little-Endian- als auch auf Big-Endian-Systemen laufen.
+
+Weitere Merkmale sind:
+
+UTF-8-Kodierung der Dokumente. Nicht-UTF-8-Daten können mittels eines speziellen Binärdatentyps gespeichert, angefragt und abgerufen werden.
+Unterstützung von Datum, regulären Ausdrücken, Code und binären Daten (allesamt BSON-Kategorien).
+Server-seitige JavaScript-Ausführung: JavaScript ist die Verkehrssprache von MongoDB und kann für Abfragen und Aggregationsfunktionen (wie beispielsweise MapReduce) verwendet werden, außerdem kann JavaScript direkt zur Datenbank geschickt und dort ausgeführt werden.
+Lizenzierung und Unterstützung
+MongoDB war bis Oktober 2018 unter der GNU Affero General Public License (AGPL) frei erhältlich. Die Sprachtreiber sind erhältlich unter einer Apache-Lizenz.[48]
+
+Im Oktober 2018 wechselten die Entwickler der Datenbank MongoDB zur proprietären Server Side Public License (SSPL), damit Cloud-Provider die Datenbank nicht nutzen, ohne Code zurückzugeben.
+Die SSPL erfordert, dass jeder, der den MongoDB-Service anbietet, auch den Quellcode des Services unter dieser Lizenz veröffentlicht, auch den Code aller Programme für das Management, für Nutzerinterfaces, für Monitoring und für Backups. MongoDB legte die Lizenz der Open Source Initiative (OSI) vor, wo diese abgelehnt wurde[49]. Eine neue Version 2 der Lizenz wurde erneut der OSI vorgelegt[50], dann aber zurückgezogen, nachdem klar wurde, dass diese nicht akzeptiert werden würde.[51] MongoDB ist derzeit nur unter der abgelehnten Version 1 verfügbar. Dem voraus ging eine ähnliche Lizenzänderung durch Entwickler der Datenbank Redis.[52]
+
+Aufgrund der Lizenzänderung wurde MongoDB aus den Linux-Distributionen Debian, Fedora und Red Hat Enterprise Linux entfernt. Das Fedora-Projekt entschied, dass die SSPL version 1 keine Freie-Software-Lizenz ist.[53][54]
+
+Sicherheit
+Zahlreiche MongoDB-Installationen im Internet sind von jedermann lesbar und teilweise sogar beschreibbar. Eine Suche mit Shodan lieferte im Januar 2017 52.000 offene Datenbanken.[55]
+
+Ursache ist, dass in der Standardinstallation keinerlei Zugriffskontrolle konfiguriert ist. Wird die Datenbank später auf einen öffentlichen Server verschoben und die Konfiguration nicht angepasst, kann von außen frei auf die Daten zugegriffen werden.[56] Zum Teil wurde das von Ransomware ausgenutzt, die diese Daten verschlüsselt hat.[57] Der Hersteller der kommerziellen Variante empfiehlt schon seit langem Maßnahmen zur Absicherung.[56][58]
+
+Bekannte Anwender
+Die Webpräsenz von MTV Networks[59]
+Disney Interactive Media Group[60]
+Foursquare[61]
+The New York Times[62]
+SourceForge[63]
+Die E-Commerce Website Etsy[64]
+Large Hadron Collider am CERN[65]
+Die Cloud-Computing-Plattform AppScale[66]
+Literatur
+Marc Boeker: MongoDB. Sag Ja zu NoSQL. EntwicklerPress, Frankfurt am Main 2010, ISBN 978-3-86802-057-1
+Tobias Trelle: MongoDB. Der praktische Einstieg. dpunkt, Heidelberg 2014, ISBN 978-3-86490-153-9
+Weblinks
+MongoDB Homepage
+MongoDB, Inc.
+MongoDB University - Free Online MongoDB Training
+Einzelnachweise und Anmerkungen
+ Release r8.1.2. 2. Juli 2025 (abgerufen am 22. Juli 2025).
+ Release r8.2.0-rc0. 21. Juli 2025 (abgerufen am 22. Juli 2025).
+ github.com. 6. Juli 2025.
+ Languages. (englisch, abgerufen am 6. August 2018).
+ www.mongodb.com. (abgerufen am 13. November 2018).
+ jira.mongodb.org. (abgerufen am 13. November 2018).
+ MongoDB. Archiviert vom Original (nicht mehr online verfügbar) am 3. Dezember 2013; abgerufen am 20. November 2013.
+ MongoDB-Website. Abgerufen am 22. Juni 2012.
+ 10gen Announces Company Name Change to MongoDB, Inc. 27. August 2013, abgerufen am 28. August 2013.
+ MongoDB Blog - March 2010. Abgerufen am 22. Juni 2012.
+ MongoDB now released under the Server Side Public License. Abgerufen am 29. November 2018.
+ DB-Engines Ranking. Abgerufen am 9. April 2024.
+ Capped collections. Abgerufen am 22. Juni 2012.
+ Tailable cursors. Abgerufen am 22. Juni 2012.
+ MongoDB Find Command. Abgerufen am 16. Oktober 2016.
+ Geospatial indexes. Abgerufen am 22. Juni 2012.
+ GridFS. Abgerufen am 15. Januar 2016.
+ mod_gridfs. Abgerufen am 19. November 2014.
+ nginx. Abgerufen am 22. Juni 2012.
+ lighttpd. Archiviert vom Original (nicht mehr online verfügbar) am 7. August 2011; abgerufen am 22. Juni 2012.  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis.
+ Vor- und Nachteile von MongoDB. Abgerufen am 30. Januar 2016.
+ Wozu Schemafreiheit? Abgerufen am 30. Januar 2016.
+ CAP-Theorem. Abgerufen am 30. Januar 2016.
+ Drivers. Abgerufen am 9. Januar 2022.
+ Node.js MongoDB Driver docs.mongodb.org
+ Mongo Cloud, Zugriff am 17. Oktober 2015
+ Compass. Abgerufen am 23. September 2020 (amerikanisches Englisch).
+ mongodb-js/compass. Abgerufen am 23. September 2020 (englisch).
+ Studio 3T (formerly MongoChef) - The IDE for MongoDB. Abgerufen am 1. Oktober 2014.
+ Fang of Mongo. Abgerufen am 22. Juni 2012.
+ Fang-of-Mongo/LICENCE at fom_object Fiedzia/Fang-of-Mongo – GitHub
+ Futon4Mongo. Abgerufen am 22. Juni 2012.
+ Mongo Management Studio. Abgerufen am 1. September 2014.
+ Mongo3. Abgerufen am 22. Juni 2012.
+ MongoHub. Archiviert vom Original am 7. Februar 2015; abgerufen am 22. Juni 2012.
+ jeromelebel/MongoHub-Mac. Abgerufen am 30. August 2018 (englisch).
+ Opricot. Abgerufen am 22. Juni 2012.
+ robomongo. Abgerufen am 10. Januar 2018.
+ robomongo/LICENSE at master paralect/robomongo – GitHub
+ UMongo. Abgerufen am 22. Juni 2012.
+ umongo/README.rst at master agirbal/umongo – GitHub
+ DBHawk. Abgerufen am 6. Januar 2018.
+ All Developer Tools and Products by JetBrains. Abgerufen am 9. Januar 2022 (englisch).
+ DataGrip: The Cross-Platform IDE for Databases & SQL by JetBrains. Abgerufen am 9. Januar 2022 (englisch).
+ https://docs.mongodb.com/manual/release-notes/4.0-compatibility/index.html#replica-sets
+ Tobias Trelle: MongoDB. Der praktische Einstieg, dpunkt, Heidelberg 2014, S. 21.
+ 32-bit limitations. Abgerufen am 22. Juni 2012.
+ The AGPL - MongoDB Blog: May 5, 2009. Abgerufen am 22. Juni 2012.
+ [License-review] Approval: Server Side Public License, Version 1 (SSPL v1). Abgerufen am 29. November 2018.
+ [License-review] Approval: Server Side Public License, Version 2 (SSPL v2). Abgerufen am 29. November 2018.
+ [License-review] Approval: Server Side Public License, Version 2 (SSPL v2). Abgerufen am 22. März 2019.
+ Hanno Böck: MongoDB wechselt Lizenz
+ Steven J. Vaughan-Nichols: MongoDB "open-source" Server Side Public License rejected. (englisch).
+ MongoDB’s licensing changes led Red Hat to drop the database from the latest version of its server OS. 16. Januar 2019 (amerikanisches Englisch).
+ Extortionists Wipe Thousands of Databases, Victims Who Pay Up Get Stiffed, Krebs on Security, 10. Januar 2017
+ MongoDB: Ungeschützte Datenbanken absichern. 18. Februar 2015, abgerufen am 18. Februar 2015.
+ MongoDB ransacking (Seite nicht mehr abrufbar, festgestellt im Mai 2019. Suche in Webarchiven)  Info: Der Link wurde automatisch als defekt markiert. Bitte prüfe den Link gemäß Anleitung und entferne dann diesen Hinweis.
+ Anleitung zur Absicherung: How to secure MongoDB on Linux or Unix production server, nixCraft, 9. Januar 2017
+ MongoDB Powering MTV's Web Properties. 10. Mai 2011, abgerufen am 6. Juli 2011.
+ Disney Central Services Storage: Leveraging Knowledge and skillsets. 24. Mai 2011, archiviert vom Original am 11. Juni 2011; abgerufen am 6. Juli 2011.
+ MongoDB at foursquare - Presentation at MongoNYC. 21. Mai 2010, archiviert vom Original am 12. Juni 2010; abgerufen am 28. Juni 2010.  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis.
+ Jacqueline Maher: Building a Better Submission Form, NYTimes Open Blog, 25. Mai 2010. Abgerufen am 28. Juni 2010 
+ How Python, TurboGears, and MongoDB are Transforming SourceForge.net. PyCon 2010, 20. Februar 2010, archiviert vom Original am 19. August 2010; abgerufen am 22. Juni 2012.
+ MongoDB at Etsy. Code as Craft: Etsy Developer Blog, 19. Mai 2010, abgerufen am 28. Juni 2010.
+ Holy Large Hadron Collider, Batman! The MongoDB NoSQL Database Blog, 3. Juni 2010, abgerufen am 3. August 2010.
+ AppScale - Supported Datastores. Archiviert vom Original (nicht mehr online verfügbar) am 7. September 2013; abgerufen am 22. Juni 2012.

@@ -1,0 +1,162 @@
+Liste der Datenbankmanagementsysteme
+
+Die Liste der Datenbankmanagementsysteme umfasst Software zur Verwaltung von Datenbanken, vor allem von relationalen Datenbanken, objektorientierten Datenbanken und objektrelationalen Datenbanken.
+
+Inhaltsverzeichnis 0–9 A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+Übersicht von relationalen Datenbankmanagementsystemen
+Name	Entwickler	Betriebssysteme	Programmiersprachen	Erscheinungsjahr	Lizenzen
+4th Dimension	4D SAS	macOS, Windows	C++	1984	Proprietär
+Apache Derby	Apache Software Foundation	Plattformunabhängig	Java	1997	Apache-Lizenz
+CUBRID	NHN Search Solutions	Linux, Windows	C	2008	GNU General Public License
+Db2	IBM	z/OS, Linux, Unix, Windows	C, C++, Assemblersprache	1983	Proprietär
+DuckDB	DuckDB Foundation	Linux, MacOS, Windows, WebAssembly	C++	2019	MIT-Lizenz
+FileMaker	Claris International	macOS, Mac OS, Mac OS X, iOS, Windows, Linux		1985	Proprietär
+Firebird	Firebird Foundation	AIX, Linux, Windows, macOS	C++	2000	Mozilla Public License
+H2 Database	Diego Fernandis	Plattformunabhängig	Java	2005	Eclipse Public License, Mozilla Public License
+HSQLDB	Collin Zwiebelmann	Plattformunabhängig	Java	2001	BSD-Lizenz
+IBLite	Embarcadero Technologies	Windows, Linux, Mac OS X, Android, iOS			Proprietär
+IBToGo	Embarcadero Technologies	Windows, Linux, Mac OS X, Android, iOS			Proprietär
+Informix	IBM	AIX, HP-UX, Linux, macOS, Solaris, Windows	C, C++		Proprietär
+Ingres	Actian Corporation	Unix-Derivate, Linux, Windows	C	1974	GNU General Public License, Proprietär
+InnoDB	Oracle	Unix, Linux, Windows, OS X, i5/OS, OpenVMS	C		GNU General Public License, Proprietär
+InterBase	Embarcadero Technologies	Windows, Linux, Mac OS X, Solaris		1980er	Proprietär
+MariaDB	MariaDB Corporation, MariaDB Foundation	Windows, macOS, Linux, Solaris, OpenBSD	C, C++, Perl	2009	GNU General Public License, GNU Lesser General Public License
+Microsoft Access	Microsoft	Windows		1992	Proprietär
+Microsoft SQL Server	Microsoft	Windows, Linux	C, C++	1989	Proprietär
+MySQL	MySQL AB, Sun Microsystems, Oracle	Linux, Windows, macOS, FreeBSD, Solaris, Unix-ähnliches System	C, C++	1995	GNU General Public License, Proprietär
+Oracle	Oracle	Linux, Windows, Solaris, HP-UX, AIX	Assemblersprache, C, C++, Java	1979	Proprietär
+PostgreSQL	PostgreSQL Global Development Group	Unix-Derivate, Linux, Windows, macOS	C	1996	PostgreSQL Lizenz
+SAP MaxDB	SAP	AIX, HP-UX, Linux, Solaris, Windows	C++		GNU General Public License, GNU Lesser General Public License
+SQL Anywhere	SAP	Linux, Windows, HP-UX, Solaris, AIX, macOS		1992	Proprietär
+SQLite	SQLite-Team	Windows, macOS, GNU/Linux und andere unixoide Systeme	C	2000	Gemeinfrei
+Transbase	Transaction Software GmbH	Unix-Derivate, Linux, Windows, macOS, Embedded Linux	C, Java, .NET	1987	Proprietär
+Übersicht von dokumentenorientierten Datenbankmanagementsystemen
+Name	Entwickler	Betriebssysteme	Programmiersprachen	Erscheinungsjahr	Lizenzen
+Amazon DocumentDB	Amazon	Plattformunabhängig		2019	Proprietär
+ArangoDB	ArangoDB GmbH	Plattformunabhängig	C++, JavaScript	2011	Apache-Lizenz
+CouchDB	Apache Software Foundation	Linux, Unix, macOS, Windows	Erlang	2005	Apache-Lizenz
+Couchbase Server	Couchbase	Plattformunabhängig	C++, Erlang, C, Go, Java	2010	Apache-Lizenz, Freemium
+CrateDB	Crate.io	Plattformunabhängig	Java		Apache-Lizenz
+HCL Notes	HCL Technologies	Plattformunabhängig	C++, Java, C, Hypertext Markup Language	1989	Proprietär
+MarkLogic	MarkLogic Corporation	Unixoide, macOS, Windows, Solaris	XQuery, JavaScript, C++		Proprietär
+MongoDB	MongoDB, Inc.	Linux, macOS, Windows, OpenBSD	C++, Go, JavaScript, C, Python	2009	Server Side Public License
+OrientDB	Luca Garulli	Plattformunabhängig	Java	2010	Apache-Lizenz
+RethinkDB	Open-Source	Plattformunabhängig	C++	2009	GNU Affero General Public License, Apache-Lizenz
+Virtuoso Universal Server	OpenLink Software	Plattformunabhängig	C		GNU General Public License
+0–9
+4th Dimension SQL – kurz: 4D SQL; ein kommerzielles Datenbanksystem für Standalone, Client/Server und Web-Datenbanken.
+A
+Access – siehe Microsoft Access
+Adabas – das kommerzielle Datenbanksystem der Software AG.
+Adabas D – ein relationales Datenbanksystem, es ist in SAP MaxDB übergegangen. Nicht verwandt mit Adabas.
+Advantage Database Server – kommerzielles relationales Datenbankmanagementsystem, ursprünglich von Extended Systems, nach Übernahme zunächst Sybase (iAnywhere), dann SAP
+Apache Cassandra – verteilte NoSQL-Datenbank
+Approach – siehe Lotus Approach
+B
+BaseX – Open Source, natives und leichtgewichtiges XML-Datenbankmanagementsystem
+Berkeley DB – Schlüssel-Werte-Datenbank von Oracle
+C
+Caché – kommerzielles multidimensionales Datenbankmanagementsystem von InterSystems.
+Conzept 16 – Datenbanksystem mit integrierter Entwicklungsumgebung der vectorsoft AG.
+CouchDB – unter Apache-Lizenz 2.0 veröffentlichte, dokumentenbasierte Datenbank
+D
+Db2 – das kommerzielle relationale Datenbanksystem der Firma IBM.
+db4o – objektorientiertes Datenbanksystem für .NET und Java der Firma Versant.
+dBASE – erste weitgenutzte Datenbank-Applikation für Mikrocomputer.
+DBM – erste dateibasierte Schlüssel-Werte-Datenbank.
+DBSR – Netzwerksystem der Firma Robotron.
+Derby – eine freie Java-Datenbank der Apache Software Foundation.
+DuckDB - Spaltenorientierte Datenbank
+E
+Essbase – ist ein multidimensionales Datenbanksystem (MDBMS) zur Erstellung von analytischen Auswertungen.
+EXAdata – Komplettlösung von Oracle. Kombination von Database-Server(n) und Storage-Server(n) in einem Rack. Sowohl für OLTP als auch für Data-Warehousing geeignet.
+eXist – eine freie XML-Datenbank
+Extensible Storage Engine (auch bekannt als Jet Blue) – Datenbank, die u. a. in Microsoft Exchange Server und Active Directory zum Einsatz kommt
+F
+FileMaker – eine kommerzielle Standalone-, Client/Server- und Web-Datenbank von Claris International (100%ige Tochtergesellschaft der Firma Apple)
+Firebird – Open-Source-Spin-off von InterBase
+FrontBase – kommerziell entwickeltes System, frei benutzbar, kostenpflichtige Supportpläne
+G
+Greenplum – MPP-Data-Warehouse auf PostgreSQL-Basis[1]
+H
+HCL Notes – ein verteiltes, dokumentenorientiertes Datenbanksystem mit sehr enger E-Mail-Anbindung
+HSQLDB – eine in Java implementierte Datenbank (früher bekannt als Hypersonic) in OpenOffice.org Base integriert.
+H2 – Java-Datenbank, neues Projekt vom HSQLDB-Initiator
+I
+InfluxDB – eine auf Zeitreihen spezialisierte Datenbank
+IMS – die hierarchische Datenbank der IBM im Mainframe-Bereich
+Informix – von der Firma Informix entwickelt, wird nun von IBM weitergepflegt
+Ingres – ein relationales Datenbanksystem von der University of California, Berkeley.
+InterBase – von der Firma Borland entwickelt
+J
+JDataStore – eine Java-Datenbank von der Firma Borland
+Jet Engine – von Microsoft, ursprünglich die Standard-Engine für Microsoft Access
+K
+Kexi – eine freie integrierte Datenbankmanagementanwendung als Teil der Calligra Suite
+L
+LibreOffice Base – Standalone-Datenbank des LibreOffice-Paketes der Document Foundation
+Lightning Memory-Mapped Database – Schlüssel-Werte-Datenbank, die u. a. in OpenLDAP zum Einsatz kommt
+Lotus Approach – die Datenbank der Lotus SmartSuite
+M
+MariaDB – relationales Open Source Datenbanksystem, Fork von MySQL. Enthält vor allem einige zusätzliche Storage-Engines.
+MaxDB – ehemals SAP DB, seit Release 7.7 SAP MaxDB, wird von der SAP entwickelt und vertrieben. Dient allen SAP-Produkten wie SAP R/3, NetWeaver, Business ByDesign als Datenbankplattform
+MetaKit – eine in C++ entwickelte Open Source Datenbank
+Microsoft Access – das relationale Datenbanksystem von Microsoft für PCs
+Microsoft SQL Server – das relationale Datenbanksystem von Microsoft für große Anwendungen
+MonetDB – eine Sammlung von quelloffenen Datenbankprodukten. Anwendungsschwerpunkte: Data-Mining, OLAP, GIS, XML-Verarbeitung
+MongoDB – eine in C++ entwickelte dokumentenbasierte Datenbank
+mSQL – relationales Datenbanksystem[2]
+MySQL – relationales Open-Source-Datenbanksystem. Vielfach auf Internet-Servern eingesetzt. Befindet sich im Besitz von Oracle.
+MUMPS – Massachusetts General Hospital Utility Multi-Programming System, oder alternativ M, ist ein ursprünglich auf DEC PDP Computern entwickeltes Betriebssystem, Datenbanksystem und Programmsprache die heute für fast alle gängigen Computer-Plattformen erhältlich ist.
+N
+Neo4j – in Java implementierte Graphdatenbank
+NonStopSQL – Relationale Datenbank für die NonStop-Systeme von Hewlett-Packard (vormals Tandem Computers).
+O
+Oracle Database – das kommerzielle, relationale Datenbanksystem der Firma Oracle.
+Oracle Rdb für OpenVMS (Datenbanksystem), kommerzielles, relationales Datenbanksystem der Firma Oracle speziell für OpenVMS-Betriebssysteme (bis 1994 DEC Rdb der Firma Digital Equipment Corporation).
+OrientDB – in Java geschriebene Open-Source-NoSQL-Datenbank. Dokumentenorientierte Datenbank mit Eigenschaften von Graphdatenbanken
+OpenOffice.org Base – Standalone-Datenbank des OpenOffice.org-Paketes
+P
+Paradox – eine dateibasierte Windows-Datenbank von Corel (früher Borland)
+Papyrus – relationale Datenbank integriert in ein Office-Paket
+Progress – relationales Datenbanksystem in Verbindung mit einer 4GL-Entwicklungsumgebung
+Polyhedra und Polyhedra FlashLite – eine speicherbasierte, relationale Datenbank für, aber nicht begrenzt auf, eingebettete Systeme von Enea AB
+Postgres Plus – eine kommerzielle Variante von PostgreSQL mit einigen Zusatzfunktionen von EnterpriseDB
+PostgreSQL – eine objektrelationale Datenbank als Open Source.
+PointBase Micro – Relationale SQL-Java-Datenbank für J2ME und J2SE Umgebung von DataMirror
+R
+Rasdaman – „raster data manager“, das erste Array-Datenbanksystem
+Redabas – dBase Clone
+Redis – In-Memory-Schlüssel-Werte-Datenbank
+R:Base – war die erste relationale Datenbank für PCs
+S
+SAP HANA – In-Memory-Datenbank der Firma SAP
+SAP MaxDB – relationales Datenbanksystem Fork von Adabas D, seit 2000 unter GPL/LGPL für Versionen 7.2 bis 7.4 mit Bezeichnung SAP DB, ab Version 7.5 mit Bezeichnung MaxDB und ab Version 7.7 mit Bezeichnung SAP MaxDB
+SESAM/SQL Server – relationales Datenbanksystem von der Firma Fujitsu Siemens Computers. Es läuft nur auf BS2000/OSD-Anlagen.
+SQL Anywhere – ein RDBMS der Firma SAP (urspr. Watcom, dann Powersoft).[3]
+SQLite – Open-Source-Standalone-Datenbank.
+SQLBase – Datenbank der Gupta Technologies. Später als SQLWindows eines der ersten relationalen Datenbanksysteme, das unter Windows lief.
+Superbase (Datenbank) – erstes Datenbank-Management-System für Windows-Computer.
+Sybase – das relationale Datenbanksystem der Firma Sybase.
+T
+Tamino DB – kommerzielles XML-Datenbanksystem der Software AG.
+Teradata – Massiv Paralleles Processing-Datenbank der Firma Teradata Ltd
+Transbase – Datenbanksystem der Firma Transaction Software GmbH
+TM1 – Multidimensionales Datenbanksystem der Firma Cognos (z. Z. IBM)
+U
+UDS – Netzwerk-Datenbanksystem der Firma Fujitsu Siemens Computers
+UniVerse – multidimensionale oder extended relational Datenbank der Firma IBM
+UniData – multidimensionale oder extended relational Datenbank der Firma IBM
+V
+Versant Object Database (V/OD) – OODBMS der Firma Versant
+Visual FoxPro – Datenbank/Entwicklungsumgebung von Microsoft
+VistaDB – reine .NET-Datenbank von VistaDB Software, Inc.
+X
+xBase – dBASE-Derivat
+Xbase++ – dBASE/Clipper-Derivat mit objektorientierter Spracherweiterung für graphische Oberflächen und unterstützt auch Visual FoxPro 3.0/5.0 Datenbanken.
+Z
+Zope Object Database
+Einzelnachweise
+ Steven Nunez: Greenplum 6 review: Jack of all trades, master of some. 7. November 2019, abgerufen am 5. September 2020 (englisch).
+ Reese, George., King, Tim: MySQL and mSQL. 1st ed Auflage. O’Reilly, Sebastopol, CA 1999, ISBN 1-56592-907-1.
+ Watcom SQL. In: infocenter.sybase.com. SAP, abgerufen am 21. Mai 2025 (englisch).

@@ -1,0 +1,393 @@
+MySQL
+
+Überprüft
+MySQL
+Logo von MySQL
+Basisdaten
+Entwickler	Oracle Corporation (bis Februar 2008: MySQL AB, bis Januar 2010: Sun Microsystems)
+Erscheinungsjahr	23. Mai 1995
+Aktuelle Version	8.4.6[1]
+(22. Juli 2025)
+Aktuelle Vorabversion	8.0 RC1[2]
+(25. September 2017)
+Betriebssystem	Unix-ähnliches System, Microsoft Windows[3], FreeBSD[3], Solaris[3], Linux[3], macOS[3]
+Programmier­sprache	C++, C[4]
+Kategorie	Datenbankmanagementsystem
+Lizenz	GNU General Public License, Version 2[5], proprietäre Lizenz[6]
+deutschsprachig	ja
+www.mysql.com
+MySQL [ˌmaɪɛskjuːˈɛl][7] ist eines der weltweit verbreitetsten[8] relationalen Datenbankverwaltungssysteme. Es ist als Open-Source-Software sowie als proprietäre Enterpriseversion für verschiedene Betriebssysteme verfügbar.
+
+MySQL wurde seit 1994 vom schwedischen Unternehmen MySQL AB entwickelt. Im Februar 2008 wurde MySQL AB vom Unternehmen Sun Microsystems übernommen, das seinerseits im Januar 2010 von Oracle gekauft wurde.
+
+Der Name MySQL setzt sich zusammen aus dem Vornamen My, den die Tochter des MySQL-AB-Mitbegründers Michael Widenius trägt, und SQL.[9][10]
+
+Einsatzgebiete und Verbreitung
+Ein bevorzugtes Einsatzgebiet von MySQL ist die Datenspeicherung für Webservices. MySQL wird dabei häufig in Verbindung mit dem Webserver Apache bzw. Nginx und der Skriptsprache PHP eingesetzt. Dieser Aufbau stand und steht bis heute als LAMP-Stack (Linux / Apache / MySQL / PHP) oder LEMP-Stack (das „e“ steht dann für [e]nginx) als Download zur Verfügung. Viele Webdienste bedienen sich dieser Architektur und betreiben je nach Größe und Bedarf eine Vielzahl von MySQL-Servern, über die die Zugriffe aus dem Netz abgewickelt werden.[11] MySQL wird unter anderem verwendet von Flickr,[12] YouTube,[13] Facebook[14][15] und Twitter.[16] Daneben wird MySQL in vielen Produkten als eingebettetes Datenbanksystem eingesetzt.[17] MariaDB ist ein Fork von MySQL und zu MySQL kompatibel, so dass MySQL-Datenbanken recht einfach migriert werden können. Der Begründer von MySQL Monty Widenius hat nach dem Kauf von MySQL durch Oracle den neuen Fork entwickelt und erweitert diesen gemeinsam mit einem Team ehemaliger Core-Entwickler von MySQL, so dass weitere Features inzwischen verfügbar sind. Eine Rückmigration ist nach Nutzung dieser Features teilweise nicht mehr ohne Weiteres möglich. Dies gilt insbesondere, wenn Speicher-Engines wie ColumnStores verwendet werden, die MySQL so nicht kennt.[18]
+
+Plattformen und Schnittstellen
+MySQL ist auf vielen Unix-Varianten, macOS und Linux, aber auch auf Windows, OS/2 und i5/OS (ehemals OS/400) lauffähig.
+
+Struktur des verwendeten Speichersystems
+MySQL sieht grundsätzlich einen MySQL-Server vor, auf dem Daten gespeichert sind, und einen oder mehrere MySQL-Clients, die Anfragen an den Server schicken, die dieser beantwortet. Der Standardport für den MySQL-Server ist 3306 im Transmission Control Protocol (TCP).
+
+Auf dem Datenbankmanagementsystem, dem MySQL-Server, können mehrere Datenbanken erstellt werden. In einer Datenbank können mehrere Tabellen angelegt werden. Praktisch erstellt MySQL dabei für jede Datenbank einen Ordner auf der Festplatte, in dem Dateien für die Struktur und die Daten der einzelnen Tabellen abgelegt werden. Das genaue Format dieser Dateien hängt von der für die jeweilige Tabelle verwendeten Speicherengine ab.
+
+Die Tabellen können jeweils von einem unterschiedlichen Typ sein. Der Tabellentyp legt fest, welche Speicherengine (Speichersubsystem) für Anfragen an eine Tabelle verwendet wird. Jede Tabelle kann Spalten enthalten, in denen Daten eines festgelegten Datentyps gespeichert werden können (z. B. Integer (ganze Zahlen) oder Strings (Zeichenketten)). Die maximale Größe der Tabellen wird grundsätzlich nur durch das Betriebssystem limitiert.
+
+Ablauf der Verarbeitung einer Anfrage
+Ein Client kann Datenbankanfragen an einen MySQL-Server schicken. Dieser ist dafür zuständig, jede Anfrage möglichst performant zu bearbeiten. Dabei wird zunächst der Query-Cache befragt und bei nicht vorhandenem Ergebnis die Anfrage geparst, optimiert und schließlich ausgeführt; das Ergebnis wird dann zurückgegeben.
+
+Query-Cache
+Um die Performance zu verbessern, kann MySQL die Ergebnisse von Anfragen in einem Zwischenspeicher, dem Query-Cache, ablegen. Sollte später eine identische Abfrage an den Server geschickt werden, ohne dass sich in der Zwischenzeit die Daten in der Datenbank verändert haben, wird sie aus dem Cache beantwortet. Es muss dann nicht auf die Datenbank selbst zugegriffen werden.[19] Der Query-Cache wurde mit MySQL 5.7.20 abgekündigt und ist in MySQL 8.0 entfernt worden.[20]
+
+Parsing
+Soll eine Query ausgeführt werden, wird zunächst geprüft, ob ihre Syntax gültig ist. Sie wird dazu in ihre einzelnen Komponenten zerlegt. Zugleich werden einige grundlegende Informationen über die Query gesammelt, wie etwa die Art der Query (z. B. SELECT, INSERT, SET oder GRANT), die betroffenen Tabellen oder die Inhalte der WHERE-Klausel. Am Ende dieses Schrittes kennt MySQL den Parse-Baum, der danach optimiert werden kann.[21]
+
+Optimierung
+Ist eine Abfrage syntaktisch gültig, dann wird sie als Nächstes optimiert. Dabei sucht der Optimizer nach dem effizientesten Weg, die Query zu bearbeiten. Dazu wird hauptsächlich versucht, die Anzahl der zu lesenden Datensätze möglichst gering zu halten. Dies wird etwa, wenn Datensätze aus mehreren Tabellen gelesen werden müssen, durch eine geschickte Abfragereihenfolge (JOIN) der Tabellen erreicht; nicht benötigte Tabellen werden komplett aus dem JOIN entfernt. Der Optimizer berücksichtigt unter anderem, ob es sinnvoll ist, zur Lokalisierung der gesuchten Datensätze einen Index zu verwenden (und wenn ja, welchen), oder ob es besser wäre, stattdessen einen Table-Scan durchzuführen, d. h., die komplette Tabelle zu durchlaufen.
+
+Die zur Verfügung stehenden Alternativen werden vom Optimizer bewertet. Dabei wird aufgrund von Heuristiken für jede Möglichkeit geschätzt, wie lange die Ausführung benötigen würde. Diejenige Alternative, die die geringsten Kosten hat, wird anschließend tatsächlich durchgeführt.
+
+Die Arbeit des Optimizers lässt sich mit dem MySQL-Kommando EXPLAIN nachvollziehen. Dieser Befehl (gefolgt von einer bestimmten Query) beauftragt den Optimizer, seinen Query-Plan zurückzugeben. Als Ausgabe erhält der Nutzer Informationen für jeden Schritt, den der Optimizer zur Beantwortung der Query durchführen würde. Auf diese Art lässt sich mit etwas Hintergrundwissen ermitteln, inwiefern die Query optimiert werden kann, so dass sie schneller ausgeführt werden kann.[19]
+
+Geschichte
+Michael Widenius und David Axmark begannen 1994 mit der Entwicklung von MySQL.[22] Es wurde zunächst als Klon für mSQL entwickelt, um Datenbanken des maskengesteuerten Datenbanksystems UNIREG in Web-Anwendungen verfügbar zu machen. (UNIREG war 1979 von Michael Widenius entwickelt und ca. 1986 in die Programmiersprache C umgeschrieben worden, damit es auch unter UNIX-Systemen lief.) MySQL war daher sowohl zu mSQL als auch UNIREG voll kompatibel.
+
+Nach einem internen Release am 23. Mai 1995 wurde die Software im Jahr 1997 sofort unter der Versionsnummer 3.1 veröffentlicht, um zu signalisieren, dass sie auf einem Kern basiert, der schon eine lange Geschichte hat. Sie war von Anfang an für große Datenmengen und sehr gute Performance ausgelegt, teils auf Kosten von Stabilität und Verfügbarkeit. Der Funktionsumfang hingegen war zunächst beschränkt. So gab es nur wenige Tabellentypen und keine Transaktionen. Typischerweise werden neue Eigenschaften auf Wunsch der Anwender implementiert, die dadurch ein sehr großes „Mitspracherecht“ haben.
+
+Mit der im Januar 2001 veröffentlichten Version 3.23 verfügte MySQL über zwei Tabellentypen mit Transaktionen, wobei der eine (InnoDB) den ACID-Kriterien genügt. Alle Operationen, die allgemeine SQL-Eigenschaften betreffen, sind für alle Tabellentypen gleich, während die Eigenschaften der Tabellentypen aufgrund der unterschiedlichen Architektur sehr verschieden sein können. So besitzt der Typ MyISAM bereits seit der frühen Version 3.23 eine sehr leistungsfähige Volltext-Suche, die beim Typ InnoDB nicht implementiert ist. Neu in Version 3.23 ist ebenfalls das Replikationssystem. Es ist für den Einsatz in einem Rechnerverbund ausgelegt und bietet sich für einen unterbrechungsfreien Betrieb an. Dabei sind dem Datenbankmanagementsystem (DBMS) mehrere Datenbanken auf unterschiedlichen Rechnerknoten zugeordnet. Eine der Datenbanken fungiert als Master; hier werden die Datenbankinhalte verändert. Das Replikationssystem verteilt anschließend die datenverändernden SQL-Kommandos auf die anderen Datenbanken, die diese Änderungen lokal auf ihren Tabellen nachvollziehen. Es handelt sich hierbei also um eine asynchrone Replikation der SQL-Kommandos. Mit dem MySQL Cluster steht ein Tabellentyp zur Verfügung, bei dem die gesamte Datenbank im Arbeitsspeicher als In-Memory-Datenbank vorgehalten werden kann. Es wird synchrone Replikation zwischen allen Clusterknoten und Transaktionsverarbeitung unterstützt, jedoch keine Volltextsuche.
+
+MySQL 4.0, das im März 2003 freigegeben wurde, erlaubt die Nutzung von Unions und führte einen Query-Cache ein, der die Ergebnisse häufig benutzter SQL-Anfragen zwischenspeichert.[23]
+
+Im Oktober 2004 wurde MySQL 4.1 veröffentlicht. Es bietet eine Datenspeicherung in unterschiedlichen Zeichensätzen pro Tabelle an; unter anderem wird auch Unicode unterstützt. Unterabfragen (Subqueries/Subselects) sind möglich.[24]
+
+Version 5.0 wurde im Oktober 2005 freigegeben. Sie unterstützt alle im SQL3-Standard definierten Objekttypen. Neu in Version 5 ist dabei die Unterstützung von Views, Triggern, Stored Procedures und User Defined Functions.
+
+Im Februar 2008 übernahm Sun Microsystems MySQL AB. Als Kaufwert wird eine Milliarde Dollar genannt; davon 200 Millionen in Aktienoptionen.[25][26]
+
+Im November 2008[27] wurde MySQL 5.1 freigegeben. Zu den Neuerungen zählen außer Partitionsfunktionen, mit denen sehr große Tabellen in mehrere physikalische Dateien aufgeteilt werden können, ein Event-Scheduler, mit dessen Hilfe zuvor definierte SQL-Kommandos in regelmäßigen Zeitabständen ausgeführt werden können, sowie Funktionen des Instanzenmanagers. Die API wurde überarbeitet, so dass nun das Laden und Entladen von Komponenten während der Laufzeit und ohne Neustart des Servers möglich ist.[28]
+
+Im Januar 2010 wurde Sun Microsystems von Oracle gekauft.[29] Wenige Monate später gab Oracle bekannt, dass die bereits von MySQL AB begonnene Entwicklung der Datenbank-Engine Falcon eingestellt wird.
+
+Ende 2010 wurde MySQL 5.5 veröffentlicht. InnoDB wurde zur Standard-Speicherengine. Die Performance wurde durch die Nutzung von asynchronem I/O verbessert. Neu sind auch die Kommandos SIGNAL/RESIGNAL, die standardkonforme Fehlerbehandlung in Stored Procedures erlauben.[30][31]
+
+Das im Jahr 2012 veröffentlichte MySQL 5.6 umfasst u. a. Memcached APIs, globale Transaktions-IDs und Verbesserungen am PERFORMANCE_SCHEMA.[32]
+
+Im Januar 2009, bereits bevor Oracle MySQL AB kaufte, startete Monty Widenius einen GPL-Fork, MariaDB. MariaDB basiert auf der Code-Basis von MySQL server 5.5 und hat sich das Ziel gegeben, weitgehend die Kompatibilität zu den von Oracle herausgegebenen MySQL-Versionen zu erhalten.[33]
+
+Die Entwicklung von MySQL 5.7 hat insgesamt über zwei Jahre in Anspruch genommen, bis es schließlich Ende Oktober 2015 veröffentlicht werden konnte. Die neue Version zeichnet sich insbesondere durch eine gesteigerte Performance, verbesserte Replikation und Logging aus. So erweiterten die MySQL Entwickler beispielsweise den Abfragenoptimierer um ein dynamisches Kostenmodell, was eine schnellere Ausführung ermöglicht und dem Nutzer mehr Eingriffsmöglichkeiten bietet.[34]
+
+Mit einem Versionssprung auf MySQL 8 erschien im Jahr 2018 die nächste Weiterentwicklung. Laut der Doku[35] ist die 8er Versionsreihe offenbar ein Upgrade, sodass die Versionsnummern momentan zweigleisig gezählt werden.
+
+Seit der Version 9.0 wird außerdem SQL-native Anmeldung mittels Passwort per default nicht mehr unterstützt[36].
+
+Versionen
+Release	General availability	Latest minor version	Latest release	End of support[37][38]
+5.1 LTS	14. November 2008[39]	5.1.73[40]	2013-12-03	Dec 2013
+5.5 LTS	3. Dezember 2010[41]	5.5.62[42]	2018-10-22	Dec 2018
+5.6 LTS	5. Februar 2013[43]	5.6.51[44]	2021-01-20	Feb 2021
+5.7 LTS	21. Oktober 2015[45]	5.7.44[46]	2023-10-25	Oct 2023
+8.0 LTS	19. April 2018[47]	8.0.40[48]	2024-10-15	Apr 2026
+8.1 IR	18. Juli 2023[49]	8.1.0[50]	2023-07-18	Oct 2023
+8.2 IR	25. Oktober 2023[51]	8.2.0[52]	2023-10-25	Jan 2024
+8.3 IR	16. Januar 2024[53]	8.3.0[54]	2024-01-16	Apr 2024
+8.4 LTS	30. April 2024[55]	8.4.3[56]	2024-10-15	Apr 2032
+9.0 IR	1. Juli 2024[57]	9.0.1[58]	2024-07-23	Oct 2024
+9.1 IR	15. Oktober 2024[59]	9.1.0[60]	2024-10-15	Jan 2025
+Legende:Ältere Version; nicht mehr unterstütztÄltere Version; noch unterstütztAktuelle VersionAktuelle VorabversionZukünftige Version
+LTS = Long-Term Support, IR = Innovation Release
+Kritik
+Seit der Übernahme von MySQL AB von Sun durch Oracle steht das Datenbanksystem immer häufiger in der Kritik. Der Unterschied zwischen der freien und proprietären Version von MySQL wird immer gravierender.[61] Neue Funktionen sind häufig nur noch in der proprietären Version von MySQL enthalten. Dazu kommen die nicht-öffentliche Datenbank mit Fehlermeldungen, veraltete Bazaar-Archive und fehlende Tests für die Fehlersuche.[62]
+
+Seit Ende 2012 erodiert auch der Rückhalt in der OpenSource-Gemeinschaft für MySQL. Nach Fedora und OpenSUSE haben Anfang 2013 auch Slackware und Arch Linux das MySQL-Paket durch MariaDB ersetzt, einen Fork des Mitbegründers Widenius. Auslöser seien der mangelnde Respekt gegenüber der Gemeinschaft und die zunehmend abgeschottete Entwicklung des RDBMS.[63] Ebenso wechselte die Wikimedia Foundation Anfang 2013 zu MariaDB.[64]
+
+Jaroslav Reznik, Red Hats Fedora-Projekt-Manager, erklärte, dass sich MySQL in Richtung eines geschlossenen Projektes entwickle. Alle nützlichen Informationen zu Sicherheitsfragen (CVEs) würden nicht mehr veröffentlicht. Es existierten keine vollständigen Regressionstests mehr und ein sehr großer Teil der MySQL-Bug-Datenbank sei nun nicht mehr öffentlich.[65]
+
+Michael Widenius, der ehemalige Gründer von MySQL AB kritisiert Oracle scharf: Oracle habe klargemacht, dass sie kein Interesse an Open Source hätten, die Zusammenarbeit mit der Community ablehnten und auch MySQL im Allgemeinen nicht mögen würden. Als Beispiele für die Missachtung der Open-Source-Prinzipien nennt er die proprietären Erweiterungen für MySQL, die inzwischen nichtöffentliche Fehler-Datenbank und den Mangel an Testfällen für neuen MySQL-Code. Vorzeige-Funktionen, wie das Online-Backup und Fremdschlüssel für alle Speicher-Engines, die für MySQL 6.0 versprochen wurden, seien nicht veröffentlicht worden, obwohl sie fertig entwickelt und bereit seien. Statt Fehler zu beheben, entferne Oracle Funktionen. Die meisten der ursprünglichen MySQL-Entwickler hätten Oracle verlassen. Als weitere Beweise für die „Verachtung“ der MySQL-Anwender nennt er den „scharfen“ Anstieg der Lizenz- und Support-Gebühren und das Fehlen einer offenen Roadmap.[66]
+
+Speichersubsysteme
+MySQL bietet verschiedene Speichersubsysteme (Engines) an. Jede Engine ist für ein spezielles Einsatz-Szenario optimiert. Im Vergleich zu der traditionellen Mehrschichtenarchitektur von Datenbanksystemen sind die Engines kein reines Speichersubsystem, sondern bieten mehr Funktionalität. So liegt die Verwaltung von Transaktionen, von Indizes und referenziellen Integritäten in der Hand der Engine.
+
+Die einzelnen Speicherengines unterstützen unterschiedliche Funktionen und weisen je nach Einsatzgebiet eine unterschiedliche Performance auf. Je nachdem, wozu eine Tabelle benutzt wird (z. B. hauptsächlich lesende SELECT-Anfragen oder hauptsächlich schreibende INSERT/UPDATE-Anfragen), sollte eine passende Speicherengine gewählt werden. Ein anderes Kriterium für die Wahl der Speicherengine kann auch die Notwendigkeit sein, eine bestimmte Funktion zu nutzen, wie z. B. Transaktionen oder referenzielle Integrität.
+
+MySQL kann auch um eigene Speicherengines erweitert werden.[67] Neben den von MySQL veröffentlichten und mit MySQL mitgelieferten Engines gibt es auch Engines anderer Hersteller.
+
+Offizielle Engines
+MyISAM
+MyISAM bietet schnellen Zugriff auf Tabellen und Indizes ohne Transaktionssicherung. Parallele Datenbankzugriffe (Concurrency) verwaltet MySQL auf Tabellenebene, das heißt die komplette Tabelle wird je nach Sperrungsart für bestimmte Operationen gesperrt (Read- oder Write-Lock). Eine Vielzahl von simultanen Lesezugriffen ist möglich, da Lesezugriffe nur sogenannte READ-Locks akquirieren. Diese erlauben es anderen „READERN“, auf den gleichen Datensatz gleichzeitig zuzugreifen. Schreibzugriffe müssen allerdings warten, bis alle gegenwärtigen „READER“ ihre Leseoperationen abgeschlossen haben und damit ihren READ-Lock freigeben. Ein „READER“ muss somit nur andere „WRITER“ blocken.
+
+Ein Datensatz, der geändert wird, kann weder gelesen noch anderweitig geschrieben werden. Somit muss ein „WRITER“ (schreibender Zugriff auf Daten) andere „READER“ und „WRITER“ blocken. Dies geschieht durch einen „Write-Lock“. Auch dieser findet auf Tabellenebene statt, somit kann in dieser Zeit weder lesend noch schreibend auf die gesamte Tabelle zugegriffen werden, bis der „Write-Lock“ aufgehoben wird.
+
+Für einen Querymix, der vor allem aus Lesezugriffen besteht, ist MyISAM eine sehr effiziente Speicher-Engine. Weitere Vorteile von MyISAM sind:
+
+flexibelste Autoincrement-Eigenschaft aller Speicherengines
+MyISAM-Tabellen können in komprimierte read-only Tabellen konvertiert werden
+MyISAM-Tabellen können feste Zeilenlänge haben, die eine schnellere Zeilensuche ermöglicht
+MyISAM-Tabellen können verwendet werden, um MERGE Tabellen zu erstellen
+MyISAM ist hoch portierbar, da die Tabellendateien (.frm Datei (Tabellenstruktur), .MYD (Datendatei), .MYI (Indexdatei)) auf eine andere Maschine kopiert werden können und dort sofort als Datenbanktabellen zur Verfügung stehen.
+Mächtige Volltextsuche
+MySQL verwaltet die Zugriffsrechte über Grant-Tabellen in der Datenbank mysql, die (auch in der neuesten Version) ausschließlich in MyISAM-Tabellen gespeichert werden. MyISAM kann beim Kompilieren oder Serverstart deshalb nicht ausgeschlossen werden. Bis MySQL-Version 5.1 war MyISAM außerdem die Standard-Speicher-Engine, danach nahm InnoDB diesen Platz ein.
+
+InnoDB
+InnoDB bietet transaktionssichere Lese- und Schreibzugriffe, d. h., es bietet Begin-, Commit- und Rollback-Funktionen. Dadurch wird sichergestellt, dass eine Abfrage oder ein Satz zusammengehöriger Abfragen entweder ganz oder gar nicht, nicht aber unvollständig ausgeführt wird. Die gewünschte Isolationsebene der Transaktionen kann eingestellt werden. Dadurch kann die Sicherheit der vollständigen und korrekten Ausführung verringert werden, was sich positiv auf die Ausführungsgeschwindigkeit auswirkt.
+
+InnoDB bietet ferner die Möglichkeit, Fremdschlüssel-Beziehungen zu überprüfen. Seit MySQL 5.5 ist InnoDB die Standard-Speicher-Engine.[30] Ab MySQL 5.6 wird auch in InnoDB-Tabellen eine Volltextsuche möglich sein.[68] Jedoch erfüllt InnoDB den SQL3-Standard nicht vollständig: Fremdschlüssel werden nur eingeschränkt unterstützt.[69]
+
+InnoDB speichert die Tabellenstruktur in einzelnen frm-Dateien, Nutzdaten und Indizes in einem Tabellenraum. Der Tabellenraum wird vor Beginn der Arbeit mit dem Datenbankserver eingestellt und kann sich über eine oder mehrere Dateien erstrecken. Die Dateien des Tabellenraums können auf verschiedene Verzeichnisse verteilt werden. Die Konfiguration des Tabellenraums kann nicht nachträglich angepasst werden, ohne Datenverlust zu riskieren. Nach einer Änderung der Konfiguration des Tabellenraums wird die gesamte Datenbank von einer Sicherungskopie wiederhergestellt.
+
+MERGE
+MERGE bietet die Möglichkeit, mehrere Tabellen vom Typ MyISAM mit gleicher Struktur zu einer Tabelle zusammenzufassen und die Zugriffe darauf auszuführen. Dabei können komprimierte MyISAM- mit nicht-komprimierten MyISAM-Tabellen zusammengefasst werden. Auf diese Weise lässt sich Datenarchivierung realisieren.
+
+MEMORY (HEAP)
+Management von temporären Tabellen. Die Definition der Tabellen wird auf der Festplatte permanent gespeichert. Die Daten werden im Arbeitsspeicher gespeichert. Es werden jedoch nicht alle Datentypen unterstützt. Bei einem Neustarten des Servers sind die Tabellenstrukturen noch vorhanden, die Inhalte müssen neu eingelesen werden, beispielsweise aus permanenten Tabellen. Es sind spezielle Verfahren zur Speicherplatz-Verwaltung implementiert, um den Platz von gelöschten Sätzen bei der nächsten Einfügung wiederzuverwenden.
+
+EXAMPLE
+Code-Beispiel für die Entwicklung einer eigenen Speicher-Engine. EXAMPLE hat Funktionen zum Erstellen einer Tabelle, die Funktionen zum Schreiben und Lesen der Datensätze sind nur angedeutet. Ein SELECT-Statement liefert immer eine leere Ergebnismenge.
+
+BDB
+BDB ist die Abkürzung für Berkeley DB. Diese Speicher-Engine wurde von Sleepycat Software entwickelt und später an Oracle verkauft. Die BDB bietet Transaktionssicherheit und besondere Vorkehrungen, damit bei einem Systemausfall die gespeicherten Daten erhalten bleiben.
+
+Die BDB-Speicher-Engine wird ab Version 5.1 nicht mehr weiter unterstützt.
+
+FEDERATED
+Die FEDERATED-Engine bietet Zugriff auf Tabellen, die auf einem anderen Server liegen. Wenn man eine Tabelle vom Typ FEDERATED erstellt, dann muss die entfernte Tabelle auf dem anderen Server bereits existieren. Der lokale Server verhält sich wie ein Client, der auf den entfernten Server zugreift. Die FEDERATED-Engine verhält sich wie ein föderiertes Informationssystem, das bedeutet, dass sie die Daten selber nicht speichert, sondern Zugriff auf den fernen Server gewährt, während auf diesem ebenfalls auf die Daten zugegriffen werden kann. Bei der Version 5.0 kann nur auf andere MySQL-Server zugegriffen werden.
+
+Die Zugangsdaten zu dem entfernten Datenbankserver werden dabei unverschlüsselt in der lokalen frm-Datei gespeichert. Der Zugriff auf das Datenverzeichnis muss auf der Betriebssystemebene eingeschränkt werden um das Auslesen der Zugriffsrechte durch Unbefugte zu verhindern.
+
+ARCHIVE
+Die ARCHIVE-Engine ist für die Speicherung von großen Datenmengen bei einem möglichst sparsamen Umgang mit dem zur Verfügung stehenden Speicherplatz konzipiert. Es können keine Indizes erstellt werden. Nur die Zugriffe INSERT und SELECT werden unterstützt. Der schnelle Zugriff auf die Daten steht hier nicht im Vordergrund.
+
+Vor dem Speichern der Daten auf dem Speichermedium werden diese zunächst in einem Kompressionspuffer gesammelt. Wenn eine Serie von Einfüge-Operationen beendet wird, wird der optimale Kompressionsalgorithmus ermittelt und die Daten werden komprimiert ausgegeben.
+
+Falls während einer Sequenz von Einfüge-Operationen von einem anderen Benutzer eine SELECT-Anfrage kommt, wird eine vorzeitige Kompression und Ausgabe der im Kompressionspuffer gespeicherten Daten erzwungen.
+
+CSV
+Bei der CSV-Engine werden die Daten im CSV-Format gespeichert: Zahlen werden nicht binär, sondern als Ziffernfolgen gespeichert; die einzelnen Werte werden durch Kommata getrennt.
+
+BLACKHOLE
+BLACKHOLE wurde entwickelt, um die Syntax von SQL-Statements zu prüfen und ein Binärlog zu schreiben. Die Daten werden nicht gespeichert. Dadurch können Syntaxprüfungen von SQL-Statements ausgeführt werden, ohne dass Speicherplatz zum Speichern der Daten bereitgestellt werden muss. Die Ausgabe des Binärlogs kann über einen Parameter aktiviert und deaktiviert werden.
+
+Die BLACKHOLE-Engine ist ideal für die folgenden Aufgaben:
+
+Syntaxprüfung von Dump-Dateien
+Testen der Datenreplikation durch anschließenden Vergleich der Binärlogs auf dem Master-Server und dem Slave-Server.
+Zeitmessungen zur Bestimmung des Aufwands für das Schreiben des Binärlogs.
+NDB
+NDB ist die Abkürzung für Network Data Base. Die NDB-Speicher-Engine ist eine unabhängige Komponente, die die persistente Speicherung von Daten ermöglicht und für die Koordination aller Zugriffe auf Datenknoten in einem MySQL Cluster zuständig ist.[70] Anwendungen können direkt auf die NDB-Speicher-Engine über die NDB-API oder über einen MySQL-Knoten zugreifen. Der Zugriff über einen MySQL-Knoten ist für Anwendungsprogrammierer wesentlich einfacher zu gestalten, da in diesem Fall Standard-SQL-Befehle verwendet werden können und das Erlernen der NDB-Spezialitäten nicht notwendig ist.
+
+Die NDB-API ist eine multithreading-fähige Schnittstelle zur Annahme aller ankommenden Datenanfragen.[70] Für jede Anfrage werden ein oder mehrere Threads gestartet. Auf die NDB-API ist nur ein sequenzieller Zugriff möglich, wodurch die Leistung des Clusters bei sehr vielen ankommenden Anfragen vermutlich eingeschränkt wird.
+
+Engines anderer Anbieter
+Neben den offiziellen Engines bieten mehrere Hersteller auch andere Engines mit anderen Eigenschaften oder Zusatzfunktionen. Einige seien hier beispielhaft erwähnt.
+
+Revision Engine
+Die Revision Engine von DDEngine fügt eine automatische Versionierung als Plugin auf Ebene einer Speicherengine hinzu. Neben dem reinen Speichern von Daten kann diese Engine dadurch gewährleisten, dass Daten so wieder herstellbar sind, wie sie zu einem bestimmten Zeitpunkt waren. Diese Eigenschaft kann z. B. genutzt werden um den Verlauf von Produkteigenschaften zu speichern oder um gesetzliche Auflagen zu erfüllen. Um die Daten physisch zu speichern, werden die mitgelieferten Storage-Engines benutzt.[71]
+
+Brighthouse Engine
+Die Firma Infobright[72] stellt die Brighthouse Engine zur Verfügung. Sie ist für Data-Warehouse-Anwendungen konzipiert und auf die Verarbeitung besonders großer Datenmengen ausgerichtet. Indizes werden nicht unterstützt. Die Daten werden komprimiert gespeichert, wodurch nach Angaben des Herstellers bis zu 90 % des Speicherplatzes eingespart werden können.[73]
+
+Partitionierung
+Ab der Version 5.1 können MySQL-Tabellen partitioniert werden. Es stehen mehrere Partitionierungsarten zur Auswahl.[74]
+
+Range-Partitionierung
+Bei der Range-Partitionierung werden Wertebereiche für die einzelnen Partitionen definiert.
+
+In dem Beispiel wird eine Tabelle mit drei Partitionen erstellt. Die Spalte 'region' darf bei dieser Syntax nur Werte kleiner als 30 erhalten.
+
+CREATE TABLE `kunde` (
+  region int NOT NULL,
+  nr int NOT NULL,
+  name char(30),
+  ed date NOT NULL
+)
+PARTITION BY range(region) (
+  PARTITION p0 VALUES LESS THAN (10),
+  PARTITION p1 VALUES LESS THAN (20),
+  PARTITION p2 VALUES LESS THAN (30)
+);
+Die Partitionierung kann auch durch einen Ausdruck ermittelt werden. Der Ausdruck muss einen Integer-Wert als Ergebnis generieren. Wenn die letzte Partition mit dem Wert 'maxvalue' definiert wird, damit kann man in die Spalte 'region' (Beispiel oben) alle Integer-Zahlen einfügen bzw. in der Spalte 'ed' (Beispiel unten) alle Datumswerte einfügen.
+
+CREATE TABLE `kunde` (
+  region int NOT NULL,
+  nr int NOT NULL,
+  name char(30),
+  ed date NOT NULL
+)
+PARTITION BY range(year(ed)) (
+  PARTITION p0 VALUES LESS THAN (1990),
+  PARTITION p1 VALUES LESS THAN (2000),
+  PARTITION p2 VALUES LESS THAN maxvalue
+);
+List-Partitionierung
+Bei der List-Partition werden die Werte einzeln aufgezählt.
+
+Beispiel:
+
+CREATE TABLE `kunde` (
+  region int NOT NULL,
+  nr int NOT NULL,
+  name char(30),
+  ed date NOT NULL
+)
+PARTITION BY list(region) (
+  PARTITION p0 VALUES IN (1, 3, 5 ),
+  PARTITION p1 VALUES IN (2, 4, 6 ),
+  PARTITION p2 VALUES IN (10, 11, 12 )
+);
+Hash-Partitionierung
+Bei der Hash-Partitionierung wird die Verteilung der Sätze auf die einzelnen Partitionen vom DBMS ermittelt. Bei der regulären Hash-Partitionierung wird die Modulo-Funktion als Hashfunktion verwendet (Region modulo 4). Sie hat den Vorteil, dass in der Spalte 'region' alle Integer-Zahlen eingefügt werden können.
+
+CREATE TABLE `kunde` (
+  region int NOT NULL,
+  nr int NOT NULL,
+  name char(30),
+  ed date NOT NULL
+)
+PARTITION BY hash(region) PARTITIONS 4;
+Es gibt auch eine 'Lineare' Hash-Partitionierung. Dabei kommt eine andere Hashfunktion zum Einsatz.
+
+Key-Partitionierung
+Bei der Key-Partitionierung wird implizit eine Hashfunktion verwendet. Als Input für die Funktion dient der Primärschlüssel der Tabelle.
+
+CREATE TABLE `kunde` (
+  nr int NOT NULL primary key,
+  name char(30),
+  ed date NOT NULL
+)
+PARTITION BY key() PARTITIONS 4;
+Die Key-Partitionierung wird bei der Speicherengine NDB implizit bei allen Tabellen verwendet. Das erleichtert die interne Koordination der Replikation.
+
+Unterpartitionen
+Bei jeder Art von Partitionierung können zusätzlich 'Subpartitions’ definiert werden. Dadurch ist eine noch granularere Aufteilung der Daten möglich.
+
+Administration
+Unter Linux installiert sich MySQL in das Verzeichnis /var/lib/mysql/. Unter Windows legt der Nutzer den Ablageort der Datendateien fest – Standard ist der Ordner %ProgramFiles%\MySQL. Grundeinstellungen werden durch den Administrator in der Datei my.cnf vorgenommen.
+
+Kommandozeilenwerkzeuge
+Zur Verwaltung von MySQL-Datenbanken dient der mitgelieferte Kommandozeilen-Client (Kommandos mysql und mysqladmin). Zum Funktionsumfang gehören außerdem die folgenden Kommandozeilenwerkzeuge:
+
+mysqlimport
+kann als Ersatz für 'LOAD DATA INFILE …' verwendet werden. Durch Angabe von Parametern können sich Benutzer anmelden und das Verhalten des Programms steuern.
+mysqldump
+kann als Ersatz für 'SELECT * INTO OUTFILE' verwendet werden. Zusätzlich kann die Tabellenstruktur als Dump ausgegeben werden. Durch Angabe von Parametern können sich Benutzer anmelden und das Verhalten des Programms steuern.
+perror
+zeigt zu Fehlercodes erweiterte Informationen an. Als Parameter wird beim Programmstart der Errorcode benötigt.
+mysqlshow
+gibt Metadaten zu Datenbanken, Tabellen oder einzelnen Tabellenspalten aus.
+Grafische Werkzeuge
+Als grafische Verwaltungssoftware bietet Oracle die Software MySQL Workbench an. Sie ist für die Betriebssysteme Windows, macOS und Linux verfügbar.
+
+Eine von vielen Alternativen ist die in der Skriptsprache PHP geschriebene Open-Source-Anwendung phpMyAdmin. Die grafische Benutzeroberfläche lässt sich über einen Browser bedienen. phpMyAdmin wird hauptsächlich zur Verwaltung von MySQL-Datenbanken auf Webservern verwendet, auf denen die einzelnen Benutzer keine Rechte haben, mysql und mysqladmin direkt auszuführen. Zum Erstellen und Verwalten von Backups der Datenbanken auf Webservern werden – wenn keine Rechte für die Ausführung von mysqldump vorliegen – häufig die ebenfalls in PHP geschriebenen Open-Source-Anwendungen phpMyBackupPro eingesetzt.
+
+Lizenz und Support
+Für den Vertrieb von MySQL Server verwendet Oracle ein duales Lizenzsystem: Einerseits ist das Programm eine freie Software, die unter der General Public License (GPL) steht, andererseits wird es auch unter einer proprietären Lizenz angeboten.
+
+Unterstützung für den Einsatz von MySQL bietet zunächst das offizielle Handbuch.[75] Außerdem gibt es mehrere Foren und IRC-Channels, in denen Fragen kostenlos beantwortet werden.
+
+Daneben bietet Oracle auch kostenpflichtige Support-Lizenzen in drei Leistungsstufen an: MySQL Enterprise Silver, Gold und Platinum.[76] Sie unterscheiden sich in Leistungsumfang und Preis.[77][78]
+
+MySQL als Dienstleistung
+Einige Cloud-Plattformen bieten MySQL „as a Service“ an. Hierbei installieren und verwaltenAnwender die MySQL-Datenbank nicht selbst, da ein Datenbankanbieter die Installation und Wartung übernimmt. Anwender zahlen je nach Nutzung. Beispiele Cloud-basierter MySQL-Dienste sind der Amazon Relational Database Service; Oracle MySQL HeatWave Database Service, Azure Database for MySQL, Rackspace; HP Convergent Cloud; Heroku und Jelastic.
+
+Mit MySQL verwandte Produkte
+Forks
+Von MySQL wurde das Datenbank-Projekt MariaDB abgespalten, um den für MySQL verwendeten Quellcode weiterhin frei zur Verfügung zu stellen und aktiv weiterzuentwickeln.
+Im Jahr 2008 folgte mit Drizzle ein weiterer Fork.[79][80][81]
+Percona Server für MySQL ist ein Fork, der durch die Firma Percona entstand. Es fokussiert sich auf die Nutzung auf Servern[82]
+WebscaleSQL war ein Zweig im MySQL-Projekt, der durch die Zusammenarbeit von Facebook, Google, LinkedIn, Twitter und der Alibaba Group entstand. Er hatte das Ziel, MySQL besser auf die Bedürfnisse der genannten Firmen anzupassen.[83] Die Weiterentwicklung des Zweigs wurde inzwischen eingestellt.[84]
+OurDelta erstellt ein eigenes SQL-Programm, dessen Version 5.0 auf MySQL basierte.[85]
+Weitere Produkte
+MySQL Cluster ermöglicht die Installation von MySQL auf einem Computercluster in einer Shared Nothing Architecture.
+Literatur
+Stefan Pröll, Eva Zangerle, Wolfgang Gassler: MySQL: Das Handbuch für Administratoren. Rheinwerk Verlag, 2015, ISBN 978-3-8362-3753-6.
+Weblinks
+Commons: MySQL – Sammlung von Bildern, Videos und Audiodateien
+MySQL.com – offizielle Website
+MySQL Documentation – offizielle Dokumentation
+Einzelnachweise
+ Changes in MySQL 8.4.6 (2025-07-22, LTS Release). 22. Juli 2025 (abgerufen am 23. Juli 2025).
+ MySQL 8.0 RC1 – Highlights.
+ Supported Platforms: MySQL Database. (englisch, abgerufen am 28. Juli 2018).
+ openhub.net
+ COPYING. (abgerufen am 27. September 2017).
+ www.mysql.com. (abgerufen am 27. September 2017).
+ Michael Widenius: Michael Widenius interviewed at MySQL Conference 2010. O’Reilly, April 2010, abgerufen am 16. November 2016 (englisch).
+ DB-Engines Ranking. Abgerufen am 28. April 2025.
+ Hilfesystem der Version MySQL 5.0 Kapitel 1.3 und 1.4 oder http://dev.mysql.com/doc/refman/5.1/en/history.html
+ 1.2.3 History of MySQL. In: MySQL. Oracle, abgerufen am 1. Juli 2023 (englisch). “MySQL is named after co-founder Monty Widenius’s daughter, My.”
+ mysql.de
+ YouTube, Flickr, and Wikipedia to Share their Secrets of Success at the 2007 MySQL Conference & Expo. O’Reilly, 10. April 2007, abgerufen am 29. September 2012.
+ MySQL Customers by Industry: Web: Social Networks. Abgerufen am 5. Januar 2012.
+ Jason Sobel: Keeping Up. In: Facebook Blog. 21. Dezember 2007, abgerufen am 30. Oktober 2008.
+ Om Malik: Facebook’s Insatiable Hunger for Hardware. GigaOM, 25. April 2008, abgerufen am 30. Oktober 2008.
+ Big and Small Data at Twitter: MySQL CE 2011. myNoSQL, 17. April 2011, abgerufen am 20. Oktober 2011.
+ Informationen zu MySQL Embedded Server 5.1, abgerufen am 27. September 2010
+ informatik-aktuell.de Vergleich MySQL und MariaDB
+ Zu weiteren Details siehe vor allem: Sasha Pachev: Understanding MySQL Internals. O’Reilly. Chapter 9: Parser and Optimizer.
+ Query Cache Status and Maintenance. MySQL, abgerufen am 31. Januar 2024.
+ Die für das Parsing zuständigen Module befinden sich in den Dateien sql/sql_yacc.yy, sql/gen_lex_hash.cc and sql/gen_lex.cc.
+ Five Questions With Michael Widenius - Founder And Original Developer of MySQL. Opensourcereleasefeed.com, archiviert vom Original am 13. März 2009; abgerufen am 8. Juni 2009 (englisch).
+ Reference-Manual der Version 4.0 (Memento des Originals vom 4. April 2013 auf WebCite)  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis.
+ MySQL Reference-Manual der Version 4.1 (Memento des Originals vom 4. April 2013 auf WebCite)  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis.
+ Sun übernimmt MySQL - News bei TecChannel
+ Sun kauft MySQL AB (Memento vom 31. Juli 2008 im Internet Archive)
+ heise.de
+ dev.mysql.com (Memento des Originals vom 17. Februar 2012 im Internet Archive)  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis.
+ Oracle Pressemitteilung: Oracle Completes Acquisition of Sun
+ oracle.com
+ heise.de
+ Neuerungen in MySQL 5.6 (Memento des Originals vom 23. April 2011 im Internet Archive)  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis. (englisch), abgerufen am 23. Juni 2012
+ MariaDB versus MySQL – Kompatibilität. In: MariaDB KnowledgeBase. (mariadb.com [abgerufen am 8. Februar 2017]).
+ Press Release: Oracle Announces General Availability of MySQL 5.7 (englisch), abgerufen am 30. August 2017
+ Doku
+ MySQL :: MySQL 9.0 Reference Manual :: 1.4 What Is New in MySQL 9.0. Abgerufen am 9. Dezember 2024.
+ Oracle Lifetime Support Policy. Abgerufen am 10. Oktober 2019 (englisch).
+ Introducing MySQL Innovation and Long-Term Support (LTS) versions. Abgerufen am 16. Oktober 2023 (englisch).
+ A.1 MySQL 5.1 FAQ: General. In: docs.oracle.com. Archiviert vom Original am 9. Februar 2023; abgerufen am 2. August 2017 (englisch).
+ 2 Changes in MySQL 5.1.73 (2013-12-03). In: docs.oracle.com. Archiviert vom Original am 30. November 2020; abgerufen am 28. April 2020 (englisch).
+ MySQL: MySQL 5.5 Release Notes. In: dev.mysql.com. Abgerufen am 15. Januar 2018 (englisch).
+ 2 Changes in MySQL 5.5.62 (2018-10-22, General availability). In: docs.oracle.com. Archiviert vom Original am 30. November 2020; abgerufen am 28. April 2020 (englisch).
+ MySQL: MySQL 5.6 Release Notes. In: dev.mysql.com. Abgerufen am 15. Januar 2018 (englisch).
+ MySQL :: MySQL 5.6 Release Notes :: Changes in MySQL 5.6.51 (2021-01-20, General Availability). In: dev.mysql.com. Archiviert vom Original am 20. Januar 2021; abgerufen am 4. März 2021 (englisch).
+ MySQL: MySQL 5.7 Release Notes. In: dev.mysql.com. Abgerufen am 15. Januar 2018 (englisch).
+ Changes in MySQL 5.7.44 (2023-10-25, General Availability). In: dev.mysql.com. Abgerufen am 25. Oktober 2023 (englisch).
+ Geir Hoydalsvik: What’s New in MySQL 8.0? (Generally Available). 19. April 2018, archiviert vom Original am 26. August 2021; abgerufen am 10. Oktober 2019 (englisch).
+ MySQL :: MySQL 8.0 Release Notes :: Changes in MySQL 8.0.40 (2024-10-15, General Availability). In: dev.mysql.com. Abgerufen am 15. November 2024 (englisch).
+ What Is New in MySQL 8.1. 18. Juli 2023, abgerufen am 16. Oktober 2023 (englisch).
+ Changes in MySQL 8.1.0 (2023-07-18, Innovation Release). 18. Juli 2023, abgerufen am 16. Oktober 2023 (englisch).
+ What Is New in MySQL 8.2. 25. Oktober 2023, abgerufen am 26. Oktober 2023 (englisch).
+ Changes in MySQL 8.2.0 (2023-08-25, Innovation Release). 25. Oktober 2023, abgerufen am 26. Oktober 2023 (englisch).
+ What Is New in MySQL 8.3. 16. Januar 2024, abgerufen am 16. Januar 2024 (englisch).
+ Changes in MySQL 8.3.0 (2024-01-16, Innovation Release). 16. Januar 2024, abgerufen am 16. Januar 2024 (englisch).
+ Geir Hoydalsvik: What Is New in MySQL 8.4 since MySQL 8.0(Generally Available). 30. April 2024, abgerufen am 30. April 2024 (englisch).
+ MySQL :: MySQL 8.4 Release Notes :: Changes in MySQL 8.4.3 (2024-10-15, General Availability). In: dev.mysql.com. Abgerufen am 15. November 2024 (englisch).
+ What Is New in MySQL 9.0. 1. Juni 2024, abgerufen am 1. Juni 2024 (englisch).
+ MySQL :: MySQL 9.0 Release Notes :: Changes in MySQL 9.0.1 (2024-07-23, General Availability). In: dev.mysql.com. Abgerufen am 1. Juli 2024 (englisch).
+ What Is New in MySQL 9.1. 15. Oktober 2024, abgerufen am 17. Oktober 2024 (englisch).
+ MySQL :: MySQL 9.1 Release Notes :: Changes in MySQL 9.1.0 (2024-10-15, Innovation Release). In: dev.mysql.com. Abgerufen am 17. Oktober 2024 (englisch).
+ pro-linux.de
+ golem.de
+ Mirko Lindner: Slackware wechselt zu MariaDB. pro-linux.de, 25. März 2013.
+ Wikimedia-Foundation wechselt zu MariaDB. blog.wikimedia.org
+ zdnet.com
+ computerworld.com.au (Memento des Originals vom 21. Februar 2016 im Internet Archive)  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis.
+ Reference-Manual von MySQL-Version 5.0 Kapitel 14. Speicher-Engines und Tabellentypen
+ golem.de
+ dev.mysql.com zu Fremdschlüssel-Beschränkungen in MySQL 5.6. dev.mysql.com, archiviert vom Original am 16. April 2015; abgerufen am 1. Februar 2012.  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis.
+ Larissa Janssen: Hochleistungs-Datenbanksysteme: Theorie und Praxis, S. 190–191.
+ ddengine.org (Memento des Originals vom 10. Mai 2012 im Internet Archive)  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis.
+ Website der Firma Infobright in Toronto
+ Informationen zum Thema Data-Warehouse (Memento des Originals vom 24. Dezember 2011 im Internet Archive)  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis.
+ dev.mysql.com
+ dev.mysql.com
+ mysql.de
+ Angebot an Support-Leistungen von Oracle
+ Oracle erhöht Preise für MySQL
+ Artikel "MySQL-Forks und Patches" (Memento des Originals vom 23. Dezember 2010 im Internet Archive)  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis.
+ drizzle.org (Memento des Originals vom 14. Januar 2013 im Internet Archive)  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis.
+ krow.livejournal.com
+ Percona Server for MySQL. Abgerufen am 29. Juli 2022 (englisch).
+ WebScaleSQL: MySQL for Facebook-sized databases. Abgerufen am 29. Juli 2022 (englisch).
+ “We’re Gonna Need A Bigger Database”. In: WebScaleSQL.org/blog. Abgerufen am 26. Januar 2023.
+ OurDelta | Open Query. 22. August 2017, abgerufen am 29. Juli 2022 (australisches Englisch).
