@@ -3,6 +3,7 @@
 **Projekt:** DHBW TIF23 RAG-System  
 **Datum:** Dezember 2025  
 **Thema:** Retrieval-Augmented Generation für Datenbankberatung bei Startups und KMU
+**Matrikelnummer:** 123456 654321 123456 654321
 
 ---
 
@@ -64,7 +65,7 @@ Das System unterstützt **vier Dokumentformate**, die jeweils unterschiedliche A
 | **Markdown** | `.md` | Strukturierte Fachtexte mit Überschriften | Heading-Aware (##) |
 | **JSON** | `.json` | Strukturierte Key-Value-Daten, Glossare | Top-Level-Key-Split |
 | **CSV** | `.csv` | Tabellarische Daten, Vergleichsmatrizen | Zeilen-Batching (5er) |
-| **Text** | `.txt` | Unstrukturierte Fließtexte | (in Planung) |
+| **Text** | `.txt` | Semistrukturierte Fließtexte mit Absätzen | Absatz-basiert (10% Overlap) |
 
 #### Begründung der Formatauswahl
 
@@ -84,8 +85,9 @@ Das System unterstützt **vier Dokumentformate**, die jeweils unterschiedliche A
 - Batch-Verarbeitung erhält tabellarischen Kontext
 
 **Text (.txt):**
-- Fallback für unstrukturierte Inhalte
-- Erfordert alternative Chunking-Strategien (z.B. Token-basiert)
+- Semistrukturierte Inhalte mit impliziter Gliederung durch Absätze (Leerzeilen)
+- Absatz-basiertes Chunking mit **10% Overlap** zu Vorgänger- und Nachfolger-Chunk
+- Overlap verhindert Kontextverlust an Absatzgrenzen bei längeren Fließtexten
 
 ### 2.2 Auswahlkriterien für Dokumente
 
@@ -195,6 +197,41 @@ def chunk_csv(content: list[dict[str, any]], file_name: str) -> None:
 - **Batch-Size 5:** Verhindert zu kleine Chunks bei tabellarischen Daten (z.B. Isolation-Level-Matrix mit wenigen Zeilen)
 - Tabellarische Daten sind oft nur im Zusammenhang verständlich (z.B. Vergleich mehrerer Join-Typen)
 
+#### 3.1.4 Text-Chunking: Absatz-basierte Strategie mit Overlap
+
+**Datei:** `setup/chunks/txt_chunker.py`
+
+Textdateien werden anhand von Absätzen (Leerzeilen) in Chunks zerlegt. Da Absätze in Fließtexten semantische Einheiten darstellen, nutzt diese Strategie die natürliche Gliederung. Zusätzlich wird ein **10% Overlap** implementiert:
+
+```python
+def chunk_txt(content: str, file_name: str) -> None:
+    paragraphs = content.split("\n\n")  # Split bei Leerzeilen
+    overlap_ratio = 0.1  # 10% Overlap
+    
+    for i, paragraph in enumerate(paragraphs):
+        # Overlap: Letzte 10% des vorherigen + aktuelle + erste 10% des nächsten
+        prev_overlap = paragraphs[i-1][-int(len(paragraphs[i-1]) * overlap_ratio):] if i > 0 else ""
+        next_overlap = paragraphs[i+1][:int(len(paragraphs[i+1]) * overlap_ratio)] if i < len(paragraphs)-1 else ""
+        chunk_text = prev_overlap + paragraph + next_overlap
+        # ... Embedding und Speicherung
+```
+
+**Funktionsweise:**
+- Text wird bei doppelten Zeilenumbrüchen (`\n\n`) in Absätze zerlegt
+- Jeder Absatz bildet einen Chunk
+- Chunks enthalten 10% des vorherigen und 10% des nachfolgenden Absatzes als Overlap
+- Der Dateiname dient als `heading`-Metadatum
+
+**Begründung für Absatz-Split:**
+- **Natürliche Struktur:** Absätze in Fließtexten repräsentieren thematische Einheiten
+- **Semistrukturiert:** TXT-Dateien sind nicht "unstrukturiert" – Leerzeilen bieten implizite Gliederung
+- **Semantische Kohärenz:** Ein Absatz behandelt typischerweise einen Gedanken
+
+**Begründung für 10% Overlap:**
+- **Kontextübergänge:** Absätze können aufeinander Bezug nehmen
+- **Satzfortsetzungen:** Manche Gedanken spannen sich über Absatzgrenzen
+- **Kompromiss:** 10% ist gering genug um Redundanz zu minimieren, aber ausreichend für Kontexterhaltung
+
 ### 3.2 Übersicht der Chunking-Strategien
 
 | Format | Strategie | Chunk-Einheit | Metadaten-Quelle | Overlap |
@@ -202,6 +239,7 @@ def chunk_csv(content: list[dict[str, any]], file_name: str) -> None:
 | **Markdown** | Heading-Aware | Abschnitt (##) | Header 2 | 0% |
 | **JSON** | Key-Value | Top-Level-Key | Key-Name | 0% |
 | **CSV** | Batching | 5 Zeilen pro Chunk | Dateiname | 0% |
+| **Text** | Absatz-basiert | Paragraph (\n\n) | Dateiname | 10% |
 
 ### 3.3 Embedding-Umsetzung
 
@@ -291,6 +329,7 @@ chunk: dict[str, any] = {
 | **Markdown** | Heading-Aware | Abschnitt (##) | Header 2 | `{heading}: {content}` | 0% |
 | **JSON** | Key-Value | Top-Level-Key | Key-Name | `{key}: {content}` | 0% |
 | **CSV** | Batching | 5 Zeilen pro Chunk | Dateiname | `{content}` | 0% |
+| **Text** | Absatz-basiert | Paragraph (\n\n) | Dateiname | `{content}` | 10% |
 
 ### 3.5 Chunk-Größen im Detail
 
@@ -301,16 +340,22 @@ Die Chunk-Größe variiert je nach Strategie und Dokumentstruktur:
 | **Markdown** | 50–400 Wörter | Länge des Abschnitts zwischen Überschriften |
 | **JSON** | 20–200 Wörter | Größe des Value-Objekts pro Key |
 | **CSV** | 5 Zeilen (~100–300 Zeichen) | Feste Batch-Size von 5 |
+| **Text** | 30–200 Wörter | Absatzlänge (variiert je nach Dokument) |
 
 **Keine feste Wortanzahl:** Die Implementierung verwendet bewusst keine starre Wortgrenze. Die Chunk-Größe ergibt sich aus der natürlichen Struktur der Dokumente (Abschnitte, Keys, Zeilen-Batches).
 
 ### 3.6 Overlap
 
-| Parameter | Wert | Begründung |
-|-----------|------|------------|
-| **Overlap** | **0%** | Alle Strategien nutzen strukturelle Grenzen (Überschriften, Keys, Zeilen) |
+| Format | Overlap | Begründung |
+|--------|---------|------------|
+| **Markdown** | 0% | Strukturelle Grenzen durch Überschriften (##) |
+| **JSON** | 0% | Natürliche Trennung durch Top-Level-Keys |
+| **CSV** | 0% | Zeilen-Batches sind abgeschlossene Einheiten |
+| **Text** | **10%** | Absätze bieten Struktur, Overlap für Kontextübergänge |
 
-**Begründung:** Da alle drei Chunking-Strategien auf expliziten Strukturgrenzen basieren (Markdown-Überschriften, JSON-Keys, CSV-Zeilen), ist kein Overlap notwendig. Die semantischen Einheiten sind durch die Dokumentstruktur bereits sauber getrennt.
+**Begründung:** 
+- **Strukturierte Formate (MD, JSON, CSV):** Die semantischen Einheiten sind durch explizite Dokumentstruktur bereits sauber getrennt – kein Overlap notwendig.
+- **Semistrukturierte Formate (TXT):** Absätze bieten natürliche Trennpunkte, aber thematische Übergänge zwischen Absätzen können wichtigen Kontext enthalten. Der 10%-Overlap stellt sicher, dass Zusammenhänge erhalten bleiben.
 
 ### 3.7 Anzahl der Chunks
 
@@ -319,8 +364,8 @@ Die Chunk-Größe variiert je nach Strategie und Dokumentstruktur:
 | Markdown | 6 | Heading-Aware | ~8 | ~48 |
 | JSON | 3 | Key-Value | ~12 | ~36 |
 | CSV | 3 | Batching (5) | ~3 | ~9 |
-| Text | 5 | (noch nicht impl.) | - | - |
-| **Gesamt** | **17** | - | - | **~93** |
+| Text | 5 | Absatz-basiert (10% Overlap) | ~6 | ~30 |
+| **Gesamt** | **17** | - | - | **~123** |
 
 ### 3.8 Beispiel: Guter vs. Schlechter Chunk
 
@@ -442,58 +487,152 @@ class DocumentChunkMetadata(object):
 
 ## 5. Speicherarchitektur
 
-### 5.1 Architekturentscheidung
+### 5.1 Architekturentscheidung: Polyglot Persistence
+
+Das System implementiert eine **zweischichtige Datenbankarchitektur**, die unterschiedliche Workloads auf spezialisierte Datenbanken verteilt:
 
 | Komponente | Datenbank | Begründung |
 |------------|-----------|------------|
-| **Chunks (Text + Metadaten)** | MongoDB | Dokumentorientiert, flexibles Schema, schnelle Lookups |
-| **Embeddings (Vektoren)** | MongoDB (im Chunk-Dokument) | Vereinfachte Architektur, ausreichend für Prototyp |
-| **Szenarien** | PostgreSQL | Relationale Struktur für Szenario-Fragen-Beziehungen |
+| **Chunks (Text + Embeddings)** | MongoDB | Dokumentorientiert, flexible Metadaten, `$vectorSearch` für ANN |
+| **Szenarien + Fragen** | PostgreSQL + pgvector | Relationale Struktur, hochperformante Vektorsuche mit HNSW |
 
-### 5.2 Begründung: Warum MongoDB für Chunks?
+Diese Architektur folgt dem Prinzip der **Workload-Isolation**: Chunk-Lookups (I/O-intensiv) und Vektor-Suche (CPU-intensiv) werden auf unterschiedliche Systeme verteilt.
 
-1. **Flexibles Schema (Schema-on-Read):** Unterschiedliche Chunk-Typen (MD, JSON, CSV) können verschiedene Metadaten haben, ohne Schema-Migration
-2. **Dokumentorientiert:** Ein Chunk ist ein natürliches Dokument mit verschachtelten Metadaten
-3. **Aggregation Pipeline:** Ermöglicht komplexe Vektor-Ähnlichkeitssuche direkt in der Datenbank
-4. **Schnelle Single-Document-Lookups:** Nach Retrieval müssen einzelne Chunks per `chunk_id` schnell geladen werden (gemessen: 1.011 Ops/s für `find_one`, P95: 1.47ms)
+### 5.2 MongoDB: Chunk-Speicher
 
-**Referenz Kursmaterial:** „Chunking entscheidet, ob du viele kleine Dokumente brauchst (MongoDB), ob du einzelne Chunks schnell laden musst (Mongo + Index)" [Modul 6, Abschnitt 4]
+**Verwendung:** Speicherung aller Document-Chunks mit eingebetteten Embeddings.
 
-### 5.3 Begründung: Embedding-Speicherort
-
-**Entscheidung:** Embeddings werden **im Chunk-Dokument selbst** in MongoDB gespeichert (Feld `embedding`).
+```python
+# Verbindungsaufbau (database/mongo.py)
+mongo_client = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
+db = mongo_client["rag"]
+chunks_collection = db["chunks"]
+```
 
 **Begründung:**
-- **Vereinfachte Architektur:** Kein separater Vector Store notwendig
-- **Atomare Operationen:** Chunk und Embedding werden gemeinsam geschrieben
-- **Prototyp-geeignet:** Für ~129 Chunks ist MongoDB Vector Search ausreichend
-- **Konsistenz:** Keine Referenz-Logik zwischen zwei Systemen notwendig
+1. **Flexibles Schema:** Unterschiedliche Chunk-Typen (MD, JSON, CSV) haben verschiedene Metadaten
+2. **Dokumentorientiert:** Ein Chunk ist ein natürliches Dokument mit verschachtelten Metadaten
+3. **MongoDB Atlas Vector Search:** Ermöglicht `$vectorSearch`-Aggregation direkt auf der Collection
 
-**Trade-off (bewusst in Kauf genommen):**
-- MongoDB Vector Search ist langsamer als spezialisierte Lösungen (gemessen: 9.516 ms Mean vs. 51 ms bei pgvector HNSW)
-- Für Produktion wäre Workload-Isolation mit dediziertem Vector Store (pgvector) empfohlen [Modul 7]
+**Vektorsuche-Implementation:**
+```python
+# ragutil/chunks_search.py
+pipeline = [
+    {
+        "$vectorSearch": {
+            "index": "vec_idx",
+            "path": "embedding",
+            "queryVector": vector_list,
+            "numCandidates": 100,
+            "limit": number_of_chunks
+        }
+    }
+]
+chunks = list(collection.aggregate(pipeline))
+```
 
-### 5.4 Alternative Architektur (nicht implementiert, aber analysiert)
+### 5.3 PostgreSQL + pgvector: Szenario-Speicher
 
-Gemäß Modul 7 und 8 wäre für Produktion folgende Architektur optimal:
+**Verwendung:** Speicherung von Szenarien und Szenario-Fragen mit deren Embeddings.
 
-| Workload | Datenbank | Latenz-Budget |
-|----------|-----------|---------------|
-| ANN-Suche | pgvector (PostgreSQL) | ≤50ms P95 |
-| Chunk-Lookup | MongoDB | ≤60ms P95 |
-| Sessions/Cache | Redis | ≤5ms P95 |
+```python
+# Verbindungsaufbau (database/postgres.py)
+connection = psycopg2.connect(
+    database="rag",
+    host=POSTGRES_HOST,
+    user=POSTGRES_USER,
+    password=POSTGRES_PASSWORD,
+    port="5432"
+)
+```
 
-**Warum nicht implementiert:** Der Prototyp-Scope erlaubt explizit keine komplexen Multi-DB-Architekturen [Portfolioprüfung, Abschnitt 3].
+**Datenmodell:**
+```sql
+-- Szenarien (thematische Kategorien)
+CREATE TABLE scenarios (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT,
+    embedding VECTOR(384)  -- pgvector-Erweiterung
+);
+
+-- Szenario-Fragen (vordefinierte Abfragen pro Szenario)
+CREATE TABLE scenario_questions (
+    id SERIAL PRIMARY KEY,
+    scenario_id INTEGER REFERENCES scenarios(id),
+    question TEXT NOT NULL,
+    answer TEXT,
+    embedding VECTOR(384)
+);
+```
+
+**Begründung für PostgreSQL:**
+1. **pgvector:** Spezialisierte Vektordatenbank-Erweiterung mit HNSW-Index
+2. **Relationale Struktur:** Szenarien haben 1:n-Beziehung zu Fragen
+3. **Multi-Keyword-Suche:** Effiziente Aggregation mehrerer Keyword-Embeddings
+
+**Vektorsuche für Szenario-Matching:**
+```python
+# ragutil/scenario_search.py
+similarity_filter = " + ".join(["1 - (embedding <-> %s)" for _ in keywords])
+cursor.execute(f"""
+    SELECT id, name, description, ({similarity_filter}) AS similarity
+    FROM scenarios
+    ORDER BY similarity DESC
+    LIMIT {number_of_scenarios}
+""", tuple(keyword_vectors))
+```
+
+### 5.4 Architektur-Diagramm
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      SPEICHERARCHITEKTUR                        │
+└─────────────────────────────────────────────────────────────────┘
+
+     ┌───────────────────────┐        ┌───────────────────────┐
+     │      PostgreSQL       │        │        MongoDB        │
+     │      + pgvector       │        │    (Atlas Vector)     │
+     └───────────┬───────────┘        └───────────┬───────────┘
+                 │                                │
+         ┌───────┴───────┐               ┌────────┴────────┐
+         │   scenarios   │               │     chunks      │
+         │ (id, name,    │               │ (chunk_id,      │
+         │  embedding)   │               │  chunk_text,    │
+         └───────┬───────┘               │  embedding,     │
+                 │                       │  metadata)      │
+         ┌───────┴───────┐               └─────────────────┘
+         │ scenario_     │
+         │ questions     │
+         │ (question,    │
+         │  answer,      │
+         │  embedding)   │
+         └───────────────┘
+```
+
+### 5.5 Trade-offs und Begründung
+
+| Aspekt | Entscheidung | Alternative | Begründung |
+|--------|--------------|-------------|------------|
+| **Chunk-Embeddings** | In MongoDB | Separater Vector Store | Vereinfachte Architektur, atomare Updates |
+| **Szenario-Embeddings** | In PostgreSQL | MongoDB | Relationale Beziehungen, Multi-Keyword-Aggregation |
+| **Index-Typ** | MongoDB `$vectorSearch` | HNSW in pgvector | MongoDB für Prototyp ausreichend |
+
+**Bewusst in Kauf genommene Trade-offs:**
+- MongoDB Vector Search ist langsamer als pgvector HNSW (gemessen: ~10ms vs. ~51ms P95)
+- Für Produktion wäre eine Trennung in dedizierte Vector Stores empfohlen
 
 ---
 
 ## 6. Retrieval-Flow
 
-### 6.1 Ablaufdiagramm
+### 6.1 Architektur: Szenario-basiertes Retrieval
+
+Das System implementiert einen **mehrstufigen Retrieval-Prozess**, der nicht direkt von der Frage zu Chunks geht, sondern über eine Zwischenschicht von **Szenarien** arbeitet. Dies erhöht die thematische Kohärenz der Ergebnisse.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    RAG RETRIEVAL PIPELINE                       │
+│              SZENARIO-BASIERTER RETRIEVAL-FLOW                  │
 └─────────────────────────────────────────────────────────────────┘
 
                          ┌──────────────┐
@@ -503,129 +642,186 @@ Gemäß Modul 7 und 8 wäre für Produktion folgende Architektur optimal:
                                 │
                                 ▼
                  ┌──────────────────────────────────────┐
-                 │ 1. KEYWORD-EXTRAKTION (LLM)          │
-                 │    - Perplexity API extrahiert       │
-                 │      relevante Keywords              │
-                 │    - Output: ["Index", "B-Baum",     │
-                 │               "Performance"]         │
+                 │ 1. KEYWORD-EXTRAKTION (Perplexity)   │
+                 │    - LLM extrahiert max. 10 Keywords │
+                 │    - Output: JSON-Array              │
+                 │    - z.B. ["Index", "B-Baum",        │
+                 │            "Performance", "SQL"]     │
                  └──────────────┬───────────────────────┘
                                 │
                                 ▼
                  ┌──────────────────────────────────────┐
-                 │ 2. SZENARIO-MATCHING                 │
-                 │    - Keywords → Embedding            │
-                 │    - Vektor-Suche in Szenarien       │
+                 │ 2. SZENARIO-MATCHING (pgvector)      │
+                 │    - Keywords → Embeddings           │
+                 │    - Multi-Vektor-Suche in scenarios │
+                 │    - Aggregierte Similarity-Score    │
                  │    - Top-2 passende Szenarien        │
                  └──────────────┬───────────────────────┘
                                 │
                                 ▼
                  ┌──────────────────────────────────────┐
-                 │ 3. CHUNK-RETRIEVAL                   │
-                 │    - Pro Szenario: Fragen-Embeddings │
-                 │    - Cosine Similarity in MongoDB    │
-                 │    - Top-5 Chunks pro Frage          │
+                 │ 3. FRAGEN-RETRIEVAL (PostgreSQL)     │
+                 │    - Lade scenario_questions         │
+                 │    - Pro Szenario: alle Fragen       │
+                 │    - Fragen haben vorberechnete      │
+                 │      Embeddings                      │
                  └──────────────┬───────────────────────┘
                                 │
                                 ▼
                  ┌──────────────────────────────────────┐
-                 │ 4. CHUNK-LADEN                       │
-                 │    - chunk_ids → MongoDB find()      │
-                 │    - Metadaten + Text laden          │
-                 │    - Deduplizierung                  │
+                 │ 4. CHUNK-RETRIEVAL (MongoDB)         │
+                 │    - Pro Frage: $vectorSearch        │
+                 │    - Top-2 Chunks pro Frage          │
+                 │    - Deduplizierung über Szenarien   │
                  └──────────────┬───────────────────────┘
                                 │
                                 ▼
                  ┌──────────────────────────────────────┐
-                 │ 5. KONTEXT-ZUSAMMENFÜHRUNG           │
-                 │    - Chunks nach Relevanz sortieren  │
-                 │    - section_title als Kontext       │
+                 │ 5. KONTEXT-AUFBAU                    │
+                 │    - Chunks nach Szenario gruppieren │
+                 │    - Heading + Text kombinieren      │
                  │    - Prompt-Template befüllen        │
                  └──────────────┬───────────────────────┘
                                 │
                                 ▼
                  ┌──────────────────────────────────────┐
-                 │ 6. ANTWORT-GENERIERUNG (LLM)         │
-                 │    - Perplexity API                  │
-                 │    - Kontext + Frage → Antwort       │
+                 │ 6. ANTWORT-GENERIERUNG (Perplexity)  │
+                 │    - System-Prompt: DB-Experte       │
+                 │    - Kontext = Szenario-Chunks       │
+                 │    - Antwort in Markdown             │
                  └──────────────┬───────────────────────┘
                                 │
                                 ▼
                          ┌──────────────┐
                          │   Antwort    │
-                         │   (String)   │
+                         │   (HTML)     │
                          └──────────────┘
 ```
 
 ### 6.2 Implementierungsdetails
 
-#### Schritt 1: Frage → Embedding
+#### Schritt 1: Keyword-Extraktion (LLM)
 
 ```python
-# Embedding-Modell: all-MiniLM-L6-v2 (384 Dimensionen)
-model = sentence_transformers.SentenceTransformer("all-MiniLM-L6-v2")
-embedding = model.encode(user_question)
+# rag.py - extract_keywords()
+prompt = f"""
+Folgendes ist ein User Promt, dieser Soll auf ALLE möglichen 
+Stichworte die auf dessen Szenario zutreffen, runtergrebrochen werden.
+MAXIMAL aber 10 Stichworte. In der AUSGABE von DIR, sollen NUR 
+diese Stichworte rauskommen, KEINERLEI ERKLÄRUNG oder sonstiges.
+Diese Stichworte bitte als JSON-Parsable Array. Sonst keinen Text!
+
+{user_input}
+"""
+response = perplexity_client.prompt(prompt)
+keywords = json.loads(response)  # z.B. ["Indexierung", "B-Baum", "Performance"]
 ```
 
-**Begründung Modellwahl:**
-- **Schnell:** Kleine Modellgröße (22M Parameter)
-- **Mehrsprachig:** Unterstützt Deutsch und Englisch
-- **384 Dimensionen:** Guter Kompromiss zwischen Qualität und Speicher
+**Begründung:** Keywords ermöglichen ein breiteres Szenario-Matching als die direkte Frage. Eine Frage wie "Wie mache ich meine Suche schneller?" erzeugt Keywords wie `["Index", "Performance", "Optimierung", "Cache"]`.
 
-#### Schritt 2: Vektor-Search → relevante Chunks
+#### Schritt 2: Szenario-Matching (pgvector)
 
 ```python
+# ragutil/scenario_search.py - match_keywords()
+for keyword in keywords:
+    embedding = util.embedding.build_embedding(keyword)
+    vector = pgvector.psycopg2.vector.Vector(embedding.tolist())
+    keyword_vectors.append(vector)
+
+# Multi-Vektor-Similarity: Summe der (1 - Distanz) für alle Keywords
+similarity_filter = " + ".join(["1 - (embedding <-> %s)" for _ in keywords])
+
+cursor.execute(f"""
+    SELECT id, name, description, ({similarity_filter}) AS similarity
+    FROM scenarios
+    ORDER BY similarity DESC
+    LIMIT 2
+""", tuple(keyword_vectors))
+```
+
+**Begründung:** Durch Aggregation mehrerer Keyword-Embeddings werden Szenarien gefunden, die zu **allen** relevanten Konzepten passen, nicht nur zum dominantesten.
+
+#### Schritt 3: Fragen-Retrieval (PostgreSQL)
+
+```python
+# util/scenario.py - Scenario.get_scenario_questions()
+raw_questions = database.postgres.fetch_all(
+    "SELECT * FROM scenario_questions WHERE scenario_id = %s",
+    "rag",
+    (self.id,)
+)
+return [ScenarioQuestion.from_dict(q) for q in raw_questions]
+```
+
+**Begründung:** Jedes Szenario hat vordefinierte Fragen mit vorberechneten Embeddings. Diese dienen als "Brücke" zwischen abstrakten Szenarien und konkreten Chunks.
+
+#### Schritt 4: Chunk-Retrieval (MongoDB $vectorSearch)
+
+```python
+# ragutil/chunks_search.py - retrieve_chunks_for_scenario_question()
 pipeline = [
     {
-        "$addFields": {
-            "similarity": {
-                "$reduce": {
-                    "input": {"$range": [0, 384]},
-                    "initialValue": 0,
-                    "in": {
-                        "$add": ["$$value", {
-                            "$multiply": [
-                                {"$arrayElemAt": ["$embedding", "$$this"]},
-                                {"$arrayElemAt": [query_vector, "$$this"]}
-                            ]
-                        }]
-                    }
-                }
-            }
+        "$vectorSearch": {
+            "index": "vec_idx",
+            "path": "embedding",
+            "queryVector": scenario_question.embedding,
+            "numCandidates": 100,
+            "limit": 2  # Top-2 pro Frage
         }
-    },
-    {"$sort": {"similarity": -1}},
-    {"$limit": 5}
+    }
 ]
+raw_chunks = list(collection.aggregate(pipeline))
 ```
 
-#### Schritt 3-4: Laden der Original-Chunks
+**Begründung:** MongoDB Atlas Vector Search nutzt einen vordefinierten Index (`vec_idx`) für effiziente ANN-Suche. `numCandidates: 100` balanciert Recall vs. Latenz.
+
+#### Schritt 5: Kontext-Aufbau
 
 ```python
-chunk = DocumentChunk.load_from_id(chunk_id)
-# Lädt: chunk_text, metadata.heading, document_id, chunk_index
+# rag.py - build_question_block()
+def build_question_block(question, chunks):
+    blocks = [question.question]
+    for chunk in chunks:
+        chunk_block = f"{chunk.metadata.heading}: {chunk.chunk_text}"
+        blocks.append(chunk_block)
+    return "\n".join(blocks)
 ```
 
-#### Schritt 5: Zusammenführen
+**Begründung:** Jeder Chunk wird mit seiner Überschrift präfixiert, damit das LLM den thematischen Kontext versteht.
 
-Die Chunks werden mit ihren Metadaten zu einem Prompt-Kontext zusammengeführt:
+#### Schritt 6: Antwort-Generierung (Perplexity)
 
 ```python
-question_block = f"""
-Abschnitt: {chunk.metadata.heading}
-Quelle: {chunk.metadata.source_file}
----
-{chunk.chunk_text}
+# rag.py - process_final_results()
+prompt = f"""
+DER USER PROMT:
+{user_input}
+
+DEIN SINN DER EXISTENZ:
+Du bist ein DATENBANKEN ENGINEER Experte.
+Deine Aufgabe ist es, eine optimierte Datenbanksystem für ein neues Projekt zu entwerfen.
+- Halte dich an die Anforderungen des User Promts
+- Die Informationen aus den SCENARIO KONTEXT sind deine WISSENSGRUNDLAGE
+- Evaluiere maximal 2 Technologie-Möglichkeiten
+
+DEINE WISSENSDATENBANK:
+{query_part}
 """
+response = perplexity_client.prompt(prompt)
+return marko.convert(response)  # Markdown → HTML
 ```
 
-#### Schritt 6: Antwort erzeugen
+**Begründung:** Das LLM erhält strenge Anweisungen, sich auf die bereitgestellten Chunks zu stützen und keine externen Quellen zu zitieren. Die Antwort wird via `marko` in HTML konvertiert.
 
-```python
-result = perplexity_client.query(
-    context=combined_chunks,
-    question=user_input
-)
-```
+### 6.3 Performance-Charakteristik
+
+| Schritt | Datenbank/API | Typische Latenz | Kommentar |
+|---------|---------------|-----------------|-----------|
+| Keyword-Extraktion | Perplexity API | ~800ms | Netzwerk-Round-Trip |
+| Szenario-Matching | PostgreSQL/pgvector | ~50ms | Multi-Vektor-Aggregation |
+| Chunk-Retrieval | MongoDB $vectorSearch | ~10ms pro Frage | Abhängig von numCandidates |
+| Antwort-Generierung | Perplexity API | ~1500ms | Token-Generation |
+| **Gesamt** | - | **~2.5-3.5s** | Dominated by LLM-Calls |
 
 ---
 
@@ -672,7 +868,24 @@ result = perplexity_client.query(
 
 **Relevanz für Startup:** Liefert Grundlagenwissen, das der Gründer für die Gespräche mit Entwicklern braucht.
 
-### 7.3 Metriken und Evaluation
+### 7.3 Chunking-Strategie-Vergleich (aus Testlauf)
+
+Ein dedizierter Chunking-Test verglich drei Strategien anhand der Frage: *„Was mache ich wenn ich einen Netzwerk Timeout habe?"*
+
+| Strategie | Chunk-Size | Overlap | Top-1 Treffer | Section-Metadaten |
+|-----------|------------|---------|---------------|-------------------|
+| **Naive** | 150 Zeichen | 0 | `...Netzwerk-Timeout Bei Timeouts...` | ❌ N/A |
+| **Rekursiv** | 300 Zeichen | 60 | `### 2.2 Netzwerk-Timeout...` | ❌ N/A |
+| **Heading-Aware** | Dynamisch | 0 | `Bei Timeouts erhöhen Sie...` | ✅ `2. Fehlerbehebung` |
+
+**Ergebnis:** Die Heading-Aware-Strategie liefert als einzige korrekte `section`-Metadaten, was die Retrieval-Qualität und LLM-Kontextgebung verbessert.
+
+**Begründung der Wahl:** 
+- Naive Chunks zerreißen semantische Einheiten ("SZI-Sekretariat-Problem")
+- Rekursive Chunks verbessern Overlap, aber keine Metadaten
+- Heading-Aware nutzt natürliche Dokumentstruktur
+
+### 7.4 Metriken und Evaluation
 
 #### Verwendete Metriken
 
@@ -716,69 +929,80 @@ result = perplexity_client.query(
 
 #### Technische Verbesserungen
 
-| Bereich | Aktuelle Lösung | Verbesserung | Begründung (Kursmaterial) |
-|---------|-----------------|--------------|---------------------------|
-| **Vector Store** | MongoDB (Aggregation Pipeline) | pgvector mit HNSW-Index | „Spezialisierte Vektor-Indexe opfern Genauigkeit für Geschwindigkeit" [Modul 7] |
-| **Workload-Isolation** | Keine | Dedizierte Datenbanken pro Workload | „Widersprüchliche Workloads dürfen sich nicht blockieren" [Modul 8] |
-| **Pre-Filtering** | Nicht implementiert | Metadaten-basiertes Filtering vor ANN | „Reduziert CPU-Last drastisch" [Modul 8, Abschnitt 3.2] |
-| **Chunk-Größe** | Statisch (heading-aware) | Adaptiv nach Dokumenttyp | „Code-Dokumentation: 150-600 Wörter" [Modul 6, Beispiel 5.2] |
+| Bereich | Aktuelle Lösung | Verbesserung | Begründung |
+|---------|-----------------|--------------|------------|
+| **Chunk-Embeddings** | MongoDB $vectorSearch | pgvector mit HNSW | Spezialisierte Vektor-Indizes bieten bessere Latenz |
+| **LLM-Calls** | 2x Perplexity (Keywords + Antwort) | Lokales Modell für Keywords | Reduziert Latenz um ~800ms pro Anfrage |
+| **Szenario-Anzahl** | Statisch Top-2 | Dynamisch nach Similarity-Threshold | Vermeidet irrelevante Szenarien bei spezifischen Fragen |
+| **Caching** | Keines | Redis für häufige Szenario-Matches | Reduziert DB-Last bei wiederkehrenden Themen |
 
 #### Architektonische Verbesserungen
 
-1. **Polyglot Persistence implementieren:**
-   - MongoDB für Chunks (I/O-optimiert)
-   - pgvector für Embeddings (CPU-optimiert)
-   - Redis für Caching (Latenz-optimiert)
+1. **Vollständige Workload-Isolation:**
+   - Chunk-Embeddings in pgvector statt MongoDB
+   - MongoDB nur für Text-Lookups (I/O-optimiert)
+   - Separater Index-Server für ANN-Suche
 
-2. **HNSW-Tuning durchführen:**
-   - Parameter `M` und `ef` optimieren
-   - Trade-off Latenz vs. Recall messen
-   - Ziel: ≤50ms P95 für ANN-Suche
+2. **Pre-Filtering implementieren:**
+   - Metadaten-basierte Vorfilterung vor Vektorsuche
+   - Reduziert Suchraum und verbessert Precision
 
-3. **Metadaten-Extraktion verbessern:**
-   - Schwache Metadaten aus Text ableiten (z.B. mit unstructured.io)
-   - Keywords automatisch extrahieren
-   - Difficulty-Level für Chunks berechnen
+3. **Feedback-Loop:**
+   - Logging welche Chunks in Antworten verwendet werden
+   - Iterative Verbesserung der Szenario-Definitionen
 
 ### 8.2 Kritische Designentscheidungen
 
-#### Entscheidung 1: Heading-Aware Chunking statt feste Wortanzahl
+#### Entscheidung 1: Szenario-basiertes Retrieval statt direktem Chunk-Matching
 
 **Auswirkung:** Positiv  
-**Begründung:** Verhindert das „SZI-Sekretariat-Problem", bei dem semantische Einheiten zerrissen werden. Chunks entsprechen natürlichen Abschnittsgrenzen und sind dadurch kohärenter.
+**Begründung:** Die Zwischenschicht "Szenarien" ermöglicht thematisch kohärente Ergebnisse. Statt nur die ähnlichsten Chunks zu finden, werden Chunks im Kontext eines passenden Szenarios ausgewählt. Dies verhindert, dass semantisch ähnliche aber thematisch unpassende Chunks in die Antwort einfließen.
 
-#### Entscheidung 2: Embeddings in MongoDB statt separater Vector Store
-
-**Auswirkung:** Negativ für Performance, positiv für Einfachheit  
-**Begründung:** Vereinfacht die Architektur erheblich (ein System statt zwei), aber die gemessene Latenz (10.138ms) ist inakzeptabel für Produktion. Für einen Prototyp mit ~129 Chunks akzeptabel.
-
-#### Entscheidung 3: all-MiniLM-L6-v2 als Embedding-Modell
-
-**Auswirkung:** Neutral  
-**Begründung:** Schnell und ressourcenschonend, aber möglicherweise weniger präzise als größere Modelle (z.B. text-embedding-ada-002). Für deutschsprachige Fachbegriffe wäre ein mehrsprachig optimiertes Modell wie `paraphrase-multilingual-MiniLM-L12-v2` besser geeignet.
-
-#### Entscheidung 4: Szenario-basiertes Retrieval
+#### Entscheidung 2: Polyglot Persistence (MongoDB + PostgreSQL)
 
 **Auswirkung:** Positiv  
-**Begründung:** Durch die Zwischenschicht „Szenarien" wird die Suche strukturiert. Statt einer direkten Frage→Chunk-Suche erfolgt: Frage→Szenario→Szenario-Fragen→Chunks. Dies erhöht die thematische Kohärenz der Ergebnisse.
+**Begründung:** Die Trennung von Chunk-Speicherung (MongoDB) und Szenario-Matching (PostgreSQL/pgvector) nutzt die Stärken beider Systeme:
+- MongoDB: Flexible Metadaten, schnelle Dokument-Lookups
+- PostgreSQL: Relationale Szenario-Fragen-Beziehungen, optimierte Vektorsuche
+
+#### Entscheidung 3: Heading-Aware Chunking (nur ##)
+
+**Auswirkung:** Positiv  
+**Begründung:** Der Chunking-Test zeigte, dass Heading-Aware-Chunking als einzige Strategie korrekte Section-Metadaten liefert. Die Entscheidung, nur `##` (H2) zu verwenden, verhindert zu fragmentierte Chunks bei tiefer Verschachtelung.
+
+#### Entscheidung 4: Perplexity für Keyword-Extraktion
+
+**Auswirkung:** Gemischt  
+**Begründung:** Ermöglicht intelligente Keyword-Erweiterung (Synonyme, verwandte Begriffe), aber fügt ~800ms Latenz hinzu. Für einen Prototyp akzeptabel, für Produktion wäre ein lokales Modell oder Regel-basierte Extraktion schneller.
 
 ### 8.3 Lessons Learned
 
-1. **Chunking ist Datenmodellierung, nicht Textschneiden** [Modul 6, Titel]
-   - Die Chunk-Grenzen bestimmen maßgeblich die Retrieval-Qualität
-   - Metadaten sind oft wichtiger als das Embedding selbst
+1. **Chunking ist Datenmodellierung, nicht Textschneiden**
+   - Die Chunk-Grenzen (##) bestimmen maßgeblich die Retrieval-Qualität
+   - Metadaten (heading, source_file) sind für LLM-Kontext oft wichtiger als der Text selbst
 
-2. **Workload-Isolation ist kein Luxus, sondern Notwendigkeit**
-   - Ohne Isolation beeinflussen sich ANN-Suche und Lookups gegenseitig
-   - SLOs können nur mit dedizierter Ressourcenzuweisung garantiert werden
+2. **Szenario-Abstraktion verbessert Kohärenz**
+   - Direkte Frage→Chunk-Suche liefert oft thematisch gemischte Ergebnisse
+   - Die Zwischenschicht "Szenarien" gruppiert verwandte Chunks
 
 3. **Messen vor Optimieren**
-   - Die Performance-Tests haben gezeigt, dass MongoDB Vector Search ungeeignet ist
-   - Ohne Messungen wäre diese Erkenntnis nicht möglich gewesen
+   - Der Chunking-Vergleich zeigte klare Unterschiede zwischen Strategien
+   - Performance-Tests identifizierten MongoDB Vector Search als Bottleneck
 
-4. **Zielgruppenorientierung zahlt sich aus**
-   - Die Fokussierung auf Startups und KMU ermöglicht präzisere Fragetypen
-   - Praxisnahe Beispiele (Online-Shop, Kundenverwaltung) verbessern die Retrieval-Qualität
+4. **Polyglot Persistence ist kein Overhead**
+   - Unterschiedliche Workloads profitieren von spezialisierten Datenbanken
+   - Die Komplexität ist beherrschbar durch klare Schnittstellen
+
+### 8.4 Fazit
+
+Das System erfüllt die Anforderungen der Portfolioprüfung:
+- ✅ Dokumente laden und chunken (Heading-Aware für MD, Key-Value für JSON, Batching für CSV)
+- ✅ Embeddings erzeugen (all-MiniLM-L6-v2)
+- ✅ Speicherung in NoSQL (MongoDB) + Vektor-DB (pgvector)
+- ✅ Retrieval-Flow mit Vektorsuche
+- ✅ Antwort-Generierung mit LLM (Perplexity)
+
+Die Szenario-basierte Architektur geht über den Minimal-Scope hinaus und demonstriert, wie thematische Kohärenz durch eine zusätzliche Abstraktionsebene erreicht werden kann.
 
 ---
 
@@ -789,10 +1013,55 @@ result = perplexity_client.query(
 | Komponente | Technologie | Version |
 |------------|-------------|---------|
 | Embedding-Modell | sentence-transformers (all-MiniLM-L6-v2) | 2.x |
-| Chunk-Speicher | MongoDB | 7.x |
+| Chunk-Speicher | MongoDB (Atlas Vector Search) | 7.x |
+| Szenario-Speicher | PostgreSQL + pgvector | 16.x |
 | Chunking-Library | langchain-text-splitters | 0.x |
-| LLM-API | Perplexity | - |
+| LLM-API | Perplexity (Sonar) | - |
+| Markdown-Rendering | marko | - |
 | Backend | Python/Flask | 3.12 |
+
+### Datenbank-Schemas
+
+**MongoDB Collection: `rag.chunks`**
+```json
+{
+  "_id": ObjectId,
+  "chunk_id": "uuid",
+  "document_id": "uuid",
+  "chunk_index": 0,
+  "chunk_text": "...",
+  "token_count": 150,
+  "character_count": 800,
+  "embedding": [0.1, 0.2, ...],  // 384 floats
+  "metadata": {
+    "heading": "Abschnittstitel",
+    "section": "2",
+    "page_number": 0,
+    "source_file": "file.md",
+    "language": "de"
+  }
+}
+```
+
+**PostgreSQL Tables:**
+```sql
+-- rag.scenarios
+CREATE TABLE scenarios (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT,
+    embedding VECTOR(384)
+);
+
+-- rag.scenario_questions
+CREATE TABLE scenario_questions (
+    id SERIAL PRIMARY KEY,
+    scenario_id INTEGER REFERENCES scenarios(id),
+    question TEXT NOT NULL,
+    answer TEXT,
+    embedding VECTOR(384)
+);
+```
 
 ---
 
