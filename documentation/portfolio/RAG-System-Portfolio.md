@@ -1,9 +1,9 @@
-# Portfolio: Datenbank Design Assistant
+# Portfolio: Der Datenbank Design Deputy (DDDD)
 
 **Projekt:** DHBW TIF23 RAG-System  
 **Datum:** Dezember 2025  
 **Thema:** Retrieval-Augmented Generation für Datenbankberatung bei Startups und KMU
-**Matrikelnummer:** 123456 654321 123456 654321
+**Matrikelnummer:** 3230442 1837738 8317319 7083848
 
 ---
 
@@ -22,9 +22,9 @@
 
 ## 1. Ziel & Use Case
 
-### 1.1 Zielsetzung: Der Datenbank Design Assistant
+### 1.1 Zielsetzung: Der Datenbank Design Deputy
 
-Das entwickelte RAG-System – der **„Datenbank Design Assistant"** – dient als intelligenter Beratungsassistent für **Startups und kleine lokale Unternehmen (KMU)**, die ihre IT-Infrastruktur erstmalig aufbauen oder erweitern möchten. Diese Zielgruppe verfügt häufig über begrenzte Ressourcen und fehlendes Fachwissen im Bereich Datenbankarchitektur, benötigt aber dennoch fundierte Entscheidungsgrundlagen.
+Das entwickelte RAG-System – **„Der Datenbank Design Deputy"** – dient als intelligenter Beratungsassistent für **Startups und kleine lokale Unternehmen (KMU)**, die ihre IT-Infrastruktur erstmalig aufbauen oder erweitern möchten. Diese Zielgruppe verfügt häufig über begrenzte Ressourcen und fehlendes Fachwissen im Bereich Datenbankarchitektur, benötigt aber dennoch fundierte Entscheidungsgrundlagen.
 
 **Primäres Ziel:**
 - Unterstützung von Gründern und technischen Leitern bei der Auswahl und Gestaltung einer passenden Datenbankarchitektur
@@ -1084,5 +1084,5 @@ CREATE TABLE scenario_questions (
 
 ---
 
-*Datenbank Design Assistant – Ein RAG-System für Startups und KMU*  
+*Der Datenbank Design Deputy – Ein RAG-System für Startups und KMU*  
 *Dokument erstellt im Rahmen der DHBW Portfolioprüfung, Dezember 2025*
