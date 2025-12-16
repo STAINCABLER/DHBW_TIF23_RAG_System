@@ -432,7 +432,11 @@
             usertag.innerText = userInput;
             usertag.classList.add("user-response")
 
-                document.querySelector("#content").appendChild(usertag);
+            document.querySelector("#content").appendChild(usertag);
+            
+            // Clear the input field after sending
+            userInputTag.value = "";
+            
             if(is_running) return;
             document.querySelector("#submit").disabled = true;
             is_running = true;
@@ -450,8 +454,8 @@
             `;
             document.querySelector("#content").appendChild(loadingTag);
             
-            // Scroll to loading indicator (start of element)
-            loadingTag.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Scroll to end of user message
+            usertag.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
             const API_URL = "./api"
             fetch(API_URL, {
@@ -474,8 +478,8 @@
 
                 document.querySelector("#content").appendChild(tag);
                 
-                // Scroll to start of RAG response
-                tag.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Scroll to end of user message (shows RAG response below)
+                usertag.scrollIntoView({ behavior: 'smooth', block: 'end' });
                 
                 is_running = false;
                 document.querySelector("#submit").disabled = false;
