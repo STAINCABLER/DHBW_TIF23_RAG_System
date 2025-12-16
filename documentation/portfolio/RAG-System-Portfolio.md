@@ -367,7 +367,26 @@ Die Chunk-Größe variiert je nach Strategie und Dokumentstruktur:
 | Text | 5 | Absatz-basiert (10% Overlap) | ~6 | ~30 |
 | **Gesamt** | **17** | - | - | **~123** |
 
-### 3.8 Beispiel: Guter vs. Schlechter Chunk
+### 3.8 Ingest-Performance
+
+Der gesamte Chunking- und Embedding-Prozess für alle Grundwissen-Dateien wurde gemessen:
+
+| Metrik | Wert |
+|--------|------|
+| **Gesamtdauer** | **230,74 Sekunden** (~3,8 Minuten) |
+| **Verarbeitete Dokumente** | 17 |
+| **Erzeugte Chunks** | ~123 |
+| **Ø Zeit pro Dokument** | ~13,6 Sekunden |
+| **Ø Zeit pro Chunk** | ~1,9 Sekunden |
+
+**Bottleneck-Analyse:**
+- **Embedding-Generierung:** Hauptanteil der Zeit (~85%) entfällt auf die Vektorisierung via `all-MiniLM-L6-v2`
+- **Dateioperationen:** Vernachlässigbar (<1 Sekunde gesamt)
+- **MongoDB-Inserts:** Schnell durch Batch-Inserts (~2 Sekunden gesamt)
+
+**Hinweis:** Die Ingest-Zeit ist ein **einmaliger Aufwand** beim Setup. Zur Laufzeit werden nur vorberechnete Embeddings aus MongoDB geladen.
+
+### 3.9 Beispiel: Guter vs. Schlechter Chunk
 
 #### ✅ Guter Chunk
 

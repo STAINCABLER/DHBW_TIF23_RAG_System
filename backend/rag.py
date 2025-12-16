@@ -217,6 +217,7 @@ def process_final_results(perplexity_client: ragutil.perplexity.PerplexityQuerie
         DU BEARBEITEST DIE AUFGABE IN DEUTSCHER SPRACHE, ABER ENGLISCHE TECHNISCHE BEGRIFFE SIND ERLAUBT.
         DU ANTWORTEST NUR AUF DEN USER INPUT DES USERS, DER REST IST NUR DEINE WISSENSGRUNDLAGE. NICHTS AUF DAS DU ANTWORTEN SOLLST, ODER DARFST!
         Deine Antwort darf KEINERLEI Links oder Verweise auf externe Quellen enthalten!
+        Nutze bitte MARKDOWN Formatierung in deiner Antwort und Volksmundverständliche Sprache mit benötigten Fachbegriffen.
 
         VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
         DEINE WISSENSDATENBANK:
