@@ -383,21 +383,21 @@ Das Chunk-Schema folgt den Anforderungen der Portfolioprüfung und den Best Prac
 ```python
 @dataclasses.dataclass
 class DocumentChunk(object):
-    chunk_id: str           # Eindeutiger Identifikator (UUID)
-    document_id: str        # Referenz auf Ursprungsdokument
-    chunk_index: int        # Position im Dokument (0, 1, 2, ...)
-    chunk_text: str         # Der eigentliche Text
-    token_count: int        # Anzahl Tokens für Budgetierung
-    character_count: int    # Zeichenanzahl
-    metadata: DocumentChunkMetadata  # Erweiterte Metadaten
+    chunk_id: str                       # Eindeutiger Identifikator (UUID)
+    document_id: str                    # Referenz auf Ursprungsdokument
+    chunk_index: int                    # Position im Dokument (0, 1, 2, ...)
+    chunk_text: str                     # Der eigentliche Text
+    token_count: int                    # Anzahl Tokens für Budgetierung
+    character_count: int                # Zeichenanzahl
+    metadata: DocumentChunkMetadata     # Erweiterte Metadaten
 
 @dataclasses.dataclass  
 class DocumentChunkMetadata(object):
-    heading: str            # section_title (Abschnittsüberschrift)
-    section: str            # Abschnittsnummer
-    page_number: int        # Seitennummer (falls relevant)
-    source_file: str        # Quelldatei
-    language: str           # Sprache des Chunks
+    heading: str                        # section_title (Abschnittsüberschrift)
+    section: str                        # Abschnittsnummer
+    page_number: int                    # Seitennummer (falls relevant)
+    source_file: str                    # Quelldatei
+    language: str                       # Sprache des Chunks
 ```
 
 ### 4.3 Begründung der Pflichtfelder
