@@ -45,6 +45,8 @@ def chunk_csv(content: list[dict[str, any]], file_name: str) -> None:
 
     doc_id: str = str(uuid.uuid4())
 
+    chunks: list[dict[str, any]] = []
+
     for i, batch in enumerate(batching(content, 5)):
         chunk_id: str = str(uuid.uuid4())
 
@@ -71,8 +73,11 @@ def chunk_csv(content: list[dict[str, any]], file_name: str) -> None:
             }
         }
 
-        with database.mongo.create_connection() as conn:
-            db = conn["rag"]
-            coll = db["chunks"]
+        chunks.append(chunk)
+    print(f"Identified {len(chunks)} elements in {file_name}")
 
-            coll.insert_one(chunk)
+    with database.mongo.create_connection() as conn:
+        db = conn["rag"]
+        coll = db["chunks"]
+
+        coll.insert_many(chunks)

@@ -22,6 +22,7 @@ def read_file_content_json(file_path: str) -> list | dict:
 
 def strategy_heading_aware(text: str, chunk_size: int = 0, overlap: int = 0) -> list[langchain_core.documents.Document]:
     headers_to_split_on = [
+        ("#", "Header 1"),
         ("##", "Header 2"),
     ]
     markdown_splitter = langchain_text_splitters.MarkdownHeaderTextSplitter(headers_to_split_on=headers_to_split_on)
@@ -33,15 +34,20 @@ def chunk_md(data: str, file_name: str) -> None:
 
     chunks: list[langchain_core.documents.Document] = strategy_heading_aware(data)
 
+    final_chunks: list[dict[str, any]] = []
+
+    print(f"Identified {len(chunks)} elements in {file_name}")
+
     for i, raw_chunk in enumerate(chunks):
         chunk_id: str = str(uuid.uuid4())
         
+        header_1_info = raw_chunk.metadata.get('Header 1', 'N/A')
         header_info = raw_chunk.metadata.get('Header 2', 'N/A')
 
         content: str = json.dumps(raw_chunk.page_content)
         character_count: int = len(content)
 
-        tensor: torch.Tensor = util.embedding.build_embedding(f"{header_info}: {content}")
+        tensor: torch.Tensor = util.embedding.build_embedding(f"{header_1_info}-{header_info}: {content}")
         vector: pgvector.psycopg2.vector.Vector = pgvector.psycopg2.vector.Vector(tensor)
 
         chunk: dict[str, any] = {
@@ -53,16 +59,18 @@ def chunk_md(data: str, file_name: str) -> None:
             "character_count": character_count,
             "embedding": vector.to_list(),
             "metadata": {
-                "heading": header_info,
-                "section": f"key:{i}",
+                "heading": f"{header_1_info}-{header_info}",
+                "section": f"{header_1_info}-{header_info}-{i}",
                 "page_number": 1,
                 "source_file": file_name,
                 "language": "DE"
             }
         }
 
-        with database.mongo.create_connection() as conn:
-            db = conn["rag"]
-            coll = db["chunks"]
+        final_chunks.append(chunk)
 
-            coll.insert_one(chunk)
+    with database.mongo.create_connection() as conn:
+        db = conn["rag"]
+        coll = db["chunks"]
+
+        coll.insert_many(final_chunks)
