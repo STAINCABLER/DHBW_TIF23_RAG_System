@@ -31,7 +31,7 @@ def get_index() -> str:
 def get_index_debug() -> str:
     with open("backend/index.html", "r", encoding="utf-8") as file:
         r = file.read()
-        return r.replace('const API_URL = "./api"', 'const API_URL = "./api-debug"').replace('<title>DHBW Rag</title>', '<title>DHBW Rag - Debug Mode</title>').replace('<h1>DHBW RAG System</h1>', '<h1>DHBW RAG System - DEBUG MODE</h1>').replace('--color-surface: #05181B;', '--color-surface: #180505;')
+        return r.replace('const API_URL = "./api"', 'const API_URL = "./api-debug"').replace('<title>Der DHBW Datenbank Design Deputy</title>', '<title>Der DHBW Datenbank Design Deputy - Debug</title>').replace('<h1>Der DHBW Datenbank Design Deputy</h1>', '<h1>Der DHBW Datenbank Design Deputy - DEBUG</h1>').replace('--color-surface: #05181B;', '--color-surface: #180505;')
 
 @app.post("/api")
 def post_api() -> str:
@@ -50,7 +50,7 @@ def post_api_debug() -> str:
     user_input: str = body["user_input"]
 
     results: list[float] = [0.0, 0.0, 0.0]
-    NUM_OF_TRIES: int = 100
+    NUM_OF_TRIES: int = 1000
 
     for _ in range(NUM_OF_TRIES):
         r = test_rag.rag_process(user_input)
