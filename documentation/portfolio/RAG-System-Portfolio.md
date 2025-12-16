@@ -24,7 +24,7 @@
 
 ### 1.1 Zielsetzung: Der Datenbank Design Deputy
 
-Das entwickelte RAG-System – **„Der Datenbank Design Deputy"** – dient als intelligenter Beratungsassistent für **Startups und kleine lokale Unternehmen (KMU)**, die ihre IT-Infrastruktur erstmalig aufbauen oder erweitern möchten. Diese Zielgruppe verfügt häufig über begrenzte Ressourcen und fehlendes Fachwissen im Bereich Datenbankarchitektur, benötigt aber dennoch fundierte Entscheidungsgrundlagen.
+Das entwickelte RAG-System - **„Der Datenbank Design Deputy"** - dient als intelligenter Beratungsassistent für **Startups und kleine lokale Unternehmen (KMU)**, die ihre IT-Infrastruktur erstmalig aufbauen oder erweitern möchten. Diese Zielgruppe verfügt häufig über begrenzte Ressourcen und fehlendes Fachwissen im Bereich Datenbankarchitektur, benötigt aber dennoch fundierte Entscheidungsgrundlagen.
 
 **Primäres Ziel:**
 - Unterstützung von Gründern und technischen Leitern bei der Auswahl und Gestaltung einer passenden Datenbankarchitektur
@@ -54,7 +54,7 @@ Das System ist optimiert für praxisorientierte Fragetypen, die typisch für Inf
 
 ---
 
-## 2. Dokumentenauswahl + Datenbasis
+## 2. Dokumentenauswahl & Datenbasis
 
 ### 2.1 Unterstützte Dokumentformate
 
@@ -63,7 +63,7 @@ Das System unterstützt **vier Dokumentformate**, die jeweils unterschiedliche A
 | Format | Dateiendung | Typischer Inhalt | Chunking-Strategie |
 |--------|-------------|------------------|-------------------|
 | **Markdown** | `.md` | Strukturierte Fachtexte mit Überschriften | Heading-Aware (##) |
-| **JSON** | `.json` | Strukturierte Key-Value-Daten, Glossare | Top-Level-Key-Split |
+| **JSON** | `.json` | Strukturierte Key-Value-Daten, Glossare | Top-Level-Key-Split/ Element-Split |
 | **CSV** | `.csv` | Tabellarische Daten, Vergleichsmatrizen | Zeilen-Batching (5er) |
 | **Text** | `.txt` | Semistrukturierte Fließtexte mit Absätzen | Absatz-basiert (10% Overlap) |
 
@@ -76,7 +76,7 @@ Das System unterstützt **vier Dokumentformate**, die jeweils unterschiedliche A
 
 **JSON (.json):**
 - Geeignet für strukturierte Wissensdaten (Glossare, Q&A-Paare, Regelsätze)
-- Jeder Top-Level-Key repräsentiert ein abgeschlossenes Konzept
+- Jeder Top-Level-Key/ jedes Element repräsentiert ein abgeschlossenes Konzept
 - Maschinenlesbar und eindeutig parsbar
 
 **CSV (.csv):**
@@ -94,9 +94,8 @@ Das System unterstützt **vier Dokumentformate**, die jeweils unterschiedliche A
 Die Dokumentenauswahl folgt folgenden Prinzipien:
 
 1. **Semantische Kohärenz:** Jedes Dokument behandelt ein abgeschlossenes Themengebiet
-2. **Strukturierte Abschnitte:** Markdown-Überschriften ermöglichen Heading-Aware Chunking
+2. **Strukturierte Abschnitte:** Markdown-Überschriften bzw. Absatztrennungen in Text Dateien, ermöglichen Heading-Aware Chunking
 3. **Variabilität der Formate:** Verschiedene Formate decken unterschiedliche Chunking-Strategien ab
-4. **Domänenrelevanz:** Inhalte müssen zum Beratungskontext (Datenbankdesign für KMU) passen
 
 ---
 
@@ -113,22 +112,21 @@ Das System implementiert **drei formatspezifische Chunking-Strategien**, die jew
 Markdown-Dokumente werden anhand ihrer Überschriftenhierarchie in Chunks zerlegt. Diese Strategie nutzt den `MarkdownHeaderTextSplitter` aus LangChain:
 
 ```python
-headers_to_split_on = [
-    ("##", "Header 2"),
-]
-markdown_splitter = langchain_text_splitters.MarkdownHeaderTextSplitter(
-    headers_to_split_on=headers_to_split_on
-)
+    headers_to_split_on = [
+        ("#", "Header 1"),
+        ("##", "Header 2"),
+    ]
+    markdown_splitter = langchain_text_splitters.MarkdownHeaderTextSplitter(headers_to_split_on=headers_to_split_on)
 ```
 
 **Funktionsweise:**
 - Jeder Abschnitt (definiert durch `##`) wird ein eigenständiger Chunk
 - Der Text zwischen zwei `##`-Überschriften bildet einen zusammenhängenden Chunk
-- Die Überschrift wird automatisch als `Header 2`-Metadatum extrahiert
-- Das Embedding wird aus der Kombination `{heading}: {content}` erzeugt
+- `Header 1` wird zusätzlich extrahiert, also auch als Chunk-Trenner verwendet. Um auch die Überschrift und Text zwischen Header 1 und dem ersten Header 2 zu berücksichtigen
+- Das Embedding wird aus der Kombination `{header_1_info}-{header_info}: {content}`, also `Überschrift-Abschnitt: Content` erzeugt
 
-**Begründung für Header-2-only:**
-- H1 (`#`) dient typischerweise als Dokumenttitel – kein sinnvoller Chunk-Trenner
+**Begründung für Chunking Strategie:**
+- H1 (`#`) dient typischerweise als Dokumenttitel, hat jedoch teils zusätzlich Text nachgestellt
 - H2 (`##`) repräsentiert in unseren Dokumenten die thematischen Hauptabschnitte
 - H3 (`###`) würde zu kleine, fragmentierte Chunks erzeugen
 
@@ -141,25 +139,26 @@ markdown_splitter = langchain_text_splitters.MarkdownHeaderTextSplitter(
 
 **Datei:** `setup/chunks/json_chunker.py`
 
-JSON-Dokumente werden auf oberster Ebene nach Schlüsseln aufgeteilt – jeder Key wird zu einem eigenständigen Chunk:
+JSON-Dokumente werden auf oberster Ebene nach Schlüsseln aufgeteilt - jeder Key wird zu einem eigenständigen Chunk:
 
 ```python
-def chunk_json(data: dict[str, any], file_name: str) -> None:
-    for i, key in enumerate(data):
+    if isinstance(data, dict):
         value = data[key]
-        content: str = json.dumps(value)
-        # Embedding aus Key + Value für bessere Semantik
-        tensor = util.embedding.build_embedding(f"{key}: {content}")
+    else:
+        value = key
+        key = ""
+
+    content: str = json.dumps(value)
+
+    tensor: torch.Tensor = util.embedding.build_embedding(f"{key}: {content}")
 ```
 
 **Funktionsweise:**
 - Iteration über alle Top-Level-Keys des JSON-Objekts
-- Jeder Key-Value-Paar wird ein Chunk
-- Der Key wird als `heading`-Metadatum gespeichert
+- Iteration über alle Elemente bei JSON-Arrays
+- Jeder Key-Value-Paar/Element wird ein Chunk
+- Der Key (falls vorhanden) wird als `heading`-Metadatum gespeichert
 - Das Embedding kombiniert Key und Value für kontextreichere Vektoren
-
-**Anwendungsfall:**
-Ideal für strukturierte Daten wie `db_glossary_relational.json`, wo jeder Eintrag (z.B. „PRIMARY_KEY", „FOREIGN_KEY") ein abgeschlossenes Konzept darstellt.
 
 #### 3.1.3 CSV-Chunking: Batch-Strategie
 
@@ -204,30 +203,59 @@ def chunk_csv(content: list[dict[str, any]], file_name: str) -> None:
 Textdateien werden anhand von Absätzen (Leerzeilen) in Chunks zerlegt. Da Absätze in Fließtexten semantische Einheiten darstellen, nutzt diese Strategie die natürliche Gliederung. Zusätzlich wird ein **10% Overlap** implementiert:
 
 ```python
-def chunk_txt(content: str, file_name: str) -> None:
-    paragraphs = content.split("\n\n")  # Split bei Leerzeilen
-    overlap_ratio = 0.1  # 10% Overlap
-    
-    for i, paragraph in enumerate(paragraphs):
-        # Overlap: Letzte 10% des vorherigen + aktuelle + erste 10% des nächsten
-        prev_overlap = paragraphs[i-1][-int(len(paragraphs[i-1]) * overlap_ratio):] if i > 0 else ""
-        next_overlap = paragraphs[i+1][:int(len(paragraphs[i+1]) * overlap_ratio)] if i < len(paragraphs)-1 else ""
-        chunk_text = prev_overlap + paragraph + next_overlap
-        # ... Embedding und Speicherung
+    if "\r\n" in data:
+        raw_data: list[str] = data.split("\r\n\r\n")
+    else:
+        raw_data: list[str] = data.split("\n\n")
+
+    for i, raw_text in enumerate(raw_data):
+
+        previous_text: str = ""
+        next_text: str = ""
+
+        if i > 0:
+            previous_raw_text: str = raw_data[i - 1]
+            first_char_index: int = int(len(previous_raw_text) * 0.9)
+
+            first_char_index: int = previous_raw_text.find(" ", first_char_index)
+            if first_char_index > 0:
+                previous_text = previous_raw_text[first_char_index:]
+        
+        if i < len(raw_data) - 1:
+            next_raw_text: str = raw_data[i + 1]
+            first_char_index: int = int(len(next_raw_text) * 0.1)
+
+            first_char_index: int = next_raw_text.find(" ", first_char_index)
+            if first_char_index > 0:
+                next_text = next_raw_text[:first_char_index]
+        
+        full_text: str = f"{previous_text}\n{raw_text}\n{next_text}"
+
+        if "\r\n" in raw_text:
+            section_name: str = raw_text.split("\r\n")[0]
+        else:
+             section_name: str = raw_text.split("\n")[0]
+
+        tensor: torch.Tensor = util.embedding.build_embedding(f"{main_title}-{section_name}: {full_text}")
 ```
 
 **Funktionsweise:**
 - Text wird bei doppelten Zeilenumbrüchen (`\n\n`) in Absätze zerlegt
 - Jeder Absatz bildet einen Chunk
-- Chunks enthalten 10% des vorherigen und 10% des nachfolgenden Absatzes als Overlap
-- Der Dateiname dient als `heading`-Metadatum
+- Chunks enthalten 10% des vorherigen und 10% des nachfolgenden Absatzes als Overlap und trennt bei bestehendem Leerzeichen (falls besteht)
+- Die erste Zeile des Dokuments, kombiniert mit der ersten Zeile eines Chunks, dient als `heading`-Metadatum
 
 **Begründung für Absatz-Split:**
 - **Natürliche Struktur:** Absätze in Fließtexten repräsentieren thematische Einheiten
-- **Semistrukturiert:** TXT-Dateien sind nicht "unstrukturiert" – Leerzeilen bieten implizite Gliederung
+- **Semistrukturiert:** TXT-Dateien sind nicht "unstrukturiert" - Leerzeilen bieten implizite Gliederung
 - **Semantische Kohärenz:** Ein Absatz behandelt typischerweise einen Gedanken
 
-**Begründung für 10% Overlap:**
+**Begründung für 0% Overlap bei Markdown, JSON und CSV:**
+- **Klare Grenzen:** Diese Formate haben explizite Strukturen (Überschriften, Keys, Zeilen)
+- **Redundanz vermeiden:** Overlap würde unnötige Duplikate erzeugen
+- **Kontext durch Metadaten:** Überschriften und Keys liefern ausreichend Kontext
+
+**Begründung für 10% Overlap bei Text:**
 - **Kontextübergänge:** Absätze können aufeinander Bezug nehmen
 - **Satzfortsetzungen:** Manche Gedanken spannen sich über Absatzgrenzen
 - **Kompromiss:** 10% ist gering genug um Redundanz zu minimieren, aber ausreichend für Kontexterhaltung
@@ -237,9 +265,9 @@ def chunk_txt(content: str, file_name: str) -> None:
 | Format | Strategie | Chunk-Einheit | Metadaten-Quelle | Overlap |
 |--------|-----------|---------------|------------------|---------|
 | **Markdown** | Heading-Aware | Abschnitt (##) | Header 2 | 0% |
-| **JSON** | Key-Value | Top-Level-Key | Key-Name | 0% |
+| **JSON** | Key-Value | Top-Level-Key/Element | Key-Name | 0% |
 | **CSV** | Batching | 5 Zeilen pro Chunk | Dateiname | 0% |
-| **Text** | Absatz-basiert | Paragraph (\n\n) | Dateiname | 10% |
+| **Text** | Absatz-basiert | Paragraph (\n\n) | Dateititel + Absatzanfang | 10% |
 
 ### 3.3 Embedding-Umsetzung
 
@@ -266,8 +294,8 @@ def build_embedding(content: str) -> torch.Tensor:
 | Eigenschaft | Wert | Bedeutung |
 |-------------|------|-----------|
 | **Dimensionalität** | 384 | Kompakter Vektor, speichereffizient |
-| **Modellgröße** | ~22 MB | Schnelles Laden, geringer Ressourcenbedarf |
-| **Max. Sequenzlänge** | 256 Tokens | Ausreichend für unsere Chunk-Größen |
+| **Modellgröße** | ~90 MB | Schnelles Laden, geringer Ressourcenbedarf |
+| **Max. Sequenzlänge** | By default 256 Wörter | Ausreichend für unsere Chunk-Größen |
 | **Trainingsgrundlage** | Sentence-Pairs | Optimiert für semantische Ähnlichkeit |
 
 **Begründung der Modellwahl:**
@@ -275,41 +303,9 @@ def build_embedding(content: str) -> torch.Tensor:
 - **Qualität:** Trotz geringer Größe liefert es gute semantische Repräsentationen für Fachtexte
 - **Mehrsprachigkeit:** Unterstützt Deutsch und Englisch, was für unsere gemischten Dokumente relevant ist
 
-#### 3.3.3 Kontext-Anreicherung beim Embedding
+#### 3.3.3 Vektor-Speicherung
 
-Die drei Chunking-Strategien unterscheiden sich in der Embedding-Generierung:
-
-| Strategie | Embedding-Input | Begründung |
-|-----------|-----------------|------------|
-| **Markdown** | `f"{header_info}: {content}"` | Die Überschrift (Header 2) liefert semantischen Kontext |
-| **JSON** | `f"{key}: {content}"` | Der Key beschreibt den Inhalt des Values |
-| **CSV** | `content` (nur Batch-Inhalt) | Kein eindeutiger Kontext-Identifier verfügbar |
-
-**Implementierungsdetail Markdown:**
-```python
-header_info = raw_chunk.metadata.get('Header 2', 'N/A')
-tensor = util.embedding.build_embedding(f"{header_info}: {content}")
-```
-
-Der `MarkdownHeaderTextSplitter` extrahiert automatisch die Überschriftenhierarchie. Die Implementierung nutzt primär `Header 2` als Kontext, da diese Ebene in den verwendeten Dokumenten die thematische Gliederung repräsentiert.
-
-**Implementierungsdetail JSON:**
-```python
-tensor = util.embedding.build_embedding(f"{key}: {content}")
-```
-
-Der JSON-Key wird dem serialisierten Value vorangestellt. Dadurch wird beispielsweise aus dem Key `"PRIMARY_KEY"` und seinem Value ein Embedding erzeugt, das den Begriff „PRIMARY_KEY" semantisch mit der Definition verknüpft.
-
-**Implementierungsdetail CSV:**
-```python
-tensor = util.embedding.build_embedding(content)
-```
-
-Bei CSV-Daten fehlt ein natürlicher Kontext-Identifier. Der Batch wird als JSON-Array serialisiert und direkt embeddet. Die semantische Kohärenz ergibt sich aus der Zusammengehörigkeit der Tabellenzeilen.
-
-#### 3.3.4 Vektor-Speicherung
-
-Die generierten Embeddings werden als Float-Array direkt im Chunk-Dokument gespeichert:
+Die generierten Embeddings werden als Float-Array direkt in einem Chunk-Dokument gespeichert:
 
 ```python
 vector: pgvector.psycopg2.vector.Vector = pgvector.psycopg2.vector.Vector(tensor)
@@ -320,75 +316,23 @@ chunk: dict[str, any] = {
 }
 ```
 
-**Hinweis:** Die Verwendung von `pgvector.psycopg2.vector.Vector` als Zwischenschritt ist ein Implementierungsdetail – die Vektoren werden letztlich als Python-Liste in MongoDB gespeichert, nicht in PostgreSQL.
-
-### 3.4 Übersicht der Chunking-Strategien
-
-| Format | Strategie | Chunk-Einheit | Metadaten-Quelle | Embedding-Kontext | Overlap |
-|--------|-----------|---------------|------------------|-------------------|---------|
-| **Markdown** | Heading-Aware | Abschnitt (##) | Header 2 | `{heading}: {content}` | 0% |
-| **JSON** | Key-Value | Top-Level-Key | Key-Name | `{key}: {content}` | 0% |
-| **CSV** | Batching | 5 Zeilen pro Chunk | Dateiname | `{content}` | 0% |
-| **Text** | Absatz-basiert | Paragraph (\n\n) | Dateiname | `{content}` | 10% |
-
-### 3.5 Chunk-Größen im Detail
-
-Die Chunk-Größe variiert je nach Strategie und Dokumentstruktur:
-
-| Strategie | Typische Chunk-Größe | Bestimmungsfaktor |
-|-----------|---------------------|-------------------|
-| **Markdown** | 50–400 Wörter | Länge des Abschnitts zwischen Überschriften |
-| **JSON** | 20–200 Wörter | Größe des Value-Objekts pro Key |
-| **CSV** | 5 Zeilen (~100–300 Zeichen) | Feste Batch-Size von 5 |
-| **Text** | 30–200 Wörter | Absatzlänge (variiert je nach Dokument) |
-
-**Keine feste Wortanzahl:** Die Implementierung verwendet bewusst keine starre Wortgrenze. Die Chunk-Größe ergibt sich aus der natürlichen Struktur der Dokumente (Abschnitte, Keys, Zeilen-Batches).
-
-### 3.6 Overlap
-
-| Format | Overlap | Begründung |
-|--------|---------|------------|
-| **Markdown** | 0% | Strukturelle Grenzen durch Überschriften (##) |
-| **JSON** | 0% | Natürliche Trennung durch Top-Level-Keys |
-| **CSV** | 0% | Zeilen-Batches sind abgeschlossene Einheiten |
-| **Text** | **10%** | Absätze bieten Struktur, Overlap für Kontextübergänge |
-
-**Begründung:** 
-- **Strukturierte Formate (MD, JSON, CSV):** Die semantischen Einheiten sind durch explizite Dokumentstruktur bereits sauber getrennt – kein Overlap notwendig.
-- **Semistrukturierte Formate (TXT):** Absätze bieten natürliche Trennpunkte, aber thematische Übergänge zwischen Absätzen können wichtigen Kontext enthalten. Der 10%-Overlap stellt sicher, dass Zusammenhänge erhalten bleiben.
-
-### 3.7 Anzahl der Chunks
-
-| Dokumenttyp | Anzahl Dokumente | Strategie | Chunks pro Dokument (Ø) | Gesamt-Chunks |
-|-------------|------------------|-----------|-------------------------|---------------|
-| Markdown | 6 | Heading-Aware | ~8 | ~48 |
-| JSON | 3 | Key-Value | ~12 | ~36 |
-| CSV | 3 | Batching (5) | ~3 | ~9 |
-| Text | 5 | Absatz-basiert (10% Overlap) | ~6 | ~30 |
-| **Gesamt** | **17** | - | - | **~123** |
-
-### 3.8 Ingest-Performance
+### 3.4 Ingest-Performance
 
 Der gesamte Chunking- und Embedding-Prozess für alle Grundwissen-Dateien wurde gemessen:
 
 | Metrik | Wert |
 |--------|------|
 | **Gesamtdauer** | **230,74 Sekunden** (~3,8 Minuten) |
-| **Verarbeitete Dokumente** | 17 |
-| **Erzeugte Chunks** | ~123 |
-| **Ø Zeit pro Dokument** | ~13,6 Sekunden |
-| **Ø Zeit pro Chunk** | ~1,9 Sekunden |
-
-**Bottleneck-Analyse:**
-- **Embedding-Generierung:** Hauptanteil der Zeit (~85%) entfällt auf die Vektorisierung via `all-MiniLM-L6-v2`
-- **Dateioperationen:** Vernachlässigbar (<1 Sekunde gesamt)
-- **MongoDB-Inserts:** Schnell durch Batch-Inserts (~2 Sekunden gesamt)
+| **Verarbeitete Dokumente** | 89 |
+| **Erzeugte Chunks** | ~11850 |
+| **Ø Zeit pro Dokument** | ~2,59 Sekunden |
+| **Ø Zeit pro Chunk** | ~0,019 Sekunden |
 
 **Hinweis:** Die Ingest-Zeit ist ein **einmaliger Aufwand** beim Setup. Zur Laufzeit werden nur vorberechnete Embeddings aus MongoDB geladen.
 
-### 3.9 Beispiel: Guter vs. Schlechter Chunk
+### 3.5 Beispiel: Guter vs. Schlechter Chunk
 
-#### ✅ Guter Chunk
+#### Guter Chunk :)
 
 ```json
 {
@@ -410,7 +354,7 @@ Der gesamte Chunking- und Embedding-Prozess für alle Grundwissen-Dateien wurde 
 - **Metadaten vorhanden:** `section_title` ermöglicht kontextbezogene Suche
 - **Richtige Größe:** ~80 Wörter, ausreichend für präzise Antworten
 
-#### ❌ Schlechter Chunk
+#### Schlechter Chunk :(
 
 ```json
 {
@@ -436,59 +380,58 @@ Das Chunk-Schema folgt den Anforderungen der Portfolioprüfung und den Best Prac
 
 | Feld | Typ | Zweck | Notwendigkeit |
 |------|-----|-------|---------------|
-| `chunk_id` | String (UUID) | Eindeutiger Identifikator für jeden Chunk | Der Vector Store liefert nur IDs zurück – ohne `chunk_id` ist der Originaltext nicht auffindbar |
-| `text` | String | Der eigentliche Chunk-Inhalt | Wird dem LLM präsentiert; entspricht dem Embedding-Vektor |
-| `doc_id` | String (UUID) | Referenz auf das Ursprungsdokument | Ermöglicht Zuordnung mehrerer Chunks zu einem Dokument; wichtig für Kontextherstellung |
-| `chunk_num` | Integer | Positionsnummer im Dokument (0-basiert) | Ermöglicht Laden von Nachbar-Chunks; rekonstruiert Reihenfolge für LLM-Kontext |
-| `section_title` | String | Abschnittsüberschrift | Erhöht Retrieval-Qualität; reduziert Halluzinationen [Modul 6, Abschnitt 3.4] |
+| `chunk_id` | String (UUID) | Eindeutiger Identifikator für jeden Chunk | Der Vector Store liefert nur IDs zurück - ohne `chunk_id` ist der Originaltext nicht auffindbar |
+| `chunk_text` | String | Der eigentliche Chunk-Inhalt | Wird dem LLM präsentiert; entspricht dem Embedding-Vektor |
+| `document_id` | String (UUID) | Referenz auf das Ursprungsdokument | Ermöglicht Zuordnung mehrerer Chunks zu einem Dokument; wichtig für Kontextherstellung |
+| `chunk_index` | Integer | Positionsnummer im Dokument (0-basiert) | Ermöglicht Laden von Nachbar-Chunks; rekonstruiert Reihenfolge für LLM-Kontext |
 
 ### 4.2 Vollständiges Schema (Implementierung)
 
 ```python
 @dataclasses.dataclass
 class DocumentChunk(object):
-    chunk_id: str                       # Eindeutiger Identifikator (UUID)
-    document_id: str                    # Referenz auf Ursprungsdokument
+    chunk_id: str                       # Eindeutiger Identifikator (UUID als String)
+    document_id: str                    # Eindeutiger Identifikator des Dokumentes (UUID als String)
     chunk_index: int                    # Position im Dokument (0, 1, 2, ...)
     chunk_text: str                     # Der eigentliche Text
-    token_count: int                    # Anzahl Tokens für Budgetierung
+    token_count: int                    # Anzahl Tokens für Budgetierung (Entspricht der Zeichenanzahl)
     character_count: int                # Zeichenanzahl
     metadata: DocumentChunkMetadata     # Erweiterte Metadaten
 
 @dataclasses.dataclass  
 class DocumentChunkMetadata(object):
     heading: str                        # section_title (Abschnittsüberschrift)
-    section: str                        # Abschnittsnummer
+    section: str                        # Abschnittsnummer entspricht heading
     page_number: int                    # Seitennummer (falls relevant)
-    source_file: str                    # Quelldatei
+    source_file: str                    # Name der Quelldatei
     language: str                       # Sprache des Chunks
 ```
 
 ### 4.3 Begründung der Pflichtfelder
 
-#### chunk_id – Warum notwendig?
+#### chunk_id - Warum notwendig?
 - Jeder Chunk muss **einzeln adressierbar** sein
 - Der Vector Store liefert bei der Suche nur IDs zurück
 - Ohne `chunk_id` könnte der Originaltext nicht gefunden werden
 - Viele Chunks stammen aus demselben Dokument → eigener Schlüssel erforderlich
 
-#### text – Warum notwendig?
+#### text - Warum notwendig?
 - Der Embedding-Vektor entspricht diesem Text
 - Das System muss den Text zurückgeben können
 - Für Präsentation und Antwortgenerierung unverzichtbar
 
-#### doc_id – Warum notwendig?
+#### doc_id - Warum notwendig?
 - Mehrere Chunks einem Dokument zuordnen
 - Kontext im Prompt herstellen („stammt aus Kapitel XY")
 - Dokumentversionen unterscheiden (bei Updates)
 
-#### chunk_num – Warum notwendig?
+#### chunk_num - Warum notwendig?
 - Viele Antworten benötigen **mehrere aufeinanderfolgende Chunks**
 - Nachbar-Chunks (vorher/nachher) können geladen werden
 - Reihenfolge im Prompt rekonstruierbar
 - **Ohne chunk_num keine zusammenhängenden Textstellen wiederherstellbar**
 
-#### section_title – Warum notwendig?
+#### section_title - Warum notwendig?
 - Gibt LLM zusätzliches Verständnis („Text gehört zur ACID-Section")
 - Erhöht Retrieval-Qualität (Prompt bekommt mehr Orientierung)
 - Hilft bei Strukturierung und Suche
@@ -512,7 +455,7 @@ Das System implementiert eine **zweischichtige Datenbankarchitektur**, die unter
 
 | Komponente | Datenbank | Begründung |
 |------------|-----------|------------|
-| **Chunks (Text + Embeddings)** | MongoDB | Dokumentorientiert, flexible Metadaten, `$vectorSearch` für ANN |
+| **Chunks (Text + Embeddings)** | MongoDB Atlas | Dokumentorientiert, flexible Metadaten, `$vectorSearch` für Cosinus ANN |
 | **Szenarien + Fragen** | PostgreSQL + pgvector | Relationale Struktur, hochperformante Vektorsuche mit HNSW |
 
 Diese Architektur folgt dem Prinzip der **Workload-Isolation**: Chunk-Lookups (I/O-intensiv) und Vektor-Suche (CPU-intensiv) werden auf unterschiedliche Systeme verteilt.
@@ -523,13 +466,13 @@ Diese Architektur folgt dem Prinzip der **Workload-Isolation**: Chunk-Lookups (I
 
 ```python
 # Verbindungsaufbau (database/mongo.py)
-mongo_client = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
+mongo_client = pymongo.MongoClient("mongodb://127.0.0.1:27017/?directConnection=true&appName=mongosh")
 db = mongo_client["rag"]
 chunks_collection = db["chunks"]
 ```
 
 **Begründung:**
-1. **Flexibles Schema:** Unterschiedliche Chunk-Typen (MD, JSON, CSV) haben verschiedene Metadaten
+1. **Flexibles Schema:** Unterschiedliche Chunk-Typen (MD, JSON, CSV) haben theoretisch verschiedene Metadaten
 2. **Dokumentorientiert:** Ein Chunk ist ein natürliches Dokument mit verschachtelten Metadaten
 3. **MongoDB Atlas Vector Search:** Ermöglicht `$vectorSearch`-Aggregation direkt auf der Collection
 
@@ -586,7 +529,7 @@ CREATE TABLE scenario_questions (
 ```
 
 **Begründung für PostgreSQL:**
-1. **pgvector:** Spezialisierte Vektordatenbank-Erweiterung mit HNSW-Index
+1. **pgvector:** Spezialisierte Vektordatenbank-Erweiterung
 2. **Relationale Struktur:** Szenarien haben 1:n-Beziehung zu Fragen
 3. **Multi-Keyword-Suche:** Effiziente Aggregation mehrerer Keyword-Embeddings
 
@@ -722,18 +665,16 @@ Das System implementiert einen **mehrstufigen Retrieval-Prozess**, der nicht dir
 #### Schritt 1: Keyword-Extraktion (LLM)
 
 ```python
-# rag.py - extract_keywords()
-prompt = f"""
-Folgendes ist ein User Promt, dieser Soll auf ALLE möglichen 
-Stichworte die auf dessen Szenario zutreffen, runtergrebrochen werden.
-MAXIMAL aber 10 Stichworte. In der AUSGABE von DIR, sollen NUR 
-diese Stichworte rauskommen, KEINERLEI ERKLÄRUNG oder sonstiges.
-Diese Stichworte bitte als JSON-Parsable Array. Sonst keinen Text!
+    # rag.py - extract_keywords()
+    prompt = f"""
+    Folgendes ist ein User Promt, dieser Soll auf ALLE möglichen Stichworte die auf dessen Szenario zutreffen, runtergrebrochen werden.
+    MAXIMAL aber 10 Stichworte. In der AUSGABE von DIR, sollen NUR diese Stichworte rauskommen, KEINERLEI ERKLÄRUNG oder sonstiges.
+    Diese Stichworte bitte als JSON-Parsable Array. Sonst keinen Text!
 
-{user_input}
-"""
-response = perplexity_client.prompt(prompt)
-keywords = json.loads(response)  # z.B. ["Indexierung", "B-Baum", "Performance"]
+    {user_input}
+    """
+    response = perplexity_client.prompt(prompt)
+    keywords = json.loads(response)  # z.B. ["Indexierung", "B-Baum", "Performance"]
 ```
 
 **Begründung:** Keywords ermöglichen ein breiteres Szenario-Matching als die direkte Frage. Eine Frage wie "Wie mache ich meine Suche schneller?" erzeugt Keywords wie `["Index", "Performance", "Optimierung", "Cache"]`.
@@ -811,23 +752,38 @@ def build_question_block(question, chunks):
 #### Schritt 6: Antwort-Generierung (Perplexity)
 
 ```python
-# rag.py - process_final_results()
-prompt = f"""
-DER USER PROMT:
-{user_input}
+    # rag.py - process_final_results()
+    prompt = f"""
+    DER USER PROMT:
+    {user_input}
 
-DEIN SINN DER EXISTENZ:
-Du bist ein DATENBANKEN ENGINEER Experte.
-Deine Aufgabe ist es, eine optimierte Datenbanksystem für ein neues Projekt zu entwerfen.
-- Halte dich an die Anforderungen des User Promts
-- Die Informationen aus den SCENARIO KONTEXT sind deine WISSENSGRUNDLAGE
-- Evaluiere maximal 2 Technologie-Möglichkeiten
+    VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+    DEIN SINN DER EXISTENZ:
 
-DEINE WISSENSDATENBANK:
-{query_part}
-"""
-response = perplexity_client.prompt(prompt)
-return marko.convert(response)  # Markdown → HTML
+
+    Du bist ein DATENBANKEN ENGINEER Experte.
+    Deine Aufgabe ist es, eine optimierte Datenbanksystem für ein neues Projekt zu entwerfen.
+    Berücksichtige dabei die folgenden Anforderungen:
+    - Halte dich an die Anforderungen des User Promts
+    - Die Informationen die du über die Kontext Scenarien bekommst sind dein DATENGRUNDLAGEN GOTT. Dies ist deine volle Wissensquelle.
+    - Es gibt keinerlei Möglichkeit auf Rückfragen, weshalb du alleine mit den dir gegebenen Informationen arbeiten musst.
+    - Evaluiere die besten Technologien und Architekturen, die den Anforderungen am besten entsprechen. NUTZE dein WISSEN aus den SCENARIO KONTEXT. 2 Möglichkeiten MAXIMAL!
+    - Erstelle ein detailliertes Datenbankschema, das die Struktur und Beziehungen der Daten klar definiert.
+    - Berücksichtige Skalierbarkeit, Leistung und Sicherheit in deinem Design. Solange sie den ANFORDERUNGEN des USER PROMTS entsprechen.
+    - Gib eine Begründung für deine Designentscheidungen, Annahmen, Berechnungen und die gewählten Technologien.
+    DU BEARBEITEST DIE AUFGABE IN DEUTSCHER SPRACHE, ABER ENGLISCHE TECHNISCHE BEGRIFFE SIND ERLAUBT.
+    DU ANTWORTEST NUR AUF DEN USER INPUT DES USERS, DER REST IST NUR DEINE WISSENSGRUNDLAGE. NICHTS AUF DAS DU ANTWORTEN SOLLST, ODER DARFST!
+    Deine Antwort darf KEINERLEI Links oder Verweise auf externe Quellen enthalten!
+    Nutze bitte MARKDOWN Formatierung in deiner Antwort und Volksmundverständliche Sprache mit benötigten Fachbegriffen.
+    NIEMALS JavaScript Code oder HTML code in der Antwort nutzen!
+
+    VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+    DEINE WISSENSDATENBANK:
+
+    {query_part}
+    """
+    response = perplexity_client.prompt(prompt)
+    return marko.convert(response)  # Markdown → HTML
 ```
 
 **Begründung:** Das LLM erhält strenge Anweisungen, sich auf die bereitgestellten Chunks zu stützen und keine externen Quellen zu zitieren. Die Antwort wird via `marko` in HTML konvertiert.
@@ -836,11 +792,11 @@ return marko.convert(response)  # Markdown → HTML
 
 | Schritt | Datenbank/API | Typische Latenz | Kommentar |
 |---------|---------------|-----------------|-----------|
-| Keyword-Extraktion | Perplexity API | ~800ms | Netzwerk-Round-Trip |
-| Szenario-Matching | PostgreSQL/pgvector | ~50ms | Multi-Vektor-Aggregation |
-| Chunk-Retrieval | MongoDB $vectorSearch | ~10ms pro Frage | Abhängig von numCandidates |
-| Antwort-Generierung | Perplexity API | ~1500ms | Token-Generation |
-| **Gesamt** | - | **~2.5-3.5s** | Dominated by LLM-Calls |
+| Keyword-Extraktion | Perplexity API | ~5s | Netzwerk-Round-Trip |
+| Szenario-Matching | PostgreSQL/pgvector | ~300ms | Multi-Vektor-Aggregation |
+| Chunk-Retrieval | MongoDB $vectorSearch | ~450ms pro Frage | Abhängig von numCandidates |
+| Antwort-Generierung | Perplexity API | ~30s | Token-Generation |
+| **Gesamt** | - | **~35-40s meistens** | Dominated by LLM-Calls |
 
 ---
 
@@ -893,9 +849,9 @@ Ein dedizierter Chunking-Test verglich drei Strategien anhand der Frage: *„Was
 
 | Strategie | Chunk-Size | Overlap | Top-1 Treffer | Section-Metadaten |
 |-----------|------------|---------|---------------|-------------------|
-| **Naive** | 150 Zeichen | 0 | `...Netzwerk-Timeout Bei Timeouts...` | ❌ N/A |
-| **Rekursiv** | 300 Zeichen | 60 | `### 2.2 Netzwerk-Timeout...` | ❌ N/A |
-| **Heading-Aware** | Dynamisch | 0 | `Bei Timeouts erhöhen Sie...` | ✅ `2. Fehlerbehebung` |
+| **Naive** | 150 Zeichen | 0 | `...Netzwerk-Timeout Bei Timeouts...` | N/A |
+| **Rekursiv** | 300 Zeichen | 60 | `### 2.2 Netzwerk-Timeout...` | N/A |
+| **Heading-Aware** | Dynamisch | 0 | `Bei Timeouts erhöhen Sie...` | `2. Fehlerbehebung` |
 
 **Ergebnis:** Die Heading-Aware-Strategie liefert als einzige korrekte `section`-Metadaten, was die Retrieval-Qualität und LLM-Kontextgebung verbessert.
 
@@ -918,10 +874,10 @@ Ein dedizierter Chunking-Test verglich drei Strategien anhand der Frage: *„Was
 
 | Operation | Ops/s | P95 Latenz | SLO-Status |
 |-----------|-------|------------|------------|
-| MongoDB Single find_one | 1.011 | 1.47ms | ✅ Erfüllt |
-| MongoDB Batch find ($in) | 8.985 | 0.16ms | ✅ Erfüllt |
-| MongoDB Vector Search | 0 | 10.138ms | ❌ Nicht erfüllt |
-| pgvector ANN (HNSW) | 19 | 60.07ms | ⚠️ Knapp verfehlt |
+| MongoDB Single find_one | 1.011 | 1.47ms | Erfüllt |
+| MongoDB Batch find ($in) | 8.985 | 0.16ms | Erfüllt |
+| MongoDB Vector Search | 0 | 10.138ms | Nicht erfüllt |
+| pgvector ANN (HNSW) | 19 | 60.07ms | Knapp verfehlt |
 
 #### Analyse der Ergebnisse
 
@@ -1015,11 +971,11 @@ Ein dedizierter Chunking-Test verglich drei Strategien anhand der Frage: *„Was
 ### 8.4 Fazit
 
 Das System erfüllt die Anforderungen der Portfolioprüfung:
-- ✅ Dokumente laden und chunken (Heading-Aware für MD, Key-Value für JSON, Batching für CSV)
-- ✅ Embeddings erzeugen (all-MiniLM-L6-v2)
-- ✅ Speicherung in NoSQL (MongoDB) + Vektor-DB (pgvector)
-- ✅ Retrieval-Flow mit Vektorsuche
-- ✅ Antwort-Generierung mit LLM (Perplexity)
+- Dokumente laden und chunken (Heading-Aware für MD, Key-Value für JSON, Batching für CSV)
+- Embeddings erzeugen (all-MiniLM-L6-v2)
+- Speicherung in NoSQL (MongoDB) + Vektor-DB (pgvector)
+- Retrieval-Flow mit Vektorsuche
+- Antwort-Generierung mit LLM (Perplexity)
 
 Die Szenario-basierte Architektur geht über den Minimal-Scope hinaus und demonstriert, wie thematische Kohärenz durch eine zusätzliche Abstraktionsebene erreicht werden kann.
 
@@ -1084,5 +1040,5 @@ CREATE TABLE scenario_questions (
 
 ---
 
-*Der Datenbank Design Deputy – Ein RAG-System für Startups und KMU*  
+*Der Datenbank Design Deputy - Ein RAG-System für Startups und KMU*  
 *Dokument erstellt im Rahmen der DHBW Portfolioprüfung, Dezember 2025*
