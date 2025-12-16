@@ -1,12 +1,10 @@
 In-Memory-Datenbank
 
 Eine In-Memory-Datenbank (IMDB) ist ein Datenbankmanagementsystem, das den Arbeitsspeicher eines Computers als Datenspeicher nutzt. Damit unterscheidet es sich von herkömmlichen Datenbankmanagementsystemen, die dazu Festplattenlaufwerke verwenden.
-
 Der Arbeitsspeicher eines Rechners bietet wesentlich höhere Zugriffsgeschwindigkeiten als Festplattenlaufwerke und die Algorithmen für den Zugriff sind einfacher. Deshalb sind In-Memory-Datenbanken wesentlich schneller und ihre Zugriffszeiten sind besser vorhersagbar als die von auf Festplatten zugreifenden Datenbankmanagementsystemen. Jedoch ist Arbeitsspeicher sehr viel teurer als Festplattenspeicher, der einzelne Rechner hat deshalb üblicherweise sehr viel weniger davon. Wenn eine Datenbank hohe Speicherkapazität braucht, kann jedoch durch Grid-Computing diese Schranke für In-Memory-Datenbanken überwunden werden.
 
 Nicht-Persistenz
 Da In-Memory-Datenbanken ihre Daten in flüchtigem Arbeitsspeicher speichern, der sie bei Systemabstürzen verliert, erfüllen sie nicht ohne Weiteres die Anforderung der dauerhaften Speicherung (Persistenz) erfolgreich abgeschlossener Transaktionen.
-
 Viele In-Memory-Datenbanken helfen dem ab und erreichen weniger oder mehr Persistenz bei der Datenspeicherung mit folgenden Methoden:
 
 Schnappschuss-Dateien speichern den Zustand der Datenbank zu bestimmten Zeitpunkten, beispielsweise in geplanten Abständen oder beim kontrollierten Abschalten der Datenbank. Alle Veränderungen seit dem jüngsten Schnappschuss können bei diesem Verfahren allerdings nach wie vor verloren gehen.
@@ -47,6 +45,7 @@ NoSQL – Weitere Alternative zu Datenbankmanagementsystemen
 Literatur
 Jack Belzer: Very Large Data Base Systems to Zero-Memory and Markov Information Source. In: Albert G. Holzman (Hrsg.): Encyclopedia of Computer Science and Technology. Band 14. Marcel Dekker Inc, 1980, ISBN 978-0-8247-2214-2 (englisch).
 Hasso Plattner, Alexander Zeier: In-Memory Data Management: An Inflection Point for Enterprise Applications. 1. Auflage. Springer, 2011, ISBN 978-3-642-19362-0 (englisch).
+
 Weblinks
 In-Memory Database Systems Questions and Answers
 H-store Project
@@ -55,6 +54,7 @@ Sprint Project
 Main Memory Database Systems: An Overview
 SAP HANA Appliance
 TIBCO Activspaces Enterprise Edition
+
 Einzelnachweise
  Bernhard Cole: Hybrid embedded database merges on-disk and in-memory data management. Embedded.com, 2. Mai 2007, abgerufen am 6. Juli 2010 (englisch).
  Steve Graves: Hybrid Data Management Gets Traction in Set-Top Boxes. Embedded.com, 28. Juli 2008, archiviert vom Original (nicht mehr online verfügbar) am 23. Mai 2016; abgerufen am 6. Juli 2010 (englisch).  Info: Der Archivlink wurde automatisch eingesetzt und noch nicht geprüft. Bitte prüfe Original- und Archivlink gemäß Anleitung und entferne dann diesen Hinweis.

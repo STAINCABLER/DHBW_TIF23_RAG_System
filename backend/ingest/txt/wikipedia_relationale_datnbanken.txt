@@ -1,16 +1,13 @@
 Relationale Datenbank
 
 Eine relationale Datenbank ist eine digitale Datenbank, die zur elektronischen Datenverwaltung in Computersystemen dient und auf einem tabellenbasierten relationalen Datenbankmodell beruht. Grundlage des Konzeptes relationaler Datenbanken ist die Relation. Sie stellt eine mathematische Beschreibung einer Tabelle dar und ist ein im mathematischen Sinn wohldefinierter Begriff; siehe Datenbankrelation. Operationen auf diesen Relationen werden durch die relationale Algebra bestimmt.
-
 Das zugehörige Datenbankmanagementsystem wird als relationales Datenbankmanagementsystem oder RDBMS (Relational Database Management System) bezeichnet. Zum Abfragen und Manipulieren der Daten wird überwiegend die Datenbanksprache SQL (Structured Query Language) eingesetzt, deren theoretische Grundlage die relationale Algebra ist.
-
 Das relationale Datenbankmodell wurde 1970 von Edgar F. Codd erstmals vorgeschlagen und ist bis heute trotz einiger Kritikpunkte ein etablierter Standard für Datenbanken.
 
 Grundlegende Konzepte
 
 Begriffe relationaler Datenbanken
 Eine relationale Datenbank kann man sich als eine Sammlung von Tabellen (den Relationen) vorstellen, in welchen Datensätze abgespeichert sind. Jede Zeile (Tupel) in einer Tabelle ist ein Datensatz (record). Jedes Tupel besteht aus einer Reihe von Attributwerten (Attribute = Eigenschaften), den Spalten der Tabelle. Das Relationenschema legt dabei die Anzahl und den Typ der Attribute für eine Relation fest. Das Bild illustriert die Relation R mit Attributen A1 bis An in den Spalten.
-
 Zum Beispiel wird ein Buch in einer Bibliothek durch den Datensatz (Buch-ID, Autor, Verlag, Verlagsjahr, Titel, Datum der Aufnahme) beschrieben. Ein Datensatz muss eindeutig identifizierbar sein. Das geschieht über einen oder mehrere Schlüssel (englisch key). In diesem Fall enthält Buch-ID die Schlüssel. Ein Schlüssel darf sich niemals ändern. Er bezieht sich auf den Datensatz und nicht auf die Position in der Tabelle.
 
 Beispiel einer Relation „Buch“:
@@ -42,10 +39,9 @@ Nutzer-ID	Buch-ID
 10	500
 11	100
 12	400
+
 Außerdem braucht man eine dritte Tabelle Entliehen, die Informationen über die Verfügbarkeit des Buches enthält. Sie würde die Attribute Nutzer-ID und Buch-ID enthalten. Jede Zeile dieser Tabelle Entliehen ordnet einer Nutzer-ID eine Buch-ID zu.
-
 Der Eintrag (10,300) würde also heißen, dass der Nutzer mit der ID 10 („Hans Vielleser“) das Buch mit der ID 300 („Mein Leben mit Asterix“) entliehen hat. Derselbe Nutzer hat auch das Buch „Drucken leicht gemacht“ entliehen, was durch den Tabelleneintrag (10,200) dargestellt ist. Als Schlüssel nimmt man hier die Attributmenge (Nutzer-ID, Buch-ID). Gleichzeitig verbindet die Nutzer-ID jeden Eintrag der Tabelle Entliehen mit einem Eintrag der Tabelle Nutzer sowie die Buch-ID jeden Eintrag von Entliehen mit einem Eintrag der Tabelle Buch. Deswegen heißen diese Attribute in diesem Zusammenhang Fremdschlüssel (englisch foreign key). Tabellen ohne Fremdschlüssel nennt man flache Tabellen.
-
 Der hier benutzte Begriff Relation beschreibt die Beziehung der Attribute zum Relationennamen. So gilt im obigen Beispiel: Hans ist ein Attribut der Relation „Nutzer“. Somit wird Relation bei relationalen Datenbanken allgemein als Synonym für Tabelle genutzt. Im Gegensatz dazu beschreibt die Relation bei einem Entity-Relationship-Modell die Beziehung zwischen Entitäten.
 
 Abgrenzung
@@ -61,7 +57,6 @@ O
 n
 ⋅
 log
-⁡
 (
 n
 )
@@ -73,9 +68,7 @@ Einige Anbieter fügen ihren relationalen Datenbanken objektorientierte Eigensch
 
 Semistrukturierte Datenbanken
 Neuere Konzepte sind die semistrukturierten Datenbanken. Sie unterscheiden sich von den herkömmlichen Datenbankmodellen darin, dass sie kein fest vorgegebenes Schema haben. Die Datenbank wird hierarchisch, baumartig aufgebaut und jede Datenbankeinheit (englisch entity) des gleichen Typs kann verschiedene Mengen von Attributen haben.
-
 Typische Vertreter dieses Typs sind XML-Datenbanken, welche die Daten als XML-Fragmente verwalten. Die XML-Daten sind hierbei hierarchisch geordnet und können beliebige Strukturen enthalten, solange diese nach XML-Definition wohlgeformt sind. Die Daten können über XQuery oder XPath abgefragt werden. Zur Manipulation werden heute proprietäre Spracherweiterungen verwendet. Der Nachteil von aktuellen XML-Datenbanken ist die im Vergleich zu relationalen Systemen geringere Performance.
-
 Semistrukturierte Datenbanken lassen sich über Erweiterungen oder Server-Programmierung auch mit relationalen DB realisieren, wobei das Relationenmodell aber nicht mehr angewendet wird.
 
 Theorie der relationalen Datenbanken
@@ -94,16 +87,13 @@ Alle Anfragen, die mittels SQL an eine relationale Datenbank gestellt werden, we
 
 Beschränkungen der relationalen Algebra
 Die relationale Algebra bietet keine Unterstützung zur Berechnung von rekursiven Anfragen (transitive Hülle). Das heißt beispielsweise, dass es nicht möglich ist, in einer Anfrage alle Vorfahren einer Person zu berechnen, wenn diese in einer Relation Person gespeichert sind und über eine Relation VorfahreVon mit dem jeweiligen Vorfahren in Person verbunden ist. Die Vorfahren können nur durch eine Folge von Anfragen ermittelt werden.
-
 Mit der Einführung von SQL-99 wurde jedoch auch eine erweiterte relationale Algebra eingeführt, die eine Operation zur Berechnung der transitiven Hülle erlaubt.
 
 Datenbankschema und Modellierung
 
 Ein ER-Diagramm in Chen-Notation
 Wichtiger Bestandteil einer relationalen Datenbank ist ihr Schema. Das Schema legt fest, welche Daten in der Datenbank gespeichert werden und wie diese Daten in Beziehung zueinander stehen. Der Vorgang zum Erstellen eines Schemas nennt sich Datenmodellierung.
-
 Zur Modellierung von relationalen Datenbanken wird auch das Entity-Relationship-Modell verwendet. Es dient zum Entwurf eines konzeptuellen Schemas, welches unter Verwendung eines Datenbankmanagementsystems (DBMS) implementiert werden kann. Dieser Schritt wird als logischer Entwurf oder auch Datenmodellabbildung bezeichnet und hat als Ergebnis ein Datenbankschema im Implementierungsdatenmodell des DBMS.
-
 Ein wichtiger Schritt des Modellierungsprozesses ist die Normalisierung. Diese soll Redundanzen verringern und Anomalien verhindern, um so die Wartung einer Datenbank zu vereinfachen, sowie die Konsistenz der Daten zu gewährleisten. Edgar F. Codd hat dazu vier Normalformen vorgeschlagen, die seitdem bei dem relationalen Datenbankentwurf zum Einsatz kommen und um weitere ergänzt wurden.
 
 Kritik am relationalen Datenbankmodell
@@ -135,6 +125,7 @@ Deduktive Datenbank
 Liste der Datenbankmanagementsysteme
 Referentielle Integrität
 Codd’sche Regeln
+
 Literatur
 Edgar F. Codd: The Relational Model for Database Management. Version 2. Addison-Wesley, Reading u. a. 1990, ISBN 0-201-14192-2.
 Alfons Kemper, André Eickler: Datenbanksysteme. Eine Einführung. R. Oldenbourg Verlag, München 2004, ISBN 3-486-27392-2.

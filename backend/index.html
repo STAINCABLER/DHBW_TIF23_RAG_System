@@ -450,8 +450,8 @@
             `;
             document.querySelector("#content").appendChild(loadingTag);
             
-            // Scroll to bottom
-            document.querySelector("#content").scrollTop = document.querySelector("#content").scrollHeight;
+            // Scroll to loading indicator (start of element)
+            loadingTag.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
             const API_URL = "./api"
             fetch(API_URL, {
@@ -474,8 +474,8 @@
 
                 document.querySelector("#content").appendChild(tag);
                 
-                // Scroll to bottom
-                document.querySelector("#content").scrollTop = document.querySelector("#content").scrollHeight;
+                // Scroll to start of RAG response
+                tag.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 
                 is_running = false;
                 document.querySelector("#submit").disabled = false;

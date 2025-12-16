@@ -1,23 +1,17 @@
 NoSQL
 
 NoSQL (englisch für Not only SQL deutsch: „Nicht nur SQL“) bezeichnet Datenbanken, die einen nicht-relationalen Ansatz verfolgen und damit mit der langen Geschichte relationaler Datenbanken brechen. Diese Datenspeicher benötigen keine festgelegten Tabellenschemata und versuchen Joins zu vermeiden. Sie skalieren dabei horizontal. Im akademischen Umfeld werden sie häufig als „strukturierte Datenspeicher“ (engl. structured storage) bezeichnet.[1][2][3][4]
-
 Bekannte Implementierungen sind Riak, Apache Cassandra, CouchDB, MongoDB und Redis.
 
 Geschichte
 Der Begriff NoSQL, noch im Sinne von no SQL, wurde erstmals für eine 1998 erschienene einfache Open-Source-Datenbank verwendet, die keine SQL-Zugriffsmöglichkeit bereitstellte. Carlo Strozzi, der Entwickler dieser Datenbank, unterscheidet allerdings die NoSQL-Datenbank von der NoSQL-Bewegung insofern, als erstere eine Datenbank ist, welche auf die Verwendung der Sprache SQL verzichtet, während letztere ein Konzept ist, das vom relationalen Modell Abstand nimmt.[5]
-
 Der Begriff NoSQL im Sinne von Not only SQL wurde Anfang 2009 von Johan Oskarsson für ein Treffen über verteilte strukturierte Datenspeicher neu eingeführt.[6] Der Name war ein Versuch einer gemeinsamen Begriffsfindung für die wachsende Zahl an nicht relationalen, verteilten Datenspeichersystemen, die meist auch auf ACID-Eigenschaften verzichteten.
-
 Dieses Thema ist nicht ganz neu. Die Bestrebung, Daten ohne die Einschränkungen des relationalen Modells zu speichern, war bereits früher unter dem Titel dokumentenorientierte Datenbank bekannt. Insofern sind alle Vertreter dieser Thematik auch als NoSQL-Systeme zu betrachten.
-
 Obwohl sich NoSQL-Systeme kontinuierlich verbreiten, wird der Markt nach wie vor deutlich von relationalen Systemen dominiert (Stand 2025).[7]
 
 Architektur
 Relationale Datenbanken leiden üblicherweise unter Leistungsproblemen bei datenintensiven Applikationen wie Indexierung großer Dokumentmengen, Webseiten mit hohen Lastaufkommen sowie Streaming-Media-Applikationen. Relationale Datenbanken sind nur dann effizient, wenn sie für häufige, aber kleine Transaktionen oder für große Batch-Transaktionen mit seltenen Schreibzugriffen optimiert sind. Sie können aber schlecht mit gleichzeitig hohen Datenanforderungen und häufigen Datenänderungen umgehen.[8] NoSQL dagegen kann mit vielen Schreib-/Leseanfragen umgehen.[9]
-
 NoSQL-Architekturen bieten meist nur schwache Garantien hinsichtlich Konsistenz wie beispielsweise eventual consistency oder auf einzelne Datensätze eingeschränkte Transaktionen. Einige Systeme unterstützen auch ACID, beispielsweise durch Hinzufügung spezieller Middleware wie CloudTPS.[10]
-
 Viele NoSQL-Implementierungen unterstützen verteilte Datenbanken mit redundanter Datenhaltung auf vielen Servern, beispielsweise unter Nutzung einer verteilten Hashtabelle. Damit können die Systeme einfach erweitert werden sowie Ausfälle einzelner Server überstehen.[11]
 
 Unterscheidung nach Datenmodell
@@ -48,6 +42,7 @@ Relational	unterschiedlich	unterschiedlich	gering	mittel	Relationale Algebra
 Literatur
 Stefan Edlich, Achim Friedland, Jens Hampe, Benjamin Brauer, Markus Brückner: NoSQL: Einstieg in die Welt nichtrelationaler Web 2.0 Datenbanken. 2., aktualisierte und erweiterte Auflage. Hanser Verlag, München 2011, ISBN 978-3-446-42753-2.
 Pramodkumar J. Sadalage, Martin Fowler: NoSQL Distilled: A Brief Guide to the Emerging World of Polyglot Persistence. Addison-Wesley, Amsterdam 2012, ISBN 978-0-321-82662-6 (englisch).
+
 Weblinks
 Binärgewitter #1: NoSQL (Podcast bei RadioTux)
 NoSQL Databases (Links zu NoSQL-Themen, gepflegt durch Stefan Edlich)
@@ -56,6 +51,7 @@ NoSQL Anwendergruppen in Deutschland
 Stefan Edlich: Ausblick zur Entwicklung von SQL zu NoSQL. Frankfurter Datenbanktage
 Roberto V. Zicari: Free Downloads/Artikel zu NoSQL ODBMS.org
 Prof. Dr. Oliver Hummel: Denormalisieren in NoSQL
+
 Einzelnachweise
  Avinash Lakshman, Prashant Malik: Cassandra – A Decentralized Structured Storage System. (PDF, 133 kB) Cornell University, 2009, abgerufen am 24. Juni 2010 (englisch).
  Fay Chang, Jeffrey Dean, Sanjay Ghemawat, Wilson C. Hsieh, Deborah A. Wallach, Mike Burrows, Tushar Chandra, Andrew Fikes, Robert E. Gruber: Bigtable: A Distributed Storage System for Structured Data. (PDF, 221 kB) Google, abgerufen am 22. April 2012 (englisch).

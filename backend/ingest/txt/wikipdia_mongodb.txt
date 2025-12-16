@@ -13,9 +13,7 @@ Kategorie	Dokumentenorientierte Datenbank
 Lizenz	Server Side Public License[5][6]
 www.mongodb.com
 MongoDB (abgeleitet vom engl. humongous, „gigantisch“) ist ein dokumentenorientiertes NoSQL-Datenbankmanagementsystem, das in der Programmiersprache C++ geschrieben ist.[7][8] Sie kann Sammlungen von JSON-ähnlichen Dokumenten verwalten. So können viele Anwendungen Daten auf natürlichere Weise modellieren, da die Daten zwar in komplexen Hierarchien verschachtelt werden können, dabei aber immer abfragbar und indizierbar bleiben.
-
 Die Entwicklung von MongoDB begann im Oktober 2007 durch das Unternehmen 10gen, welches am 27. August 2013 in MongoDB, Inc. umbenannt wurde.[9] Die Erstveröffentlichung fand im Februar 2009 statt.[10] MongoDB wurde bis zum 15. Oktober 2018 als Freie Software veröffentlicht und ist seitdem unter der proprietären SSPL verfügbar.[11] Es ist die populärste NoSQL-Datenbank (Stand: Apr 2024).[12]
-
 Das Unternehmen MongoDB, Inc. ist im NASDAQ gelistet und wird unter dem Kürzel MDB gehandelt.
 
 Systemvoraussetzungen
@@ -30,7 +28,6 @@ Eine Collection enthält Dokumente und ist mit einer Tabelle einer relationalen 
 
 Capped Collections
 MongoDB unterstützt größenbeschränkte Dokumentensammlungen – auch capped collections genannt.[13] Eine capped collection wird mit einer bestimmten Größe und – je nach Bedarf – einer Anzahl an Elementen angelegt. Eine capped collection ist die einzige Art Dokumentensammlung, die die Ordnung einhält: Sobald die spezifizierte Größe erreicht ist, verhält sich die capped collection wie ein digitaler Ringspeicher.
-
 Eine besondere Art Cursor – genannt tailable cursor[14] – kann bei capped collections verwendet werden. Der Cursor wurde nach dem Unix-Befehl tail -f benannt. Er verschwindet nicht, sobald er die Wiedergabe der Ergebnisse beendet hat, sondern wartet und gibt neue Ergebnisse wieder, sobald neue Dokumente der Sammlung hinzugefügt werden.
 
 System Collections
@@ -38,14 +35,11 @@ MongoDB legt automatisch System Collections an. Eine der System Collections bein
 
 Abfragen
 Mongo erlaubt es, jedes Feld jederzeit abzufragen. Mongo unterstützt auch Bereichsabfragen, das Suchen nach regulären Ausdrücken und andere Spezialsuchabfragen zusätzlich zu Suchen anhand von Beispielen[15]. Diese Abfragen schließen auch benutzerdefinierte JavaScript-Funktionen ein. Abfragen können sowohl spezifische Dokumentenfelder wiedergeben (anstelle des gesamten Dokuments) als auch Ergebnisse sortieren, überspringen und einschränken. Abfragen können in eingebettete Objekte und Anordnungen hineinreichen.
-
 Jedes Abfrageergebnis wird als Cursor bereitgestellt.
 
 Indizierung
 Die Software unterstützt Indexstrukturen, beispielsweise B-Bäume und Geospatial-Indizes.[16] Verschachtelte Felder (so wie oben in der Ad-hoc-Abfrage beschrieben) können gleichfalls indiziert werden. Das Indizieren von Listen ergibt eine Indizierung jedes einzelnen Elements der Liste.
-
 Der Abfrage-Optimierer von MongoDB sucht während eines Abfragelaufs selbständig zwischen unterschiedlichen Auswertungsplänen aus und wählt den schnellsten; dabei findet periodisch eine Stichprobewiederholung statt. Entwickler können den verwendeten Index mittels der Funktion explain einsehen und einen anderen Index mit Hilfe der Funktion hint auswählen.
-
 Indizes können jederzeit angelegt und gelöscht werden.
 
 Aggregation
@@ -56,11 +50,8 @@ Um Dokumente speichern zu können, die die Größenbeschränkung von 16 MB über
 
 Abgrenzung zu relationalen (SQL-)Datenbanken
 MongoDB wird als NoSQL-Datenbank klassifiziert und grenzt sich als solche dadurch von traditionellen Datenbanken ab, dass sie eine weniger mächtige Abfragesprache anbietet. Dies ist Nachteil und Vorteil zugleich: Zum einen muss in der Anwendungsschicht mehr Logik vorhanden sein, um die gleichen Ergebnisse zu erzielen wie mit SQL-Datenbanken. Zum anderen kann MongoDB den Datenbestand und die Arbeitslast auf mehrere Server verteilen, was in monolithischen SQL-Datenbanken nicht möglich ist. Gleichwohl gibt es mittlerweile auch SQL-Datenbanken z. B. Exasol oder Greenplum, welche über mehrere Server verteilt sind. Nur auf den Mehrserversystemen sind große Join-Operationen in einer angemessenen Zeit zu bewerkstelligen.
-
 MongoDB zielt bei der Verteilung der Daten auf mehrere Server darauf ab, durch Replikation die Verfügbarkeit zu erhöhen und durch Sharding (siehe unten) die Arbeits- und Datenlast zu verteilen. Die Replikation bringt allerdings einen weiteren Nachteil mit sich: Wird ein Schreibzugriff von MongoDB bestätigt, dann gibt es standardmäßig ein Zeitfenster, in dem nachgelagerte Lesezugriffe den alten Datenbestand zurückliefern. Dieses Konsistenzmodell wird als Eventual Consistency bezeichnet.
-
 Ein weiteres Abgrenzungsmerkmal von MongoDB zu Relationalen Datenbanken ist die Schemafreiheit. Während in Relationalen Datenbanken die Struktur eines Datenbankeintrages durch die Definition der Tabelle fest vorgeschrieben ist, können sich die Datenbankeinträge in MongoDB frei voneinander unterscheiden (auch wenn sie derselben Collection angehören).[21] Dieser Freiheit wird zugesprochen, dass sie eine agile Softwareentwicklung unterstützt, da es einfacher ist, auf veränderte Anforderungen zu reagieren.[22]
-
 Allerdings müssen bei Analysen anschließend die Informationen ebenfalls strukturiert werden.
 
 Abgrenzung zu anderen NoSQL-Datenbanken
@@ -75,7 +66,6 @@ Die Mongo Shell ist ein Kommandozeilen-Client. Sie dient der Verwaltung von Mong
 
 Treiber
 MongoDB ist mit offiziellen Treibern ausgestattet für C, C++, C#, Go, Java, JavaScript, PHP, Python, Ruby, Rust, Scala und Swift.[24]
-
 Es gibt auch zu einigen Programmiersprachen offiziell unterstützte ORMs für MongoDB, wie z. B. Mongoose für die Node.js-Plattform.[25]
 
 Cloud-basierter Monitoring-Dienst
@@ -104,9 +94,7 @@ Um Ausfälle einzelner Server zu kompensieren und die Last der Lesezugriffe auf 
 
 Master-Slave-Replikation
 Die Master-Slave-Replikation ist veraltet und seit Version 4.0 nicht mehr verfügbar[45].
-
 Ein Master konnte Lese- („Reads“) und Schreibzugriffe („Writes“) ausführen. Ein Slave kopierte die Daten vom Master und konnte nur für Lesezugriffe oder die Datensicherung eingesetzt werden, nicht aber für Schreibzugriffe.
-
 Die Master-Slave-Replikation gestattete es Entwicklern, zu garantieren, dass auf einer Per-Ablauf-Basis zumindest ein Ablauf auf N Server repliziert wurde.
 
 Replica-Sets
@@ -114,12 +102,10 @@ Replica-Sets ähneln dem Master-Slave-Verhältnis, enthalten aber die Möglichke
 
 Sharding
 MongoDB skaliert horizontal unter Verwendung eines Systems, welches als horizontale Fragmentierung bezeichnet wird und das dem Bigtable- und PNUTS-Skalierungssystem sehr ähnlich ist. Der Entwickler wählt einen Fragmentierungsschlüssel, der festlegt, wie die Daten in einer Ansammlung verteilt werden. Die Daten werden in Bereiche aufgeteilt (unter Zugrundelegung des Fragmentierungsschlüssels) und über mehrere Instanzen verteilt.
-
 Die Anwendung bzw. ihr Entwickler muss wissen, dass die Kommunikation bei bestimmten Abläufen mit einem fragmentierten Cluster erfolgt. So muss eine „findAndModify“-Abfrage den Fragmentierungsschlüssel zum Beispiel beinhalten, wenn die angefragte Sammlung horizontal fragmentiert ist. Die Anwendung kommuniziert mit einem speziellen Routing-Prozess, der „mongos“ genannt wird und der genauso wie ein einzelner MongoDB-Server aussieht. Dieser „mongos“-Prozess weiß, welche Daten von welcher Instanz verwaltet werden, und routet die Abfrage dementsprechend. Alle Abfragen fließen durch diesen Prozess: Dieser leitet nicht nur die Abfragen und Antworten weiter, sondern führt auch alle notwendigen, finalen Datenver- und -entflechtungen durch. Jede beliebige Anzahl an „mongos“-Prozessen kann gestartet werden, allerdings wird gewöhnlich nur eine pro Anwendungsserver empfohlen.
 
 Technische Grundlagen
 Bei Lese- und Schreibzugriffen werden die Daten zunächst im RAM abgelegt und erst nach einer bestimmten Zeit (per Voreinstellung alle 60 Sekunden) vom Betriebssystemdienst mmap auf Disk synchronisiert. Dies ergibt einen Geschwindigkeitsvorteil, da auf den RAM in Nanosekunden zugegriffen werden kann, auf Dateien hingegen im dreistelligen Millisekundenbereich. Ein Nachteil ist, dass etwa bei einem Serverabsturz alle nur im RAM vorhandenen Daten verlorengehen. MongoDB begegnet diesem Nachteil mit dem Journaling-Verfahren.[46]
-
 Aufgrund der Nutzung von mmap ist auf 32-Bit-Rechnern die Datengröße auf 2 GB begrenzt (bei 64-Bit-Rechnern liegt die Obergrenze entsprechend sehr viel höher).[47] Der MongoDB-Server kann nur auf Little-Endian-Systemen benutzt werden, obwohl die meisten Treiber sowohl auf Little-Endian- als auch auf Big-Endian-Systemen laufen.
 
 Weitere Merkmale sind:
@@ -132,12 +118,10 @@ MongoDB war bis Oktober 2018 unter der GNU Affero General Public License (AGPL) 
 
 Im Oktober 2018 wechselten die Entwickler der Datenbank MongoDB zur proprietären Server Side Public License (SSPL), damit Cloud-Provider die Datenbank nicht nutzen, ohne Code zurückzugeben.
 Die SSPL erfordert, dass jeder, der den MongoDB-Service anbietet, auch den Quellcode des Services unter dieser Lizenz veröffentlicht, auch den Code aller Programme für das Management, für Nutzerinterfaces, für Monitoring und für Backups. MongoDB legte die Lizenz der Open Source Initiative (OSI) vor, wo diese abgelehnt wurde[49]. Eine neue Version 2 der Lizenz wurde erneut der OSI vorgelegt[50], dann aber zurückgezogen, nachdem klar wurde, dass diese nicht akzeptiert werden würde.[51] MongoDB ist derzeit nur unter der abgelehnten Version 1 verfügbar. Dem voraus ging eine ähnliche Lizenzänderung durch Entwickler der Datenbank Redis.[52]
-
 Aufgrund der Lizenzänderung wurde MongoDB aus den Linux-Distributionen Debian, Fedora und Red Hat Enterprise Linux entfernt. Das Fedora-Projekt entschied, dass die SSPL version 1 keine Freie-Software-Lizenz ist.[53][54]
 
 Sicherheit
 Zahlreiche MongoDB-Installationen im Internet sind von jedermann lesbar und teilweise sogar beschreibbar. Eine Suche mit Shodan lieferte im Januar 2017 52.000 offene Datenbanken.[55]
-
 Ursache ist, dass in der Standardinstallation keinerlei Zugriffskontrolle konfiguriert ist. Wird die Datenbank später auf einen öffentlichen Server verschoben und die Konfiguration nicht angepasst, kann von außen frei auf die Daten zugegriffen werden.[56] Zum Teil wurde das von Ransomware ausgenutzt, die diese Daten verschlüsselt hat.[57] Der Hersteller der kommerziellen Variante empfiehlt schon seit langem Maßnahmen zur Absicherung.[56][58]
 
 Bekannte Anwender
@@ -149,13 +133,16 @@ SourceForge[63]
 Die E-Commerce Website Etsy[64]
 Large Hadron Collider am CERN[65]
 Die Cloud-Computing-Plattform AppScale[66]
+
 Literatur
 Marc Boeker: MongoDB. Sag Ja zu NoSQL. EntwicklerPress, Frankfurt am Main 2010, ISBN 978-3-86802-057-1
 Tobias Trelle: MongoDB. Der praktische Einstieg. dpunkt, Heidelberg 2014, ISBN 978-3-86490-153-9
+
 Weblinks
 MongoDB Homepage
 MongoDB, Inc.
 MongoDB University - Free Online MongoDB Training
+
 Einzelnachweise und Anmerkungen
  Release r8.1.2. 2. Juli 2025 (abgerufen am 22. Juli 2025).
  Release r8.2.0-rc0. 21. Juli 2025 (abgerufen am 22. Juli 2025).
