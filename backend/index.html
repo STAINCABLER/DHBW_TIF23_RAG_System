@@ -198,6 +198,57 @@
             border-bottom-left-radius: 0.25rem;
         }
 
+        /* ===== Loading Indicator ===== */
+        .loading-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.25rem;
+            border-radius: 1rem;
+            background: var(--color-surface-alt);
+            border: 1px solid var(--color-border);
+            border-bottom-left-radius: 0.25rem;
+            margin-right: auto;
+            max-width: 85%;
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 0.35rem;
+        }
+
+        .loading-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+
+        .loading-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes pulse {
+            0%, 80%, 100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+            40% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .loading-text {
+            color: var(--color-muted);
+            font-size: 0.9rem;
+        }
+
         /* ===== Input Area ===== */
         .input-area {
             display: flex;
@@ -261,6 +312,18 @@
 
         #submit:active {
             transform: translateY(0);
+        }
+
+        #submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #submit:disabled:hover {
+            transform: none;
+            box-shadow: none;
         }
 
         /* ===== Divider ===== */
@@ -373,6 +436,23 @@
             if(is_running) return;
             document.querySelector("#submit").disabled = true;
             is_running = true;
+
+            // Show loading indicator
+            let loadingTag = document.createElement("div");
+            loadingTag.classList.add("loading-indicator");
+            loadingTag.innerHTML = `
+                <div class="loading-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <span class="loading-text">Denke nach...</span>
+            `;
+            document.querySelector("#content").appendChild(loadingTag);
+            
+            // Scroll to bottom
+            document.querySelector("#content").scrollTop = document.querySelector("#content").scrollHeight;
+
             const API_URL = "./api"
             fetch(API_URL, {
                 method: "POST",
@@ -385,11 +465,18 @@
             })
             .then((response) => response.text()
             .then((content) => {
+                // Remove loading indicator
+                loadingTag.remove();
+
                 let tag = document.createElement("div");
                 tag.innerHTML = content;
                 tag.classList.add("rag-response")
 
                 document.querySelector("#content").appendChild(tag);
+                
+                // Scroll to bottom
+                document.querySelector("#content").scrollTop = document.querySelector("#content").scrollHeight;
+                
                 is_running = false;
                 document.querySelector("#submit").disabled = false;
 
