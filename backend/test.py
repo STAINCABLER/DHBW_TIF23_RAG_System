@@ -63,9 +63,11 @@ with database.mongo.create_connection() as conn:
 
     #coll.drop()
 
-    r = coll.find_one()
+    r = coll.find({}, {"embedding": 0})
     
-    print(r)
+    for i in r:
+        print(i)
+        print("\n\n")
 
 
 # import ragutil.perplexity
