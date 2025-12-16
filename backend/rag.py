@@ -1,5 +1,6 @@
 import json
 import logging
+import marko
 import time
 
 import ragutil.chunks_search
@@ -45,10 +46,20 @@ def rag_process(user_input: str) -> str:
     logging.info("Retrieved chunks")
 
     total_prompt_blocks: list[str] = []
+    scenariO_chunk_blocks: list[str] = []
 
     for scenario in scenarios:
-        prompt_block: str = process_scenario(scenario)
-        total_prompt_blocks.append(prompt_block)
+        prompt_block: tuple[str, str] = process_scenario(scenario)
+        total_prompt_blocks.append(prompt_block[1])
+
+        res = prompt_block[0]
+
+
+        scenario_name: str = scenario.name
+
+        desc: str = f"# # {scenario_name}<br>\n# # -{res}"
+
+        scenariO_chunk_blocks.append(desc)
 
     query_part: str = "\n\n".join(total_prompt_blocks)
     
@@ -67,11 +78,33 @@ def rag_process(user_input: str) -> str:
     rag_delta: float = start_time_4 - start_time_2
     delta: float = end_time - start_time_1
 
-    return result + f"\n\n---------------------------------------------------------\n# Rag hat {delta:.3f}s benötigt! ({rag_delta:.3f}s ohne AI)\n# - Perplexity 1: {delta_perflexity_1:.3f}s\n# - ScenarioSearch 1: {delta_scenarios:.3f}s\n# - ChunkSearch 1: {delta_chunks:.3f}s\n# - Perplexity 2: {delta_perflexity_2:.3f}s\n---------------------------------------------------------"
+    scenario_info_string = "<br>\n# # <br>\n".join(scenariO_chunk_blocks)
+
+    return result + f"""
+    <br>
+    <br>
+    <hr>
+    <br>
+    <p>
+    # Rag hat {delta:.3f}s benötigt! ({rag_delta:.3f}s ohne AI)<br>
+    # - Perplexity 1: {delta_perflexity_1:.3f}s<br>
+    # - ScenarioSearch 1: {delta_scenarios:.3f}s<br>
+    # - ChunkSearch 1: {delta_chunks:.3f}s<br>
+    # - Perplexity 2: {delta_perflexity_2:.3f}s<br>
+    <br>
+    # Keywords: {keywords}<br>
+    <br>
+    <br>
+    # SzenarioInfo:<br>
+    {scenario_info_string}<br>
+    <br>
+    <hr>
+    </p>
+    """
 
 
 
-def process_scenario(scenario: util.scenario.Scenario) -> str:
+def process_scenario(scenario: util.scenario.Scenario) -> tuple[str, str]:
     total_chunks: list[util.chunk.DocumentChunk] = []
     questions: list[util.scenario.ScenarioQuestion] = scenario.get_scenario_questions()
 
@@ -109,7 +142,17 @@ def process_scenario(scenario: util.scenario.Scenario) -> str:
         question_block: str = build_question_block(question, reduced_chunks)
         scenario_blocks.append(question_block)
     
-    return "\n\n".join(scenario_blocks)
+    chunk_file_names: list[str] = []
+    for i in total_chunks:
+        file_name: str = i.metadata.source_file
+        index: int = i.chunk_index
+
+        chunk_file_names.append(f"{file_name}:{index}")
+    
+    chunk_file_content: str = ", ".join(chunk_file_names)
+
+
+    return chunk_file_content, "\n\n".join(scenario_blocks)
 
 
 def build_question_block(question: util.scenario.ScenarioQuestion, chunks: list[util.chunk.DocumentChunk]) -> str:
@@ -182,6 +225,6 @@ def process_final_results(perplexity_client: ragutil.perplexity.PerplexityQuerie
         """
     try:
         response = perplexity_client.prompt(prompt)
-        return response
+        return marko.convert(response)
     except:
         return "Perplexity hat nicht geantwortet [Zusammenfassung]"

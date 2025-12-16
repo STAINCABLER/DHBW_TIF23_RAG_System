@@ -2,7 +2,7 @@ import json
 import pgvector.psycopg2.vector
 import torch
 import uuid
-
+import logging
 
 import database.mongo
 import util.embedding
@@ -11,6 +11,7 @@ import util.file_manager
 
 
 def process_file(file_path: str) -> None:
+    logging.info(file_path)
     content: list | dict = read_file_content_json(file_path)
 
     chunk_json(content, file_path.split("/")[-1])
@@ -19,12 +20,19 @@ def read_file_content_json(file_path: str) -> list | dict:
     with open(util.file_manager.get_relative_file_path(file_path), "rb") as file:
        return json.load(file)
 
-def chunk_json(data: dict[str, any], file_name: str) -> None:
+def chunk_json(data: dict[str, any] | list[any], file_name: str) -> None:
 
     doc_id: str = str(uuid.uuid4())
 
+    chunks: list[dict[str, any]] = []
+    print(f"Identified {len(data)} elements in {file_name}")
+
     for i, key in enumerate(data):
-        value = data[key]
+        if isinstance(data, dict):
+            value = data[key]
+        else:
+            value = key
+            key = ""
 
         chunk_id: str = str(uuid.uuid4())
 
@@ -51,8 +59,10 @@ def chunk_json(data: dict[str, any], file_name: str) -> None:
             }
         }
 
-        with database.mongo.create_connection() as conn:
-            db = conn["rag"]
-            coll = db["chunks"]
+        chunks.append(chunk)
 
-            coll.insert_one(chunk)
+    with database.mongo.create_connection() as conn:
+        db = conn["rag"]
+        coll = db["chunks"]
+
+        coll.insert_many(chunks)

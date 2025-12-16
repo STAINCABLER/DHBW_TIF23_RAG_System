@@ -54,24 +54,24 @@ sys.dont_write_bytecode = True
 # print(i[0:10])
 
 
-# import database.mongo
+import database.mongo
 
 
-# with database.mongo.create_connection() as conn:
-#     db = conn["rag"]
-#     coll = db["chunks"]
+with database.mongo.create_connection() as conn:
+    db = conn["rag"]
+    coll = db["chunks"]
 
-#     #coll.drop()
+    #coll.drop()
 
-#     r = coll.find(projection={"_id": 1})
+    r = coll.find_one()
     
-#     print(list(r))
+    print(r)
 
 
 # import ragutil.perplexity
-import dotenv
+# import dotenv
 
-dotenv.load_dotenv()
+# dotenv.load_dotenv()
 
 
 
@@ -93,22 +93,22 @@ dotenv.load_dotenv()
 # setup.chunker.import_all()
 
 
-import logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s",
-    handlers=[
-        logging.StreamHandler(sys.stdout),
-    ],
-)
-import rag
-prompt: str = "Ich möchte eine Datenbank haben. Hierfür habe ich im Wald über 100 Temperaturmessgeräte, welche in einem refgelmäßifen Interval Daten zukommen lassen. Welche Datenbankarchitektur ist dafür geeingnet?"
+# import logging
+# logging.basicConfig(
+#     level=logging.INFO,
+#     format="%(asctime)s | %(levelname)s | %(message)s",
+#     handlers=[
+#         logging.StreamHandler(sys.stdout),
+#     ],
+# )
+# import rag
+# prompt: str = "Ich möchte eine Datenbank haben. Hierfür habe ich im Wald über 100 Temperaturmessgeräte, welche in einem refgelmäßifen Interval Daten zukommen lassen. Welche Datenbankarchitektur ist dafür geeingnet?"
 
-prompt = "Ich verwalte viele Server als DDos Schutz. Alle meine Kunden benötigen sehr schnell eine Überprüfung, ob ein Client eine Verbindung aufbauen darf. Des Weiteren benötige ich eine Datenbank über meine Kunden."
-prompt = "Wir möchten als Projekt ein Datenbank RAG bauen, welches Informationen über Datenbanken ausgeben kann. Die Nutzereingabe wird hierbei so verarbeitet, dass aus dem RAG passende Daten gefunden werden. Diese sollen zusammen mit der Nutzereingabe an ein LLm geschickt werden zur Textverarbeitung."
+# prompt = "Ich verwalte viele Server als DDos Schutz. Alle meine Kunden benötigen sehr schnell eine Überprüfung, ob ein Client eine Verbindung aufbauen darf. Des Weiteren benötige ich eine Datenbank über meine Kunden."
+# prompt = "Wir möchten als Projekt ein Datenbank RAG bauen, welches Informationen über Datenbanken ausgeben kann. Die Nutzereingabe wird hierbei so verarbeitet, dass aus dem RAG passende Daten gefunden werden. Diese sollen zusammen mit der Nutzereingabe an ein LLm geschickt werden zur Textverarbeitung."
 
-prompt = "Wie würdest du ein RAG Datenbanksystem machen?"
-szf = rag.rag_process(prompt)
+# prompt = "Wie würdest du ein RAG Datenbanksystem machen?"
+# szf = rag.rag_process(prompt)
 
 
-print(szf)
+# print(szf)

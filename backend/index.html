@@ -59,6 +59,10 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
+        ul, ol {
+            margin-left: 25px;
+        }
+
         /* ===== Container ===== */
         .container {
             width: 100%;
@@ -306,8 +310,8 @@
         </div>
 
         <div id="content">
-            <div class="user-response">Ich hätte gerne ein System zum Verwalten von Backrezepten in einer Datenbank. Das beeinhaltet sowas wie Anleitung und Zutaten.</div>
-            <div class="rag-response">Ich hätte gerne ein System zum Verwalten von Backrezepten in einer Datenbank. Das beeinhaltet sowas wie Anleitung und Zutaten.</div>
+            <!--<div class="user-response">Ich hätte gerne ein System zum Verwalten von Backrezepten in einer Datenbank. Das beeinhaltet sowas wie Anleitung und Zutaten.</div>
+            <div class="rag-response">Ich hätte gerne ein System zum Verwalten von Backrezepten in einer Datenbank. Das beeinhaltet sowas wie Anleitung und Zutaten.</div>-->
         </div>
         
         <div class="divider"></div>
@@ -367,8 +371,10 @@
 
                 document.querySelector("#content").appendChild(usertag);
             if(is_running) return;
+            document.querySelector("#submit").disabled = true;
             is_running = true;
-            fetch("./api", {
+            const API_URL = "./api"
+            fetch(API_URL, {
                 method: "POST",
                 body: JSON.stringify({
                     user_input: userInput
@@ -380,10 +386,12 @@
             .then((response) => response.text()
             .then((content) => {
                 let tag = document.createElement("div");
-                tag.innerText = content;
+                tag.innerHTML = content;
+                tag.classList.add("rag-response")
 
                 document.querySelector("#content").appendChild(tag);
-                is_running = true;
+                is_running = false;
+                document.querySelector("#submit").disabled = false;
 
             }))
         }

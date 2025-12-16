@@ -1,5 +1,6 @@
 import csv
 import json
+import logging
 import pgvector.psycopg2.vector
 import torch
 import uuid
@@ -10,6 +11,7 @@ import util.file_manager
 
 
 def process_file(file_path: str) -> None:
+    logging.info(file_path)  
     content: list | dict = read_file_content_csv(file_path)
 
     chunk_csv(content, file_path.split("/")[-1])

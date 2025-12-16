@@ -1,6 +1,7 @@
 import json
 import langchain_text_splitters
 import langchain_core.documents
+import logging
 import pgvector.psycopg2.vector
 import torch
 import uuid
@@ -10,6 +11,7 @@ import util.embedding
 import util.file_manager
 
 def process_file(file_path: str) -> None:
+    logging.info(file_path)
     content: str = read_file_content_json(file_path)
 
     chunk_md(content, file_path.split("/")[-1])
