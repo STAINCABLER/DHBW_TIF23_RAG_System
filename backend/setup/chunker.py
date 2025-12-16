@@ -1,5 +1,6 @@
 import os
 
+import database.mongo
 import setup.chunks.csv_chunker
 import setup.chunks.json_chunker
 import setup.chunks.md_chunker
@@ -13,6 +14,35 @@ def import_all() -> None:
     do_csv()
     do_json()
     do_md()
+
+
+
+    # Create Index
+    with database.mongo.create_connection() as conn:
+        db = conn["rag"]
+
+        db.command(
+            {
+                "createSearchIndexes": "chunks",
+                "indexes": [
+                    {
+                        "name": "vec_idx",
+                        "definition": {
+                            "mappings": {
+                                "dynamic": False,
+                                "fields": {
+                                    "embedding": {
+                                        "type": "vector",
+                                        "similarity": "cosine",
+                                        "numDimensions": 384
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        )
     
 
 

@@ -6,35 +6,16 @@ import util.chunk
 import util.scenario
 
 def build_pipeline_from_vector_list(vector_list: list[float], number_of_chunks: int = 5) -> list:
-
     pipeline = [
         {
-            "$addFields": {
-                "similarity": {
-                    "$reduce": {
-                        "input": {"$range": [0, 384]},
-                        "initialValue": 0,
-                        "in": {
-                            "$add": [
-                                "$$value",
-                                {
-                                    "$multiply": [
-                                        {"$arrayElemAt": ["$embedding", "$$this"]},
-                                        {"$arrayElemAt": [vector_list, "$$this"]}
-                                    ]
-                                }
-                            ]
-                        }
-                    }
-                }
+            "$vectorSearch": {
+            "index": "vec_idx",
+            "path": "embedding",
+            "queryVector": vector_list,
+            "numCandidates": 100,
+            "limit": number_of_chunks
             }
-        },
-        {"$sort": {"similarity": -1}},
-
-        # Hier Anzahl eingeben
-        {"$limit": number_of_chunks},
-        
-        {"$project": {"embedding_id": 1, "similarity": 1}}
+        }
     ]
 
     return pipeline
@@ -58,7 +39,7 @@ def retrieve_chunks_for_scenario_question(scenario_question: util.scenario.Scena
     chunks: list[util.chunk.DocumentChunk] = []
 
     for raw_chunk in raw_chunks:
-        chunk: util.chunk.DocumentChunk = util.chunk.DocumentChunk.load_from_id(raw_chunk["_id"])
+        chunk: util.chunk.DocumentChunk = util.chunk.DocumentChunk.from_dict(raw_chunk)
         chunks.append(chunk)
     
     return chunks
