@@ -893,7 +893,7 @@ Ein dedizierter Chunking-Test verglich drei Strategien anhand der Frage: *„Was
 
 **Ursachenanalyse:**
 - MongoDB ist nicht für hochperformante Vektorsuche optimiert
-- Fehlende HNSW-Indexierung in MongoDB (nur lineare Suche)
+- Fehlende Indexierung in MongoDB (nur lineare Suche)
 - Gemäß Modul 7: „B-Trees können die 50ms Latenz bei ANN-Suche niemals einhalten"
 
 ---
