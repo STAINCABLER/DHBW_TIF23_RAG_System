@@ -213,7 +213,7 @@ def process_final_results(perplexity_client: ragutil.perplexity.PerplexityQuerie
         - Evaluiere die besten Technologien und Architekturen, die den Anforderungen am besten entsprechen. NUTZE dein WISSEN aus den SCENARIO KONTEXT. 2 Möglichkeiten MAXIMAL!
         - Erstelle ein detailliertes Datenbankschema, das die Struktur und Beziehungen der Daten klar definiert.
         - Berücksichtige Skalierbarkeit, Leistung und Sicherheit in deinem Design. Solange sie den ANFORDERUNGEN des USER PROMTS entsprechen.
-        - Gib eine Begründung für deine Designentscheidungen und die gewählten Technologien.
+        - Gib eine Begründung für deine Designentscheidungen, Annahmen, Berechnungen und die gewählten Technologien.
         DU BEARBEITEST DIE AUFGABE IN DEUTSCHER SPRACHE, ABER ENGLISCHE TECHNISCHE BEGRIFFE SIND ERLAUBT.
         DU ANTWORTEST NUR AUF DEN USER INPUT DES USERS, DER REST IST NUR DEINE WISSENSGRUNDLAGE. NICHTS AUF DAS DU ANTWORTEN SOLLST, ODER DARFST!
         Deine Antwort darf KEINERLEI Links oder Verweise auf externe Quellen enthalten!
