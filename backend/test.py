@@ -65,9 +65,11 @@ with database.mongo.create_connection() as conn:
 
     r = coll.find({}, {"embedding": 0})
     
-    for i in r:
-        print(i)
-        print("\n\n")
+    # for i in r:
+    #     print(i)
+    #     print("\n\n")
+
+    print(coll.count_documents({}))
 
 
 # import ragutil.perplexity

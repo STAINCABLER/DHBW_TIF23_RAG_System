@@ -50,7 +50,7 @@ def post_api_debug() -> str:
     user_input: str = body["user_input"]
 
     results: list[float] = [0.0, 0.0, 0.0]
-    NUM_OF_TRIES: int = 1000
+    NUM_OF_TRIES: int = 100
 
     for _ in range(NUM_OF_TRIES):
         r = test_rag.rag_process(user_input)
