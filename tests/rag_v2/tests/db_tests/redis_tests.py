@@ -75,6 +75,7 @@ class RedisPerformanceTest(BasePerformanceTest):
     """
     
     DATABASE_NAME = "Redis"
+    DATABASE_CATEGORY = "NoSQL/Document"
     
     TEST_DESCRIPTION = """
     Redis Key-Value Store Performance Tests

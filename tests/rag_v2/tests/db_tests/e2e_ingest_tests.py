@@ -821,7 +821,8 @@ class E2EIngestPerformanceTest(BasePerformanceTest):
                 operation_type="parse",
                 latencies_ms=[ns_to_ms(t) for t in parse_times[file_type]],
                 total_operations=num_files,
-                notes=f"Parsing von {num_files} {file_type}-Dateien"
+                notes=f"Parsing von {num_files} {file_type}-Dateien",
+                category="E2E/Ingest"
             )
             self.results.append(result)
             
@@ -832,7 +833,8 @@ class E2EIngestPerformanceTest(BasePerformanceTest):
                 operation_type="chunk",
                 latencies_ms=[ns_to_ms(t) for t in chunk_times[file_type]],
                 total_operations=num_files,
-                notes=f"Chunking von {num_files} {file_type}-Dateien"
+                notes=f"Chunking von {num_files} {file_type}-Dateien",
+                category="E2E/Ingest"
             )
             self.results.append(result)
             
@@ -843,7 +845,8 @@ class E2EIngestPerformanceTest(BasePerformanceTest):
                 operation_type="embed",
                 latencies_ms=[ns_to_ms(t) for t in embed_times[file_type]],
                 total_operations=num_files,
-                notes=f"Embedding von {num_files} {file_type}-Dateien (sentence-transformers)"
+                notes=f"Embedding von {num_files} {file_type}-Dateien (sentence-transformers)",
+                category="E2E/Ingest"
             )
             self.results.append(result)
             
@@ -888,7 +891,8 @@ class E2EIngestPerformanceTest(BasePerformanceTest):
                     operation_type="write",
                     latencies_ms=[ns_to_ms(store_time)],
                     total_operations=len(chunks),
-                    notes=f"Bulk-Insert von {len(chunks)} Chunks mit Embeddings"
+                    notes=f"Bulk-Insert von {len(chunks)} Chunks mit Embeddings",
+                    category="E2E/Storage"
                 )
                 self.results.append(result)
                 
@@ -940,7 +944,8 @@ class E2EIngestPerformanceTest(BasePerformanceTest):
                     operation_type="vector_search",
                     latencies_ms=[ns_to_ms(t) for t in search_times],
                     total_operations=len(test_queries),
-                    notes=f"Top-5 Vektor-Suche mit {len(test_queries)} Queries"
+                    notes=f"Top-5 Vektor-Suche mit {len(test_queries)} Queries",
+                    category="E2E/Vector Search"
                 )
                 self.results.append(result)
                 

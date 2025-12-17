@@ -77,6 +77,7 @@ class MongoPerformanceTest(BasePerformanceTest):
     """
     
     DATABASE_NAME = "MongoDB"
+    DATABASE_CATEGORY = "NoSQL/Document"
     
     TEST_DESCRIPTION = """
     MongoDB Document Store Performance Tests

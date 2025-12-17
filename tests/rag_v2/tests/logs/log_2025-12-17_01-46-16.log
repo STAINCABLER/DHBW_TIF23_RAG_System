@@ -1,0 +1,212 @@
+[2025-12-17 01:46:16] INFO     __main__: ======================================================================
+[2025-12-17 01:46:16] INFO     __main__: RAG-System Datenbank Performance Tests
+[2025-12-17 01:46:16] INFO     __main__: ======================================================================
+[2025-12-17 01:46:16] INFO     __main__: Gestartet: 2025-12-17 01:46:16
+[2025-12-17 01:46:16] INFO     __main__: Konfiguration: D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\config\test_config.yaml
+[2025-12-17 01:46:16] INFO     __main__: Ausgewählte Tests: postgres, mariadb, mysql, mssql, redis, mongo, couchdb, vector
+[2025-12-17 01:46:16] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-17 01:46:16] INFO     __main__: Starte Docker-Infrastruktur...
+[2025-12-17 01:46:16] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-17 01:46:16] INFO     utils.docker_manager: ============================================================
+[2025-12-17 01:46:16] INFO     utils.docker_manager: Starte Docker Container...
+[2025-12-17 01:46:16] INFO     utils.docker_manager: ============================================================
+[2025-12-17 01:46:16] INFO     utils.docker_manager: Führe aus: docker compose -f D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\docker\docker-compose.yml up -d --wait
+[2025-12-17 01:46:31] INFO     utils.docker_manager: Container gestartet, warte auf Initialisierung...
+[2025-12-17 01:46:46] INFO     utils.docker_manager: ✓ Alle Container sind bereit!
+[2025-12-17 01:46:46] INFO     __main__: 
+======================================================================
+[2025-12-17 01:46:46] INFO     __main__: Starte POSTGRES Tests
+[2025-12-17 01:46:46] INFO     __main__: ======================================================================
+[2025-12-17 01:46:46] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:46:46] INFO     db_tests.base_test: Starte Tests für: PostgreSQL
+[2025-12-17 01:46:46] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:46:46] INFO     db_tests.base_test: Beschreibung:
+
+    PostgreSQL Relationale Datenbank Performance Tests
+    
+    WARUM: PostgreSQL speichert strukturierte, ACID-kritische Daten
+           (User-Profile, Berechtigungen, Audit-Logs).
+    
+    HYPOTHESE:
+        - Transaktionsbatch ist 50-100x schneller als Single Commits
+        - Indizierte Queries sind 10-100x schneller
+        - P99 Latenz unter 5ms für indizierte SELECTs
+    
+    REFERENZ: Modul 4 (Query Paths), Modul 8 (PostgreSQL Commits)
+    
+[2025-12-17 01:46:46] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-17 01:46:46] INFO     db_tests.base_test: Setup...
+[2025-12-17 01:46:46] INFO     db_tests.postgres_tests: Verbinde zu PostgreSQL: localhost:5432
+[2025-12-17 01:46:46] INFO     db_tests.postgres_tests: ✓ PostgreSQL-Verbindung hergestellt
+[2025-12-17 01:46:46] INFO     db_tests.postgres_tests: ✓ Tabellen erstellt
+[2025-12-17 01:46:46] INFO     db_tests.postgres_tests: Generiere 10000 User-Datensätze...
+[2025-12-17 01:46:46] INFO     utils.data_generator: Generiere 10000 User-Datensätze...
+[2025-12-17 01:46:47] INFO     db_tests.postgres_tests: ✓ 10000 Testdaten generiert
+[2025-12-17 01:46:47] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-17 01:46:47] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-17 01:46:47] INFO     db_tests.postgres_tests: Test: Single Commits (jedes INSERT mit COMMIT)
+[2025-12-17 01:47:00] INFO     db_tests.base_test:   → PostgreSQL Single Commits: 747 ops/s, P95=2.04ms
+[2025-12-17 01:47:00] INFO     db_tests.postgres_tests: Test: Transactional Batch (eine Transaktion)
+[2025-12-17 01:47:05] INFO     db_tests.base_test:   → PostgreSQL Transactional Batch: 2,005 ops/s, P95=0.65ms
+[2025-12-17 01:47:05] INFO     db_tests.postgres_tests: Test: execute_batch (psycopg2 optimiert)
+[2025-12-17 01:47:06] INFO     db_tests.base_test:   → PostgreSQL execute_batch: 12,126 ops/s, P95=0.08ms
+[2025-12-17 01:47:06] INFO     db_tests.postgres_tests: Test: Primary Key SELECT
+[2025-12-17 01:47:11] INFO     db_tests.base_test:   → PostgreSQL PK SELECT: 1,894 ops/s, P95=0.73ms
+[2025-12-17 01:47:11] INFO     db_tests.postgres_tests: Test: Indexed SELECT (role)
+[2025-12-17 01:47:12] INFO     db_tests.base_test:   → PostgreSQL Indexed SELECT: 2,049 ops/s, P95=0.61ms
+[2025-12-17 01:47:12] INFO     db_tests.postgres_tests: Test: Unindexed SELECT (Sequential Scan)
+[2025-12-17 01:47:12] INFO     db_tests.base_test:   → PostgreSQL Unindexed SELECT: 637 ops/s, P95=1.96ms
+[2025-12-17 01:47:12] INFO     db_tests.postgres_tests: Starte asynchrone PostgreSQL-Tests...
+[2025-12-17 01:47:42] ERROR    db_tests.base_test: Fehler in PostgreSQL Tests: 
+[2025-12-17 01:47:42] INFO     db_tests.base_test: Teardown...
+[2025-12-17 01:47:42] INFO     db_tests.postgres_tests: ✓ PostgreSQL-Verbindung geschlossen
+[2025-12-17 01:47:42] ERROR    __main__: Fehler in postgres Tests: 
+Traceback (most recent call last):
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\run_tests.py", line 246, in run_tests
+    results = test.run_all_tests()
+              ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\db_tests\base_test.py", line 153, in run_all_tests
+    self._run_tests()
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\db_tests\postgres_tests.py", line 254, in _run_tests
+    asyncio.run(self._run_async_tests())
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\db_tests\postgres_tests.py", line 646, in _run_async_tests
+    await conn.execute("TRUNCATE test_users CASCADE")
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\.venv\Lib\site-packages\asyncpg\connection.py", line 354, in execute
+    result = await self._protocol.query(query, timeout)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "asyncpg/protocol/protocol.pyx", line 369, in query
+TimeoutError
+[2025-12-17 01:47:42] INFO     __main__: 
+======================================================================
+[2025-12-17 01:47:42] INFO     __main__: Starte MARIADB Tests
+[2025-12-17 01:47:42] INFO     __main__: ======================================================================
+[2025-12-17 01:47:42] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:47:42] INFO     db_tests.base_test: Starte Tests für: MariaDB
+[2025-12-17 01:47:42] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:47:42] INFO     db_tests.base_test: Beschreibung:
+
+    MariaDB SQL-Datenbank Performance Tests
+    
+    WARUM: MariaDB ist ein MySQL-kompatibler SQL-Server mit
+           erweiterten Features und besserer Performance.
+    
+    HYPOTHESE:
+        - Transaktionsbatch ist 50-100x schneller als Single Commits
+        - Indizierte Queries sind 10-100x schneller
+        - Prepared Statements beschleunigen wiederholte Queries
+        - P99 Latenz unter 5ms für indizierte SELECTs
+    
+    REFERENZ: Modul 4 (Query Paths), Modul 8 (SQL Performance)
+    
+[2025-12-17 01:47:42] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-17 01:47:42] INFO     db_tests.base_test: Setup...
+[2025-12-17 01:47:42] INFO     db_tests.mariadb_tests: Verbinde zu MariaDB: localhost:3306
+[2025-12-17 01:47:42] INFO     db_tests.mariadb_tests: ✓ MariaDB-Verbindung hergestellt
+[2025-12-17 01:47:42] INFO     db_tests.mariadb_tests: ✓ Tabellen erstellt
+[2025-12-17 01:47:42] INFO     db_tests.mariadb_tests: Generiere 10000 User-Datensätze...
+[2025-12-17 01:47:42] INFO     utils.data_generator: Generiere 10000 User-Datensätze...
+[2025-12-17 01:47:43] INFO     db_tests.mariadb_tests: ✓ 10000 Testdaten generiert
+[2025-12-17 01:47:43] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-17 01:47:43] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-17 01:47:43] INFO     db_tests.mariadb_tests: 
+--- Write Performance Tests ---
+[2025-12-17 01:47:43] INFO     db_tests.mariadb_tests: Test: Single Commits (1 INSERT = 1 COMMIT)
+[2025-12-17 01:48:03] INFO     db_tests.mariadb_tests:   → 505.32 Ops/s, P99: 4.53ms
+[2025-12-17 01:48:03] INFO     db_tests.mariadb_tests: Test: Transactional Batch (N INSERTs = 1 COMMIT)
+[2025-12-17 01:48:08] INFO     db_tests.mariadb_tests:   → 1802.99 Ops/s, P99: 0.93ms
+[2025-12-17 01:48:08] INFO     db_tests.mariadb_tests: Test: executemany (Prepared Statement Batch)
+[2025-12-17 01:48:09] INFO     db_tests.mariadb_tests:   → 48926.84 Ops/s, Total: 204.39ms
+[2025-12-17 01:48:09] INFO     db_tests.mariadb_tests: 
+--- Read Performance Tests ---
+[2025-12-17 01:48:09] INFO     db_tests.mariadb_tests: Test: Primary Key Lookup
+[2025-12-17 01:48:15] INFO     db_tests.mariadb_tests:   → 1681.71 Ops/s, P99: 1.02ms
+[2025-12-17 01:48:15] INFO     db_tests.mariadb_tests: Test: Indexed Column Query (email)
+[2025-12-17 01:48:15] INFO     db_tests.mariadb_tests:   → 1509.54 Ops/s, P99: 1.12ms
+[2025-12-17 01:48:15] INFO     db_tests.mariadb_tests: Test: Non-Indexed Column Query (Full Table Scan)
+[2025-12-17 01:48:16] INFO     db_tests.mariadb_tests:   → 238.25 Ops/s, P99: 5.86ms
+[2025-12-17 01:48:16] INFO     db_tests.mariadb_tests: Test: Range Query mit Index (role)
+[2025-12-17 01:48:17] INFO     db_tests.mariadb_tests:   → 713.66 Ops/s, P99: 2.51ms
+[2025-12-17 01:48:17] INFO     db_tests.mariadb_tests: Test: JOIN Query (users + logs)
+[2025-12-17 01:48:17] INFO     db_tests.mariadb_tests:   → Erstelle Log-Einträge für JOIN-Test...
+[2025-12-17 01:48:18] INFO     db_tests.mariadb_tests:   → 1434.18 Ops/s, P99: 1.10ms
+[2025-12-17 01:48:18] INFO     db_tests.mariadb_tests: 
+--- Async Performance Tests ---
+[2025-12-17 01:48:18] INFO     db_tests.mariadb_tests: Starte asynchrone MariaDB-Tests...
+[2025-12-17 01:48:18] INFO     db_tests.mariadb_tests: Test: Async Concurrent Reads (10 Clients)
+[2025-12-17 01:48:18] INFO     db_tests.mariadb_tests:   → 3.24 Ops/s, P99: 312.90ms
+[2025-12-17 01:48:18] INFO     db_tests.mariadb_tests: Test: Async Concurrent Writes (10 Clients)
+[2025-12-17 01:48:19] INFO     db_tests.mariadb_tests:   → 2.93 Ops/s, P99: 579.32ms
+[2025-12-17 01:48:19] INFO     db_tests.base_test: ✓ 10 Tests abgeschlossen
+[2025-12-17 01:48:19] INFO     db_tests.base_test: Teardown...
+[2025-12-17 01:48:19] INFO     db_tests.mariadb_tests: ✓ MariaDB-Verbindung geschlossen
+[2025-12-17 01:48:19] INFO     __main__: ✓ MARIADB abgeschlossen in 37.08s (10 Tests)
+[2025-12-17 01:48:19] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: Single Commits (1 INSERT = 1 COMMIT)
+[2025-12-17 01:48:19] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: Transactional Batch (N INSERTs = 1 COMMIT)
+[2025-12-17 01:48:19] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: executemany (Prepared Statement Batch)
+[2025-12-17 01:48:19] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: Primary Key Lookup
+[2025-12-17 01:48:19] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: Indexed Column Query (email)
+[2025-12-17 01:48:19] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: Non-Indexed Query (Full Table Scan)
+[2025-12-17 01:48:19] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: Range Query mit Index (role)
+[2025-12-17 01:48:19] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: JOIN Query (users + logs)
+[2025-12-17 01:48:19] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: Async Concurrent Reads (10 Clients)
+[2025-12-17 01:48:19] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: Async Concurrent Writes (10 Clients)
+[2025-12-17 01:48:19] INFO     __main__: 
+======================================================================
+[2025-12-17 01:48:19] INFO     __main__: Starte MYSQL Tests
+[2025-12-17 01:48:19] INFO     __main__: ======================================================================
+[2025-12-17 01:48:19] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:48:19] INFO     db_tests.base_test: Starte Tests für: MySQL
+[2025-12-17 01:48:19] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:48:19] INFO     db_tests.base_test: Beschreibung:
+
+    MySQL SQL-Datenbank Performance Tests
+    
+    WARUM: MySQL ist die weltweit am meisten verwendete 
+           Open-Source SQL-Datenbank.
+    
+    HYPOTHESE:
+        - Transaktionsbatch ist 50-100x schneller als Single Commits
+        - InnoDB Buffer Pool beschleunigt Reads signifikant
+        - Prepared Statements reduzieren Parse-Overhead
+        - P99 Latenz unter 5ms für indizierte SELECTs
+    
+    REFERENZ: Modul 4 (Query Paths), Modul 8 (SQL Performance)
+    
+[2025-12-17 01:48:19] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-17 01:48:19] INFO     db_tests.base_test: Setup...
+[2025-12-17 01:48:19] INFO     db_tests.mysql_tests: Verbinde zu MySQL: localhost:3307
+[2025-12-17 01:48:19] INFO     mysql.connector: package: mysql.connector.plugins
+[2025-12-17 01:48:19] INFO     mysql.connector: plugin_name: caching_sha2_password
+[2025-12-17 01:48:19] INFO     mysql.connector: AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+[2025-12-17 01:48:19] INFO     db_tests.mysql_tests: ✓ MySQL-Verbindung hergestellt
+[2025-12-17 01:48:19] INFO     db_tests.mysql_tests: ✓ Tabellen erstellt
+[2025-12-17 01:48:19] INFO     db_tests.mysql_tests: Generiere 10000 User-Datensätze...
+[2025-12-17 01:48:19] INFO     utils.data_generator: Generiere 10000 User-Datensätze...
+[2025-12-17 01:48:20] INFO     db_tests.mysql_tests: ✓ 10000 Testdaten generiert
+[2025-12-17 01:48:20] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-17 01:48:20] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-17 01:48:20] INFO     db_tests.mysql_tests: 
+--- Write Performance Tests ---
+[2025-12-17 01:48:20] INFO     db_tests.mysql_tests: Test: Single Commits (1 INSERT = 1 COMMIT)
+[2025-12-17 01:48:49] INFO     db_tests.base_test: Teardown...
+[2025-12-17 01:48:49] WARNING  db_tests.mysql_tests: Fehler beim Schließen: bytearray index out of range
+[2025-12-17 01:48:49] WARNING  __main__: 
+Tests durch Benutzer abgebrochen!
+[2025-12-17 01:48:49] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-17 01:48:49] INFO     __main__: Stoppe Docker-Infrastruktur...
+[2025-12-17 01:48:49] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-17 01:48:49] INFO     utils.docker_manager: ============================================================
+[2025-12-17 01:48:49] INFO     utils.docker_manager: Stoppe Docker Container...
+[2025-12-17 01:48:49] INFO     utils.docker_manager: ============================================================
+[2025-12-17 01:48:54] INFO     utils.docker_manager: ✓ Alle Container gestoppt und aufgeräumt!

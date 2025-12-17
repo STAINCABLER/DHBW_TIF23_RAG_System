@@ -93,6 +93,40 @@ databases:
     user: "postgres"
     password: "postgres"
 
+  # MariaDB - MySQL-kompatibel
+  mariadb:
+    host: "localhost"
+    port: 3306
+    database: "rag_performance_test"
+    user: "testuser"
+    password: "testpass"
+    root_password: "root"
+
+  # MySQL - Klassische SQL-Datenbank
+  mysql:
+    host: "localhost"
+    port: 3307
+    database: "rag_performance_test"
+    user: "testuser"
+    password: "testpass"
+    root_password: "root"
+
+  # Microsoft SQL Server
+  mssql:
+    host: "localhost"
+    port: 1433
+    database: "rag_performance_test"
+    user: "sa"
+    password: "TestPassword123!"
+
+  # CouchDB - Document Store
+  couchdb:
+    host: "localhost"
+    port: 5984
+    database: "rag_performance_test"
+    user: "admin"
+    password: "admin"
+
 # -----------------------------------------------------------------------------
 # Test-Szenarien Konfiguration
 # -----------------------------------------------------------------------------

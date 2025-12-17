@@ -1,0 +1,639 @@
+[2025-12-17 01:49:09] INFO     __main__: ======================================================================
+[2025-12-17 01:49:09] INFO     __main__: RAG-System Datenbank Performance Tests
+[2025-12-17 01:49:09] INFO     __main__: ======================================================================
+[2025-12-17 01:49:09] INFO     __main__: Gestartet: 2025-12-17 01:49:09
+[2025-12-17 01:49:09] INFO     __main__: Konfiguration: D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\config\test_config.yaml
+[2025-12-17 01:49:09] INFO     __main__: Ausgewählte Tests: postgres, mariadb, mysql, mssql, redis, mongo, couchdb, vector
+[2025-12-17 01:49:09] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-17 01:49:09] INFO     __main__: Starte Docker-Infrastruktur...
+[2025-12-17 01:49:09] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-17 01:49:09] INFO     utils.docker_manager: ============================================================
+[2025-12-17 01:49:09] INFO     utils.docker_manager: Starte Docker Container...
+[2025-12-17 01:49:09] INFO     utils.docker_manager: ============================================================
+[2025-12-17 01:49:09] INFO     utils.docker_manager: Führe aus: docker compose -f D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\docker\docker-compose.yml up -d --wait
+[2025-12-17 01:49:27] INFO     utils.docker_manager: Container gestartet, warte auf Initialisierung...
+[2025-12-17 01:49:42] INFO     utils.docker_manager: ✓ Alle Container sind bereit!
+[2025-12-17 01:49:43] INFO     __main__: 
+======================================================================
+[2025-12-17 01:49:43] INFO     __main__: Starte POSTGRES Tests
+[2025-12-17 01:49:43] INFO     __main__: ======================================================================
+[2025-12-17 01:49:43] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:49:43] INFO     db_tests.base_test: Starte Tests für: PostgreSQL
+[2025-12-17 01:49:43] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:49:43] INFO     db_tests.base_test: Beschreibung:
+
+    PostgreSQL Relationale Datenbank Performance Tests
+    
+    WARUM: PostgreSQL speichert strukturierte, ACID-kritische Daten
+           (User-Profile, Berechtigungen, Audit-Logs).
+    
+    HYPOTHESE:
+        - Transaktionsbatch ist 50-100x schneller als Single Commits
+        - Indizierte Queries sind 10-100x schneller
+        - P99 Latenz unter 5ms für indizierte SELECTs
+    
+    REFERENZ: Modul 4 (Query Paths), Modul 8 (PostgreSQL Commits)
+    
+[2025-12-17 01:49:43] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-17 01:49:43] INFO     db_tests.base_test: Setup...
+[2025-12-17 01:49:43] INFO     db_tests.postgres_tests: Verbinde zu PostgreSQL: localhost:5432
+[2025-12-17 01:49:43] INFO     db_tests.postgres_tests: ✓ PostgreSQL-Verbindung hergestellt
+[2025-12-17 01:49:43] INFO     db_tests.postgres_tests: ✓ Tabellen erstellt
+[2025-12-17 01:49:43] INFO     db_tests.postgres_tests: Generiere 10000 User-Datensätze...
+[2025-12-17 01:49:43] INFO     utils.data_generator: Generiere 10000 User-Datensätze...
+[2025-12-17 01:49:43] INFO     db_tests.postgres_tests: ✓ 10000 Testdaten generiert
+[2025-12-17 01:49:43] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-17 01:49:43] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-17 01:49:43] INFO     db_tests.postgres_tests: Test: Single Commits (jedes INSERT mit COMMIT)
+[2025-12-17 01:49:57] INFO     db_tests.base_test:   → PostgreSQL Single Commits: 755 ops/s, P95=1.79ms
+[2025-12-17 01:49:57] INFO     db_tests.postgres_tests: Test: Transactional Batch (eine Transaktion)
+[2025-12-17 01:50:02] INFO     db_tests.base_test:   → PostgreSQL Transactional Batch: 1,820 ops/s, P95=0.74ms
+[2025-12-17 01:50:02] INFO     db_tests.postgres_tests: Test: execute_batch (psycopg2 optimiert)
+[2025-12-17 01:50:03] INFO     db_tests.base_test:   → PostgreSQL execute_batch: 10,414 ops/s, P95=0.10ms
+[2025-12-17 01:50:03] INFO     db_tests.postgres_tests: Test: Primary Key SELECT
+[2025-12-17 01:50:09] INFO     db_tests.base_test:   → PostgreSQL PK SELECT: 1,827 ops/s, P95=0.75ms
+[2025-12-17 01:50:09] INFO     db_tests.postgres_tests: Test: Indexed SELECT (role)
+[2025-12-17 01:50:09] INFO     db_tests.base_test:   → PostgreSQL Indexed SELECT: 1,776 ops/s, P95=0.76ms
+[2025-12-17 01:50:09] INFO     db_tests.postgres_tests: Test: Unindexed SELECT (Sequential Scan)
+[2025-12-17 01:50:09] INFO     db_tests.base_test:   → PostgreSQL Unindexed SELECT: 617 ops/s, P95=2.03ms
+[2025-12-17 01:50:09] INFO     db_tests.postgres_tests: Starte asynchrone PostgreSQL-Tests...
+[2025-12-17 01:51:09] ERROR    db_tests.base_test: Fehler in PostgreSQL Tests: 
+[2025-12-17 01:51:09] INFO     db_tests.base_test: Teardown...
+[2025-12-17 01:51:09] INFO     db_tests.postgres_tests: ✓ PostgreSQL-Verbindung geschlossen
+[2025-12-17 01:51:09] ERROR    __main__: Fehler in postgres Tests: 
+Traceback (most recent call last):
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\run_tests.py", line 246, in run_tests
+    results = test.run_all_tests()
+              ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\db_tests\base_test.py", line 153, in run_all_tests
+    self._run_tests()
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\db_tests\postgres_tests.py", line 254, in _run_tests
+    asyncio.run(self._run_async_tests())
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\asyncio\base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\db_tests\postgres_tests.py", line 647, in _run_async_tests
+    await conn.execute("TRUNCATE test_users CASCADE", timeout=60.0)
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\.venv\Lib\site-packages\asyncpg\connection.py", line 354, in execute
+    result = await self._protocol.query(query, timeout)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "asyncpg/protocol/protocol.pyx", line 369, in query
+TimeoutError
+[2025-12-17 01:51:09] INFO     __main__: 
+======================================================================
+[2025-12-17 01:51:09] INFO     __main__: Starte MARIADB Tests
+[2025-12-17 01:51:09] INFO     __main__: ======================================================================
+[2025-12-17 01:51:09] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:51:09] INFO     db_tests.base_test: Starte Tests für: MariaDB
+[2025-12-17 01:51:09] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:51:09] INFO     db_tests.base_test: Beschreibung:
+
+    MariaDB SQL-Datenbank Performance Tests
+    
+    WARUM: MariaDB ist ein MySQL-kompatibler SQL-Server mit
+           erweiterten Features und besserer Performance.
+    
+    HYPOTHESE:
+        - Transaktionsbatch ist 50-100x schneller als Single Commits
+        - Indizierte Queries sind 10-100x schneller
+        - Prepared Statements beschleunigen wiederholte Queries
+        - P99 Latenz unter 5ms für indizierte SELECTs
+    
+    REFERENZ: Modul 4 (Query Paths), Modul 8 (SQL Performance)
+    
+[2025-12-17 01:51:09] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-17 01:51:09] INFO     db_tests.base_test: Setup...
+[2025-12-17 01:51:09] INFO     db_tests.mariadb_tests: Verbinde zu MariaDB: localhost:3306
+[2025-12-17 01:51:09] INFO     db_tests.mariadb_tests: ✓ MariaDB-Verbindung hergestellt
+[2025-12-17 01:51:09] INFO     db_tests.mariadb_tests: ✓ Tabellen erstellt
+[2025-12-17 01:51:09] INFO     db_tests.mariadb_tests: Generiere 10000 User-Datensätze...
+[2025-12-17 01:51:09] INFO     utils.data_generator: Generiere 10000 User-Datensätze...
+[2025-12-17 01:51:10] INFO     db_tests.mariadb_tests: ✓ 10000 Testdaten generiert
+[2025-12-17 01:51:10] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-17 01:51:10] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-17 01:51:10] INFO     db_tests.mariadb_tests: 
+--- Write Performance Tests ---
+[2025-12-17 01:51:10] INFO     db_tests.mariadb_tests: Test: Single Commits (1 INSERT = 1 COMMIT)
+[2025-12-17 01:51:29] INFO     db_tests.mariadb_tests:   → 520.10 Ops/s, P99: 4.22ms
+[2025-12-17 01:51:29] INFO     db_tests.mariadb_tests: Test: Transactional Batch (N INSERTs = 1 COMMIT)
+[2025-12-17 01:51:35] INFO     db_tests.mariadb_tests:   → 1819.31 Ops/s, P99: 0.97ms
+[2025-12-17 01:51:35] INFO     db_tests.mariadb_tests: Test: executemany (Prepared Statement Batch)
+[2025-12-17 01:51:35] INFO     db_tests.mariadb_tests:   → 43736.73 Ops/s, Total: 228.64ms
+[2025-12-17 01:51:35] INFO     db_tests.mariadb_tests: 
+--- Read Performance Tests ---
+[2025-12-17 01:51:35] INFO     db_tests.mariadb_tests: Test: Primary Key Lookup
+[2025-12-17 01:51:41] INFO     db_tests.mariadb_tests:   → 1778.95 Ops/s, P99: 0.87ms
+[2025-12-17 01:51:41] INFO     db_tests.mariadb_tests: Test: Indexed Column Query (email)
+[2025-12-17 01:51:42] INFO     db_tests.mariadb_tests:   → 1507.30 Ops/s, P99: 1.23ms
+[2025-12-17 01:51:42] INFO     db_tests.mariadb_tests: Test: Non-Indexed Column Query (Full Table Scan)
+[2025-12-17 01:51:42] INFO     db_tests.mariadb_tests:   → 242.03 Ops/s, P99: 5.99ms
+[2025-12-17 01:51:42] INFO     db_tests.mariadb_tests: Test: Range Query mit Index (role)
+[2025-12-17 01:51:44] INFO     db_tests.mariadb_tests:   → 632.42 Ops/s, P99: 3.51ms
+[2025-12-17 01:51:44] INFO     db_tests.mariadb_tests: Test: JOIN Query (users + logs)
+[2025-12-17 01:51:44] INFO     db_tests.mariadb_tests:   → Erstelle Log-Einträge für JOIN-Test...
+[2025-12-17 01:51:44] INFO     db_tests.mariadb_tests:   → 1463.12 Ops/s, P99: 1.30ms
+[2025-12-17 01:51:44] INFO     db_tests.mariadb_tests: 
+--- Async Performance Tests ---
+[2025-12-17 01:51:44] INFO     db_tests.mariadb_tests: Starte asynchrone MariaDB-Tests...
+[2025-12-17 01:51:45] INFO     db_tests.mariadb_tests: Test: Async Concurrent Reads (10 Clients)
+[2025-12-17 01:51:45] INFO     db_tests.mariadb_tests:   → 3.13 Ops/s, P99: 323.22ms
+[2025-12-17 01:51:45] INFO     db_tests.mariadb_tests: Test: Async Concurrent Writes (10 Clients)
+[2025-12-17 01:51:45] INFO     db_tests.mariadb_tests:   → 4.26 Ops/s, P99: 391.05ms
+[2025-12-17 01:51:45] INFO     db_tests.base_test: ✓ 10 Tests abgeschlossen
+[2025-12-17 01:51:45] INFO     db_tests.base_test: Teardown...
+[2025-12-17 01:51:45] INFO     db_tests.mariadb_tests: ✓ MariaDB-Verbindung geschlossen
+[2025-12-17 01:51:45] INFO     __main__: ✓ MARIADB abgeschlossen in 36.07s (10 Tests)
+[2025-12-17 01:51:45] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: Single Commits (1 INSERT = 1 COMMIT)
+[2025-12-17 01:51:45] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: Transactional Batch (N INSERTs = 1 COMMIT)
+[2025-12-17 01:51:45] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: executemany (Prepared Statement Batch)
+[2025-12-17 01:51:45] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: Primary Key Lookup
+[2025-12-17 01:51:45] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: Indexed Column Query (email)
+[2025-12-17 01:51:45] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: Non-Indexed Query (Full Table Scan)
+[2025-12-17 01:51:45] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: Range Query mit Index (role)
+[2025-12-17 01:51:45] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: JOIN Query (users + logs)
+[2025-12-17 01:51:45] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: Async Concurrent Reads (10 Clients)
+[2025-12-17 01:51:45] INFO     utils.report_generator: Ergebnis hinzugefügt: MariaDB: Async Concurrent Writes (10 Clients)
+[2025-12-17 01:51:45] INFO     __main__: 
+======================================================================
+[2025-12-17 01:51:45] INFO     __main__: Starte MYSQL Tests
+[2025-12-17 01:51:45] INFO     __main__: ======================================================================
+[2025-12-17 01:51:45] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:51:45] INFO     db_tests.base_test: Starte Tests für: MySQL
+[2025-12-17 01:51:45] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:51:45] INFO     db_tests.base_test: Beschreibung:
+
+    MySQL SQL-Datenbank Performance Tests
+    
+    WARUM: MySQL ist die weltweit am meisten verwendete 
+           Open-Source SQL-Datenbank.
+    
+    HYPOTHESE:
+        - Transaktionsbatch ist 50-100x schneller als Single Commits
+        - InnoDB Buffer Pool beschleunigt Reads signifikant
+        - Prepared Statements reduzieren Parse-Overhead
+        - P99 Latenz unter 5ms für indizierte SELECTs
+    
+    REFERENZ: Modul 4 (Query Paths), Modul 8 (SQL Performance)
+    
+[2025-12-17 01:51:45] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-17 01:51:45] INFO     db_tests.base_test: Setup...
+[2025-12-17 01:51:45] INFO     db_tests.mysql_tests: Verbinde zu MySQL: localhost:3307
+[2025-12-17 01:51:45] INFO     mysql.connector: package: mysql.connector.plugins
+[2025-12-17 01:51:45] INFO     mysql.connector: plugin_name: caching_sha2_password
+[2025-12-17 01:51:45] INFO     mysql.connector: AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+[2025-12-17 01:51:45] INFO     db_tests.mysql_tests: ✓ MySQL-Verbindung hergestellt
+[2025-12-17 01:51:46] INFO     db_tests.mysql_tests: ✓ Tabellen erstellt
+[2025-12-17 01:51:46] INFO     db_tests.mysql_tests: Generiere 10000 User-Datensätze...
+[2025-12-17 01:51:46] INFO     utils.data_generator: Generiere 10000 User-Datensätze...
+[2025-12-17 01:51:46] INFO     db_tests.mysql_tests: ✓ 10000 Testdaten generiert
+[2025-12-17 01:51:46] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-17 01:51:46] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-17 01:51:46] INFO     db_tests.mysql_tests: 
+--- Write Performance Tests ---
+[2025-12-17 01:51:46] INFO     db_tests.mysql_tests: Test: Single Commits (1 INSERT = 1 COMMIT)
+[2025-12-17 01:52:53] INFO     db_tests.mysql_tests:   → 149.55 Ops/s, P99: 43.87ms
+[2025-12-17 01:52:54] INFO     db_tests.mysql_tests: Test: Transactional Batch (N INSERTs = 1 COMMIT)
+[2025-12-17 01:53:04] INFO     db_tests.mysql_tests:   → 995.59 Ops/s, P99: 1.82ms
+[2025-12-17 01:53:04] INFO     db_tests.mysql_tests: Test: executemany (Prepared Statement Batch)
+[2025-12-17 01:53:04] INFO     db_tests.mysql_tests:   → 19607.55 Ops/s, Total: 510.01ms
+[2025-12-17 01:53:05] INFO     db_tests.mysql_tests: Test: INSERT IGNORE (Skip Duplicates)
+[2025-12-17 01:53:06] INFO     db_tests.mysql_tests:   → 1248.54 Ops/s, P99: 1.28ms
+[2025-12-17 01:53:06] INFO     db_tests.mysql_tests: 
+--- Read Performance Tests ---
+[2025-12-17 01:53:06] INFO     db_tests.mysql_tests: Test: Primary Key Lookup
+[2025-12-17 01:53:07] INFO     db_tests.mysql_tests:   → 1002.39 Ops/s, P99: 1.74ms
+[2025-12-17 01:53:07] INFO     db_tests.mysql_tests: Test: Indexed Column Query (email)
+[2025-12-17 01:53:08] INFO     db_tests.mysql_tests:   → 1032.52 Ops/s, P99: 1.55ms
+[2025-12-17 01:53:08] INFO     db_tests.mysql_tests: Test: Non-Indexed Column Query (Full Table Scan)
+[2025-12-17 01:53:08] INFO     db_tests.mysql_tests:   → 653.76 Ops/s, P99: 2.11ms
+[2025-12-17 01:53:08] INFO     db_tests.mysql_tests: Test: Range Query mit Index (role)
+[2025-12-17 01:53:12] INFO     db_tests.mysql_tests:   → 326.23 Ops/s, P99: 5.06ms
+[2025-12-17 01:53:12] INFO     db_tests.mysql_tests: Test: COUNT Aggregation
+[2025-12-17 01:53:12] INFO     db_tests.mysql_tests:   → 879.67 Ops/s, P99: 1.69ms
+[2025-12-17 01:53:12] INFO     db_tests.mysql_tests: Test: JOIN Query (users + logs)
+[2025-12-17 01:53:13] INFO     db_tests.mysql_tests:   → 851.94 Ops/s, P99: 1.75ms
+[2025-12-17 01:53:13] INFO     db_tests.mysql_tests: 
+--- Special Tests ---
+[2025-12-17 01:53:13] INFO     db_tests.mysql_tests: Test: JSON Column Query
+[2025-12-17 01:53:14] INFO     db_tests.mysql_tests:   → 1042.03 Ops/s, P99: 1.48ms
+[2025-12-17 01:53:14] INFO     db_tests.mysql_tests: Test: LIKE Pattern Matching
+[2025-12-17 01:53:14] INFO     db_tests.mysql_tests:   → 475.14 Ops/s, P99: 3.15ms
+[2025-12-17 01:53:14] INFO     db_tests.mysql_tests: 
+--- Async Performance Tests ---
+[2025-12-17 01:53:14] INFO     db_tests.mysql_tests: Starte asynchrone MySQL-Tests...
+[2025-12-17 01:53:14] INFO     db_tests.mysql_tests: Test: Async Concurrent Reads (10 Clients)
+[2025-12-17 01:53:14] INFO     db_tests.mysql_tests:   → 2.21 Ops/s, P99: 469.17ms
+[2025-12-17 01:53:15] INFO     db_tests.mysql_tests: Test: Async Concurrent Writes (10 Clients)
+[2025-12-17 01:53:16] INFO     db_tests.mysql_tests:   → 2.21 Ops/s, P99: 759.96ms
+[2025-12-17 01:53:16] INFO     db_tests.base_test: ✓ 14 Tests abgeschlossen
+[2025-12-17 01:53:16] INFO     db_tests.base_test: Teardown...
+[2025-12-17 01:53:16] INFO     db_tests.mysql_tests: ✓ MySQL-Verbindung geschlossen
+[2025-12-17 01:53:16] INFO     __main__: ✓ MYSQL abgeschlossen in 90.46s (14 Tests)
+[2025-12-17 01:53:16] INFO     utils.report_generator: Ergebnis hinzugefügt: MySQL: Single Commits (1 INSERT = 1 COMMIT)
+[2025-12-17 01:53:16] INFO     utils.report_generator: Ergebnis hinzugefügt: MySQL: Transactional Batch (N INSERTs = 1 COMMIT)
+[2025-12-17 01:53:16] INFO     utils.report_generator: Ergebnis hinzugefügt: MySQL: executemany (Prepared Statement Batch)
+[2025-12-17 01:53:16] INFO     utils.report_generator: Ergebnis hinzugefügt: MySQL: INSERT IGNORE (Skip Duplicates)
+[2025-12-17 01:53:16] INFO     utils.report_generator: Ergebnis hinzugefügt: MySQL: Primary Key Lookup
+[2025-12-17 01:53:16] INFO     utils.report_generator: Ergebnis hinzugefügt: MySQL: Indexed Column Query (email)
+[2025-12-17 01:53:16] INFO     utils.report_generator: Ergebnis hinzugefügt: MySQL: Non-Indexed Query (Full Table Scan)
+[2025-12-17 01:53:16] INFO     utils.report_generator: Ergebnis hinzugefügt: MySQL: Range Query mit Index (role)
+[2025-12-17 01:53:16] INFO     utils.report_generator: Ergebnis hinzugefügt: MySQL: COUNT Aggregation
+[2025-12-17 01:53:16] INFO     utils.report_generator: Ergebnis hinzugefügt: MySQL: JOIN Query (users + logs)
+[2025-12-17 01:53:16] INFO     utils.report_generator: Ergebnis hinzugefügt: MySQL: JSON Column Query
+[2025-12-17 01:53:16] INFO     utils.report_generator: Ergebnis hinzugefügt: MySQL: LIKE Pattern Matching
+[2025-12-17 01:53:16] INFO     utils.report_generator: Ergebnis hinzugefügt: MySQL: Async Concurrent Reads (10 Clients)
+[2025-12-17 01:53:16] INFO     utils.report_generator: Ergebnis hinzugefügt: MySQL: Async Concurrent Writes (10 Clients)
+[2025-12-17 01:53:16] INFO     __main__: 
+======================================================================
+[2025-12-17 01:53:16] INFO     __main__: Starte MSSQL Tests
+[2025-12-17 01:53:16] INFO     __main__: ======================================================================
+[2025-12-17 01:53:16] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:53:16] INFO     db_tests.base_test: Starte Tests für: MSSQL
+[2025-12-17 01:53:16] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:53:16] INFO     db_tests.base_test: Beschreibung:
+
+    Microsoft SQL Server Performance Tests
+    
+    WARUM: MSSQL ist eine Enterprise SQL-Datenbank mit
+           erweiterten Features wie Columnstore und Full-Text Search.
+    
+    HYPOTHESE:
+        - Transaktionsbatch ist signifikant schneller als Single Commits
+        - Clustered Index bietet schnellste Lookups
+        - Non-Clustered Index beschleunigt sekundäre Queries
+        - P99 Latenz unter 10ms für indizierte SELECTs
+    
+    REFERENZ: Modul 4 (Query Paths), Modul 8 (SQL Performance)
+    
+[2025-12-17 01:53:16] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-17 01:53:16] INFO     db_tests.base_test: Setup...
+[2025-12-17 01:53:16] INFO     db_tests.mssql_tests: Verbinde zu MSSQL: localhost:1433
+[2025-12-17 01:53:16] INFO     db_tests.mssql_tests: ✓ MSSQL-Verbindung hergestellt
+[2025-12-17 01:53:16] INFO     db_tests.mssql_tests: ✓ Tabellen erstellt
+[2025-12-17 01:53:16] INFO     db_tests.mssql_tests: Generiere 10000 User-Datensätze...
+[2025-12-17 01:53:16] INFO     utils.data_generator: Generiere 10000 User-Datensätze...
+[2025-12-17 01:53:17] INFO     db_tests.mssql_tests: ✓ 10000 Testdaten generiert
+[2025-12-17 01:53:17] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-17 01:53:17] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-17 01:53:17] INFO     db_tests.mssql_tests: 
+--- Write Performance Tests ---
+[2025-12-17 01:53:17] INFO     db_tests.mssql_tests: Test: Single Commits (1 INSERT = 1 COMMIT)
+[2025-12-17 01:53:54] INFO     db_tests.mssql_tests:   → 268.06 Ops/s, P99: 7.19ms
+[2025-12-17 01:53:55] INFO     db_tests.mssql_tests: Test: Transactional Batch (N INSERTs = 1 COMMIT)
+[2025-12-17 01:54:03] INFO     db_tests.mssql_tests:   → 1213.16 Ops/s, P99: 1.35ms
+[2025-12-17 01:54:03] INFO     db_tests.mssql_tests: Test: executemany (Batch Insert)
+[2025-12-17 01:54:11] INFO     db_tests.mssql_tests:   → 1257.21 Ops/s, Total: 7954.15ms
+[2025-12-17 01:54:11] INFO     db_tests.mssql_tests: 
+--- Read Performance Tests ---
+[2025-12-17 01:54:11] INFO     db_tests.mssql_tests: Test: Clustered Index Lookup (Primary Key)
+[2025-12-17 01:54:26] INFO     db_tests.mssql_tests:   → 690.05 Ops/s, P99: 2.30ms
+[2025-12-17 01:54:26] INFO     db_tests.mssql_tests: Test: Non-Clustered Index Query (email)
+[2025-12-17 01:54:28] INFO     db_tests.mssql_tests:   → 421.83 Ops/s, P99: 3.69ms
+[2025-12-17 01:54:28] INFO     db_tests.mssql_tests: Test: Non-Indexed Query (Table Scan)
+[2025-12-17 01:54:28] INFO     db_tests.mssql_tests:   → 225.05 Ops/s, P99: 5.44ms
+[2025-12-17 01:54:28] INFO     db_tests.mssql_tests: Test: TOP N Query
+[2025-12-17 01:54:35] INFO     db_tests.mssql_tests:   → 75.85 Ops/s, P99: 21.95ms
+[2025-12-17 01:54:35] INFO     db_tests.mssql_tests: Test: JOIN Query (users + logs)
+[2025-12-17 01:54:37] INFO     db_tests.mssql_tests:   → 390.83 Ops/s, P99: 3.50ms
+[2025-12-17 01:54:37] INFO     db_tests.mssql_tests: 
+--- Special Tests ---
+[2025-12-17 01:54:37] INFO     db_tests.mssql_tests: Test: JSON Path Query
+[2025-12-17 01:54:37] INFO     db_tests.mssql_tests:   → 430.15 Ops/s, P99: 3.29ms
+[2025-12-17 01:54:37] INFO     db_tests.mssql_tests: Test: LIKE Pattern Matching
+[2025-12-17 01:54:40] INFO     db_tests.mssql_tests:   → 44.69 Ops/s, P99: 30.14ms
+[2025-12-17 01:54:40] INFO     db_tests.mssql_tests: Test: COUNT Aggregation
+[2025-12-17 01:54:40] INFO     db_tests.mssql_tests:   → 600.93 Ops/s, P99: 2.15ms
+[2025-12-17 01:54:40] INFO     db_tests.base_test: ✓ 11 Tests abgeschlossen
+[2025-12-17 01:54:40] INFO     db_tests.base_test: Teardown...
+[2025-12-17 01:54:40] INFO     db_tests.mssql_tests: ✓ MSSQL-Verbindung geschlossen
+[2025-12-17 01:54:40] INFO     __main__: ✓ MSSQL abgeschlossen in 84.00s (11 Tests)
+[2025-12-17 01:54:40] INFO     utils.report_generator: Ergebnis hinzugefügt: MSSQL: Single Commits (1 INSERT = 1 COMMIT)
+[2025-12-17 01:54:40] INFO     utils.report_generator: Ergebnis hinzugefügt: MSSQL: Transactional Batch (N INSERTs = 1 COMMIT)
+[2025-12-17 01:54:40] INFO     utils.report_generator: Ergebnis hinzugefügt: MSSQL: executemany (Batch Insert)
+[2025-12-17 01:54:40] INFO     utils.report_generator: Ergebnis hinzugefügt: MSSQL: Clustered Index Lookup (PK)
+[2025-12-17 01:54:40] INFO     utils.report_generator: Ergebnis hinzugefügt: MSSQL: Non-Clustered Index Query (email)
+[2025-12-17 01:54:40] INFO     utils.report_generator: Ergebnis hinzugefügt: MSSQL: Non-Indexed Query (Table Scan)
+[2025-12-17 01:54:40] INFO     utils.report_generator: Ergebnis hinzugefügt: MSSQL: TOP N Query
+[2025-12-17 01:54:40] INFO     utils.report_generator: Ergebnis hinzugefügt: MSSQL: JOIN Query (users + logs)
+[2025-12-17 01:54:40] INFO     utils.report_generator: Ergebnis hinzugefügt: MSSQL: JSON Path Query
+[2025-12-17 01:54:40] INFO     utils.report_generator: Ergebnis hinzugefügt: MSSQL: LIKE Pattern Matching
+[2025-12-17 01:54:40] INFO     utils.report_generator: Ergebnis hinzugefügt: MSSQL: COUNT Aggregation
+[2025-12-17 01:54:40] INFO     __main__: 
+======================================================================
+[2025-12-17 01:54:40] INFO     __main__: Starte REDIS Tests
+[2025-12-17 01:54:40] INFO     __main__: ======================================================================
+[2025-12-17 01:54:40] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:54:40] INFO     db_tests.base_test: Starte Tests für: Redis
+[2025-12-17 01:54:40] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:54:40] INFO     db_tests.base_test: Beschreibung:
+
+    Redis Key-Value Store Performance Tests
+    
+    WARUM: Redis ist der primäre Cache und Session-Store im RAG-System.
+           Er liegt im kritischen Pfad für Rate-Limiting und Session-Checks.
+    
+    HYPOTHESE:
+        - Pipeline/Batch-Operationen sind 10-20x schneller
+        - P99 Latenz unter 2ms für Einzeloperationen
+        - Asynchrone Tests zeigen höheren Durchsatz
+    
+    REFERENZ: Modul 4 (Query Paths), Modul 8 (Performance-Myth-Busting)
+    
+[2025-12-17 01:54:40] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-17 01:54:40] INFO     db_tests.base_test: Setup...
+[2025-12-17 01:54:40] INFO     db_tests.redis_tests: Verbinde zu Redis: localhost:6379
+[2025-12-17 01:54:40] INFO     db_tests.redis_tests: ✓ Redis-Verbindung hergestellt
+[2025-12-17 01:54:40] INFO     db_tests.redis_tests: ✓ Redis-Datenbank geleert
+[2025-12-17 01:54:40] INFO     db_tests.redis_tests: Generiere 10000 Key-Value Paare...
+[2025-12-17 01:54:40] INFO     utils.data_generator: Generiere 10000 Key-Value Paare...
+[2025-12-17 01:54:41] INFO     db_tests.redis_tests: ✓ 10000 Testdaten generiert
+[2025-12-17 01:54:41] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-17 01:54:41] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-17 01:54:41] INFO     db_tests.redis_tests: Test: Naive Writes (einzelne SET)
+[2025-12-17 01:54:45] INFO     db_tests.base_test:   → Redis Naive SET: 2,154 ops/s, P95=0.63ms
+[2025-12-17 01:54:45] INFO     db_tests.redis_tests: Test: Pipeline Writes (Batch-SET)
+[2025-12-17 01:54:45] INFO     db_tests.base_test:   → Redis Pipeline SET: 84,851 ops/s, P95=0.01ms
+[2025-12-17 01:54:45] INFO     db_tests.redis_tests: Test: Naive Reads (einzelne GET)
+[2025-12-17 01:54:50] INFO     db_tests.base_test:   → Redis Naive GET: 2,309 ops/s, P95=0.56ms
+[2025-12-17 01:54:50] INFO     db_tests.redis_tests: Test: Pipeline Reads (Batch-GET)
+[2025-12-17 01:54:50] INFO     db_tests.base_test:   → Redis Pipeline GET: 92,696 ops/s, P95=0.03ms
+[2025-12-17 01:54:50] INFO     db_tests.redis_tests: Test: MGET (Multi-Key GET)
+[2025-12-17 01:54:50] INFO     db_tests.base_test:   → Redis MGET: 18,414 ops/s, P95=0.06ms
+[2025-12-17 01:54:50] INFO     db_tests.redis_tests: Starte asynchrone Redis-Tests...
+[2025-12-17 01:54:50] INFO     db_tests.redis_tests: Test: Async Writes (10 Clients)
+[2025-12-17 01:54:52] INFO     db_tests.base_test:   → Redis Async SET: 7,021 ops/s, P95=1.85ms
+[2025-12-17 01:54:52] INFO     db_tests.redis_tests: Test: Async Reads (10 Clients)
+[2025-12-17 01:54:53] INFO     db_tests.base_test:   → Redis Async GET: 6,794 ops/s, P95=2.22ms
+[2025-12-17 01:54:53] INFO     db_tests.base_test: ✓ 7 Tests abgeschlossen
+[2025-12-17 01:54:53] INFO     db_tests.base_test: Teardown...
+[2025-12-17 01:54:53] INFO     db_tests.redis_tests: ✓ Redis-Verbindung geschlossen
+[2025-12-17 01:54:53] INFO     __main__: ✓ REDIS abgeschlossen in 13.42s (7 Tests)
+[2025-12-17 01:54:53] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Naive SET
+[2025-12-17 01:54:53] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Pipeline SET
+[2025-12-17 01:54:53] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Naive GET
+[2025-12-17 01:54:53] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Pipeline GET
+[2025-12-17 01:54:53] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis MGET
+[2025-12-17 01:54:53] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Async SET
+[2025-12-17 01:54:53] INFO     utils.report_generator: Ergebnis hinzugefügt: Redis Async GET
+[2025-12-17 01:54:53] INFO     __main__: 
+======================================================================
+[2025-12-17 01:54:53] INFO     __main__: Starte MONGO Tests
+[2025-12-17 01:54:53] INFO     __main__: ======================================================================
+[2025-12-17 01:54:53] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:54:53] INFO     db_tests.base_test: Starte Tests für: MongoDB
+[2025-12-17 01:54:53] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:54:53] INFO     db_tests.base_test: Beschreibung:
+
+    MongoDB Document Store Performance Tests
+    
+    WARUM: MongoDB speichert die Chunk-Dokumente im RAG-System.
+           Nach der Vektorsuche werden Chunks per ID geladen.
+    
+    HYPOTHESE:
+        - insert_many() ist 5-10x schneller als insert_one()
+        - $in-Query ist effizienter als mehrere find_one()
+        - Async zeigt höheren Durchsatz bei parallelen Zugriffen
+    
+    REFERENZ: Modul 5 & 6 (Chunking & Datenmodellierung), Modul 8
+    
+[2025-12-17 01:54:53] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-17 01:54:53] INFO     db_tests.base_test: Setup...
+[2025-12-17 01:54:53] INFO     db_tests.mongo_tests: Verbinde zu MongoDB: localhost:27017
+[2025-12-17 01:54:53] INFO     db_tests.mongo_tests: ✓ MongoDB-Verbindung hergestellt
+[2025-12-17 01:54:53] INFO     db_tests.mongo_tests: ✓ Collection geleert
+[2025-12-17 01:54:53] INFO     db_tests.mongo_tests: ✓ Index auf metadata.category erstellt
+[2025-12-17 01:54:53] INFO     db_tests.mongo_tests: Generiere 10000 Chunk-Dokumente...
+[2025-12-17 01:54:53] INFO     utils.data_generator: Generiere 10000 Chunks...
+[2025-12-17 01:54:56] INFO     db_tests.mongo_tests: ✓ 10000 Testdaten generiert
+[2025-12-17 01:54:56] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-17 01:54:56] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-17 01:54:56] INFO     db_tests.mongo_tests: Test: Single Inserts (insert_one)
+[2025-12-17 01:55:06] INFO     db_tests.base_test:   → MongoDB Single insert_one: 1,059 ops/s, P95=1.36ms
+[2025-12-17 01:55:06] INFO     db_tests.mongo_tests: Test: Bulk Inserts (insert_many)
+[2025-12-17 01:55:06] INFO     db_tests.base_test:   → MongoDB Bulk insert_many: 35,794 ops/s, P95=0.03ms
+[2025-12-17 01:55:06] INFO     db_tests.mongo_tests: Test: Single Reads (find_one)
+[2025-12-17 01:55:15] INFO     db_tests.base_test:   → MongoDB Single find_one: 1,076 ops/s, P95=1.30ms
+[2025-12-17 01:55:15] INFO     db_tests.mongo_tests: Test: Batch Reads ($in Query)
+[2025-12-17 01:55:16] INFO     db_tests.base_test:   → MongoDB Batch find ($in): 8,762 ops/s, P95=0.15ms
+[2025-12-17 01:55:16] INFO     db_tests.mongo_tests: Test: Filtered Reads (mit Index)
+[2025-12-17 01:55:17] INFO     db_tests.base_test:   → MongoDB Filtered find: 282 ops/s, P95=3.83ms
+[2025-12-17 01:55:17] INFO     db_tests.mongo_tests: Starte asynchrone MongoDB-Tests...
+[2025-12-17 01:55:17] INFO     db_tests.mongo_tests: Test: Async Inserts (10 Clients)
+[2025-12-17 01:55:20] INFO     db_tests.base_test:   → MongoDB Async insert_one: 2,717 ops/s, P95=5.59ms
+[2025-12-17 01:55:20] INFO     db_tests.mongo_tests: Test: Async Reads (10 Clients)
+[2025-12-17 01:55:24] INFO     db_tests.base_test:   → MongoDB Async find_one: 2,420 ops/s, P95=6.49ms
+[2025-12-17 01:55:24] INFO     db_tests.base_test: ✓ 7 Tests abgeschlossen
+[2025-12-17 01:55:24] INFO     db_tests.base_test: Teardown...
+[2025-12-17 01:55:24] WARNING  db_tests.mongo_tests: Fehler beim Schließen der MongoDB-Verbindung: Collection objects do not implement truth value testing or bool(). Please compare with None instead: collection is not None
+[2025-12-17 01:55:24] INFO     __main__: ✓ MONGO abgeschlossen in 31.00s (7 Tests)
+[2025-12-17 01:55:24] INFO     utils.report_generator: Ergebnis hinzugefügt: MongoDB Single insert_one
+[2025-12-17 01:55:24] INFO     utils.report_generator: Ergebnis hinzugefügt: MongoDB Bulk insert_many
+[2025-12-17 01:55:24] INFO     utils.report_generator: Ergebnis hinzugefügt: MongoDB Single find_one
+[2025-12-17 01:55:24] INFO     utils.report_generator: Ergebnis hinzugefügt: MongoDB Batch find ($in)
+[2025-12-17 01:55:24] INFO     utils.report_generator: Ergebnis hinzugefügt: MongoDB Filtered find
+[2025-12-17 01:55:24] INFO     utils.report_generator: Ergebnis hinzugefügt: MongoDB Async insert_one
+[2025-12-17 01:55:24] INFO     utils.report_generator: Ergebnis hinzugefügt: MongoDB Async find_one
+[2025-12-17 01:55:24] INFO     __main__: 
+======================================================================
+[2025-12-17 01:55:24] INFO     __main__: Starte COUCHDB Tests
+[2025-12-17 01:55:24] INFO     __main__: ======================================================================
+[2025-12-17 01:55:24] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:55:24] INFO     db_tests.base_test: Starte Tests für: CouchDB
+[2025-12-17 01:55:24] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:55:24] INFO     db_tests.base_test: Beschreibung:
+
+    CouchDB Document Store Performance Tests
+    
+    WARUM: CouchDB ist ein schemafreier Document Store mit
+           RESTful API und eingebauter Replikation.
+    
+    HYPOTHESE:
+        - Bulk Operations sind signifikant schneller
+        - View Queries schneller als Mango Queries
+        - P99 Latenz für einzelne GET unter 10ms
+    
+    REFERENZ: Modul 5 & 6 (Chunking & Datenmodellierung)
+    
+[2025-12-17 01:55:24] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-17 01:55:24] INFO     db_tests.base_test: Setup...
+[2025-12-17 01:55:24] INFO     db_tests.couchdb_tests: Verbinde zu CouchDB: localhost:5984
+[2025-12-17 01:55:25] INFO     db_tests.couchdb_tests: ✓ CouchDB-Verbindung hergestellt
+[2025-12-17 01:55:25] INFO     db_tests.couchdb_tests: ✓ Mango Index erstellt
+[2025-12-17 01:55:25] INFO     db_tests.couchdb_tests: Generiere 10000 Chunk-Dokumente...
+[2025-12-17 01:55:25] INFO     utils.data_generator: Generiere 10000 Chunks...
+[2025-12-17 01:55:27] INFO     db_tests.couchdb_tests: ✓ 10000 Testdaten generiert
+[2025-12-17 01:55:27] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-17 01:55:29] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-17 01:55:29] INFO     db_tests.couchdb_tests: 
+--- Write Performance Tests ---
+[2025-12-17 01:55:29] INFO     db_tests.couchdb_tests: Test: Single Document Insert
+[2025-12-17 01:55:29] ERROR    db_tests.base_test: Fehler in CouchDB Tests: Object of type datetime is not JSON serializable
+[2025-12-17 01:55:29] INFO     db_tests.base_test: Teardown...
+[2025-12-17 01:55:29] INFO     db_tests.couchdb_tests: ✓ CouchDB-Verbindung geschlossen
+[2025-12-17 01:55:29] ERROR    __main__: Fehler in couchdb Tests: Object of type datetime is not JSON serializable
+Traceback (most recent call last):
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\run_tests.py", line 246, in run_tests
+    results = test.run_all_tests()
+              ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\db_tests\base_test.py", line 153, in run_all_tests
+    self._run_tests()
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\db_tests\couchdb_tests.py", line 276, in _run_tests
+    self._test_single_insert()
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\db_tests\couchdb_tests.py", line 327, in _test_single_insert
+    doc_id, doc_rev = self.db.save(doc)
+                      ^^^^^^^^^^^^^^^^^
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\.venv\Lib\site-packages\couchdb\client.py", line 529, in save
+    _, _, data = func(body=doc, **options)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\.venv\Lib\site-packages\couchdb\http.py", line 577, in put_json
+    return self._request_json('PUT', path, body=body, headers=headers,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\.venv\Lib\site-packages\couchdb\http.py", line 595, in _request_json
+    status, headers, data = self._request(method, path, body=body,
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\.venv\Lib\site-packages\couchdb\http.py", line 590, in _request
+    return self.session.request(method, url, body=body,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\.venv\Lib\site-packages\couchdb\http.py", line 280, in request
+    body = json.encode(body).encode('utf-8')
+           ^^^^^^^^^^^^^^^^^
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\.venv\Lib\site-packages\couchdb\json.py", line 69, in encode
+    return _encode(obj)
+           ^^^^^^^^^^^^
+  File "D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\.venv\Lib\site-packages\couchdb\json.py", line 135, in <lambda>
+    dumps(obj, allow_nan=False, ensure_ascii=False)
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\json\encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\json\encoder.py", line 258, in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type datetime is not JSON serializable
+[2025-12-17 01:55:29] INFO     __main__: 
+======================================================================
+[2025-12-17 01:55:29] INFO     __main__: Starte VECTOR Tests
+[2025-12-17 01:55:29] INFO     __main__: ======================================================================
+[2025-12-17 01:55:29] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:55:29] INFO     db_tests.base_test: Starte Tests für: Vector Search
+[2025-12-17 01:55:29] INFO     db_tests.base_test: ============================================================
+[2025-12-17 01:55:29] INFO     db_tests.base_test: Beschreibung:
+
+    Vektorsuche Performance Tests (pgvector & MongoDB)
+    
+    WARUM: Die Vektorsuche ist der kritische Pfad im RAG-System.
+           Das 50ms SLO (P95) muss eingehalten werden!
+    
+    HYPOTHESE:
+        - HNSW-Index ist 10-100x schneller als lineare Suche
+        - P95 Latenz mit HNSW unter 50ms
+        - Pre-Filtering beschleunigt die Suche
+    
+    REFERENZ: Modul 7 (Embeddings & Vektorsuche)
+    
+[2025-12-17 01:55:29] INFO     db_tests.base_test: ------------------------------------------------------------
+[2025-12-17 01:55:29] INFO     db_tests.base_test: Setup...
+[2025-12-17 01:55:29] INFO     db_tests.vector_tests: Generiere 50000 Vektoren (768D)...
+[2025-12-17 01:55:29] INFO     utils.data_generator: Generiere 50000 Vektoren (768D)...
+[2025-12-17 01:55:32] INFO     db_tests.vector_tests: ✓ 50000 Vektoren generiert
+[2025-12-17 01:55:32] INFO     db_tests.vector_tests: ✓ 1000 Query-Vektoren generiert
+[2025-12-17 01:55:32] INFO     db_tests.vector_tests: Verbinde zu pgvector-native: localhost:5433
+[2025-12-17 01:55:32] INFO     db_tests.vector_tests: ✓ pgvector-native verbunden und konfiguriert
+[2025-12-17 01:55:32] INFO     db_tests.vector_tests: Füge Vektoren in pgvector-native ein...
+[2025-12-17 01:57:10] INFO     db_tests.vector_tests: ✓ 50000 Vektoren in pgvector-native eingefügt
+[2025-12-17 01:57:10] INFO     db_tests.vector_tests: Verbinde zu pgvector-manual: localhost:5434
+[2025-12-17 01:57:10] INFO     db_tests.vector_tests: ✓ pgvector-manual verbunden und konfiguriert
+[2025-12-17 01:57:10] INFO     db_tests.vector_tests: Füge Vektoren in pgvector-manual ein...
+[2025-12-17 01:58:52] INFO     db_tests.vector_tests: ✓ 50000 Vektoren in pgvector-manual eingefügt
+[2025-12-17 01:58:52] INFO     db_tests.vector_tests: Verbinde zu MongoDB-Vector: localhost:27018
+[2025-12-17 01:58:52] INFO     db_tests.vector_tests: Füge Vektoren in MongoDB ein...
+[2025-12-17 01:59:01] INFO     db_tests.vector_tests: ✓ 50000 Vektoren in MongoDB eingefügt
+[2025-12-17 01:59:01] INFO     db_tests.base_test: Warmup (100 Operationen)...
+[2025-12-17 01:59:03] INFO     db_tests.base_test: Führe Tests aus...
+[2025-12-17 01:59:03] INFO     db_tests.vector_tests: 
+============================================================
+[2025-12-17 01:59:03] INFO     db_tests.vector_tests: pgvector NATIVE Tests
+[2025-12-17 01:59:03] INFO     db_tests.vector_tests: ============================================================
+[2025-12-17 01:59:03] INFO     db_tests.vector_tests: Test: Exakte Suche (KNN) - pgvector-Native
+[2025-12-17 01:59:19] INFO     db_tests.base_test:   → pgvector-Native KNN (exakt): 6 ops/s, P95=197.06ms
+[2025-12-17 01:59:19] INFO     db_tests.vector_tests: Erstelle HNSW-Index für pgvector-Native...
+[2025-12-17 02:00:47] INFO     db_tests.vector_tests: ✓ HNSW-Index für pgvector-Native erstellt
+[2025-12-17 02:00:47] INFO     db_tests.vector_tests: Test: ANN-Suche (HNSW) - pgvector-Native
+[2025-12-17 02:01:39] INFO     db_tests.base_test:   → pgvector-Native ANN (HNSW): 19 ops/s, P95=60.33ms
+[2025-12-17 02:01:39] INFO     db_tests.vector_tests: Test: Filtered ANN-Suche - pgvector-Native
+[2025-12-17 02:02:31] INFO     db_tests.base_test:   → pgvector-Native Filtered ANN: 19 ops/s, P95=60.06ms
+[2025-12-17 02:02:31] INFO     db_tests.vector_tests: 
+============================================================
+[2025-12-17 02:02:31] INFO     db_tests.vector_tests: pgvector MANUAL Tests
+[2025-12-17 02:02:31] INFO     db_tests.vector_tests: ============================================================
+[2025-12-17 02:02:31] INFO     db_tests.vector_tests: Test: Exakte Suche (KNN) - pgvector-Manual
+[2025-12-17 02:02:47] INFO     db_tests.base_test:   → pgvector-Manual KNN (exakt): 6 ops/s, P95=197.23ms
+[2025-12-17 02:02:47] INFO     db_tests.vector_tests: Erstelle HNSW-Index für pgvector-Manual...
+[2025-12-17 02:06:09] INFO     db_tests.vector_tests: ✓ HNSW-Index für pgvector-Manual erstellt
+[2025-12-17 02:06:09] INFO     db_tests.vector_tests: Test: ANN-Suche (HNSW) - pgvector-Manual
+[2025-12-17 02:07:01] INFO     db_tests.base_test:   → pgvector-Manual ANN (HNSW): 19 ops/s, P95=60.33ms
+[2025-12-17 02:07:01] INFO     db_tests.vector_tests: Test: Filtered ANN-Suche - pgvector-Manual
+[2025-12-17 02:07:53] INFO     db_tests.base_test:   → pgvector-Manual Filtered ANN: 19 ops/s, P95=60.09ms
+[2025-12-17 02:07:53] INFO     db_tests.vector_tests: 
+============================================================
+[2025-12-17 02:07:53] INFO     db_tests.vector_tests: MongoDB Vector Tests
+[2025-12-17 02:07:53] INFO     db_tests.vector_tests: ============================================================
+[2025-12-17 02:07:53] INFO     db_tests.vector_tests: Test: MongoDB Vector Search
+[2025-12-17 02:23:16] INFO     db_tests.base_test:   → MongoDB Vector Search: 0 ops/s, P95=9553.33ms
+[2025-12-17 02:23:16] INFO     db_tests.base_test: ✓ 7 Tests abgeschlossen
+[2025-12-17 02:23:16] INFO     db_tests.base_test: Teardown...
+[2025-12-17 02:23:16] INFO     db_tests.vector_tests: ✓ Vector-Test Cleanup abgeschlossen
+[2025-12-17 02:23:16] INFO     __main__: ✓ VECTOR abgeschlossen in 1667.49s (7 Tests)
+[2025-12-17 02:23:16] INFO     utils.report_generator: Ergebnis hinzugefügt: pgvector-Native KNN (exakt)
+[2025-12-17 02:23:16] INFO     utils.report_generator: Ergebnis hinzugefügt: pgvector-Native ANN (HNSW)
+[2025-12-17 02:23:16] INFO     utils.report_generator: Ergebnis hinzugefügt: pgvector-Native Filtered ANN
+[2025-12-17 02:23:16] INFO     utils.report_generator: Ergebnis hinzugefügt: pgvector-Manual KNN (exakt)
+[2025-12-17 02:23:16] INFO     utils.report_generator: Ergebnis hinzugefügt: pgvector-Manual ANN (HNSW)
+[2025-12-17 02:23:16] INFO     utils.report_generator: Ergebnis hinzugefügt: pgvector-Manual Filtered ANN
+[2025-12-17 02:23:16] INFO     utils.report_generator: Ergebnis hinzugefügt: MongoDB Vector Search
+[2025-12-17 02:23:16] INFO     __main__: 
+======================================================================
+[2025-12-17 02:23:16] INFO     __main__: Testlaufzeiten
+[2025-12-17 02:23:16] INFO     __main__: ======================================================================
+[2025-12-17 02:23:16] INFO     __main__:   POSTGRES: 86.69s
+[2025-12-17 02:23:16] INFO     __main__:   MARIADB: 36.07s
+[2025-12-17 02:23:16] INFO     __main__:   MYSQL: 90.46s
+[2025-12-17 02:23:16] INFO     __main__:   MSSQL: 84.00s
+[2025-12-17 02:23:16] INFO     __main__:   REDIS: 13.42s
+[2025-12-17 02:23:16] INFO     __main__:   MONGO: 31.00s
+[2025-12-17 02:23:16] INFO     __main__:   COUCHDB: 4.39s
+[2025-12-17 02:23:16] INFO     __main__:   VECTOR: 1667.49s
+[2025-12-17 02:23:16] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-17 02:23:16] INFO     __main__:   GESAMT: 2013.78s
+[2025-12-17 02:23:16] INFO     __main__: ======================================================================
+[2025-12-17 02:23:16] INFO     utils.report_generator: Testlaufzeiten gesetzt: 8 Tests, Gesamt: 2013.78s
+[2025-12-17 02:23:16] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-17 02:23:16] INFO     __main__: Generiere Report...
+[2025-12-17 02:23:16] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-17 02:23:16] INFO     utils.report_generator: Generiere Performance Report...
+[2025-12-17 02:23:16] INFO     utils.report_generator: ✓ Report generiert: D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\reports\report_2025-12-17_01-49-09.md
+[2025-12-17 02:23:17] INFO     __main__: ✓ Report gespeichert: D:\Documents\GitHub\DHBW_TIF23_RAG_System\rag_v2\tests\reports\report_2025-12-17_01-49-09.md
+[2025-12-17 02:23:17] INFO     __main__: 
+======================================================================
+[2025-12-17 02:23:17] INFO     __main__: Alle Tests erfolgreich abgeschlossen!
+[2025-12-17 02:23:17] INFO     __main__: ======================================================================
+[2025-12-17 02:23:17] INFO     __main__: 
+----------------------------------------------------------------------
+[2025-12-17 02:23:17] INFO     __main__: Stoppe Docker-Infrastruktur...
+[2025-12-17 02:23:17] INFO     __main__: ----------------------------------------------------------------------
+[2025-12-17 02:23:17] INFO     utils.docker_manager: ============================================================
+[2025-12-17 02:23:17] INFO     utils.docker_manager: Stoppe Docker Container...
+[2025-12-17 02:23:17] INFO     utils.docker_manager: ============================================================
+[2025-12-17 02:23:22] INFO     utils.docker_manager: ✓ Alle Container gestoppt und aufgeräumt!

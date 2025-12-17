@@ -84,6 +84,9 @@ class BasePerformanceTest(ABC):
     # Name der Datenbank (für Reports)
     DATABASE_NAME: str = "Unknown"
     
+    # Kategorie der Datenbank (SQL, NoSQL/Document, NoSQL/Vector)
+    DATABASE_CATEGORY: str = "Other"
+    
     # Beschreibung des Tests (WARUM und WAS)
     TEST_DESCRIPTION: str = "Keine Beschreibung verfügbar"
     
@@ -300,7 +303,8 @@ class BasePerformanceTest(ABC):
             concurrent_clients=concurrent_clients,
             error_count=error_count,
             slo_target_ms=slo_target_ms,
-            notes=notes
+            notes=notes,
+            category=self.DATABASE_CATEGORY
         )
         
         self.results.append(result)

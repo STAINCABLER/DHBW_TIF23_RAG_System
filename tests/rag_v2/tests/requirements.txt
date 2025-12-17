@@ -17,11 +17,23 @@ redis>=5.0               # Redis Client
 pymongo>=4.6             # MongoDB Client
 psycopg2-binary>=2.9     # PostgreSQL Client (binär für einfache Installation)
 
+# MySQL/MariaDB Treiber
+mysql-connector-python>=8.0  # MySQL/MariaDB Client (offizieller Oracle-Treiber)
+mariadb>=1.1             # Native MariaDB Client
+
+# Microsoft SQL Server Treiber
+pymssql>=2.2             # MSSQL Client (benötigt FreeTDS auf Linux)
+
+# CouchDB Treiber
+CouchDB>=1.2             # CouchDB Client
+
 # -----------------------------------------------------------------------------
 # Datenbanktreiber - Asynchron
 # -----------------------------------------------------------------------------
 motor>=3.3               # Async MongoDB Client (basiert auf pymongo)
 asyncpg>=0.29            # Async PostgreSQL Client
+aiomysql>=0.2            # Async MySQL Client
+aiocouch>=3.0            # Async CouchDB Client
 
 # -----------------------------------------------------------------------------
 # Testdaten-Generierung
@@ -34,6 +46,12 @@ Faker>=22.0              # Realistische Testdaten (Namen, E-Mails, etc.)
 # -----------------------------------------------------------------------------
 PyMuPDF>=1.24            # PDF-Text-Extraktion (import: pymupdf/fitz)
 sentence-transformers>=2.2  # Echte Embedding-Generierung (all-MiniLM-L6-v2)
+
+# -----------------------------------------------------------------------------
+# HTTP Client für CouchDB REST API
+# -----------------------------------------------------------------------------
+requests>=2.31           # HTTP Client für REST-APIs
+aiohttp>=3.9             # Async HTTP Client
 
 # -----------------------------------------------------------------------------
 # Optional: Entwicklung & Debugging

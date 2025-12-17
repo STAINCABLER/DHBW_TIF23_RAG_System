@@ -81,6 +81,10 @@ class ReportGenerator:
         self.comparisons: list[dict] = []
         self.notes: list[str] = []
         
+        # Testlaufzeiten
+        self.test_durations: dict[str, float] = {}
+        self.total_duration: float = 0.0
+        
         # Zeitstempel für den Report
         self.timestamp = datetime.now()
     
@@ -112,6 +116,18 @@ class ReportGenerator:
             note: Die Anmerkung
         """
         self.notes.append(note)
+    
+    def set_test_durations(self, test_durations: dict[str, float], total_duration: float) -> None:
+        """
+        Setzt die Testlaufzeiten für den Report.
+        
+        Args:
+            test_durations: Dictionary mit Testname -> Laufzeit in Sekunden
+            total_duration: Gesamtlaufzeit aller Tests in Sekunden
+        """
+        self.test_durations = test_durations
+        self.total_duration = total_duration
+        logger.info(f"Testlaufzeiten gesetzt: {len(test_durations)} Tests, Gesamt: {total_duration:.2f}s")
     
     def generate(self) -> Path:
         """
@@ -154,6 +170,7 @@ class ReportGenerator:
             self._generate_results_section(),
             self._generate_comparisons_section(),
             self._generate_slo_analysis(),
+            self._generate_test_durations_section(),
             self._generate_notes_section(),
             self._generate_footer(),
         ])
@@ -187,6 +204,9 @@ der definierten SLOs (Service Level Objectives).
         # Getestete Datenbanken
         databases_tested = sorted(set(r.database for r in self.results))
         
+        # Kategorien ermitteln (SQL, NoSQL, Vector)
+        categories_tested = sorted(set(getattr(r, 'category', 'Other') for r in self.results))
+        
         # SLO-Status
         slo_results = [r for r in self.results if r.slo_met is not None]
         slo_passed = sum(1 for r in slo_results if r.slo_met)
@@ -194,24 +214,47 @@ der definierten SLOs (Service Level Objectives).
         # Vollständiges Ranking nach Ops/s
         by_ops = sorted(self.results, key=lambda r: r.ops_per_second, reverse=True)
         
+        # Dynamische Kategorien-Zuordnung erstellen
+        category_to_dbs: dict[str, set[str]] = {}
+        for r in self.results:
+            cat = getattr(r, 'category', 'Other')
+            if cat not in category_to_dbs:
+                category_to_dbs[cat] = set()
+            category_to_dbs[cat].add(r.database)
+        
+        # Kategorien-Tabelle dynamisch generieren
+        category_rows = []
+        for cat in sorted(category_to_dbs.keys()):
+            dbs = sorted(category_to_dbs[cat])
+            category_rows.append(f"| {cat} | {', '.join(dbs)} |")
+        category_table = "\n".join(category_rows)
+        
         summary = f"""## Zusammenfassung
 
 | Metrik | Wert |
 |--------|------|
 | Anzahl Tests | {total_tests} |
 | Getestete Datenbanken | {', '.join(databases_tested)} |
+| Kategorien | {', '.join(categories_tested)} |
 | Gesamtoperationen | {total_operations:,} |
 | Fehler | {total_errors} |
 | SLO-Tests | {slo_passed}/{len(slo_results)} bestanden |
 
+### Datenbank-Kategorien (getestet)
+
+| Kategorie | Datenbanken |
+|-----------|-------------|
+{category_table}
+
 ### Vollständiges Ranking (nach Ops/s)
 
-| Rang | Test | Datenbank | Typ | Ops/s | P95 (ms) |
-|------|------|-----------|-----|-------|----------|"""
+| Rang | Test | Datenbank | Kategorie | Typ | Ops/s | P95 (ms) |
+|------|------|-----------|-----------|-----|-------|----------|"""
         
         for i, r in enumerate(by_ops, 1):
             async_marker = "async" if r.is_async else "sync"
-            summary += f"\n| {i} | {r.test_name} | {r.database} | {async_marker} | {r.ops_per_second:,.0f} | {r.p95_latency_ms:.2f} |"
+            category = getattr(r, 'category', 'Other')
+            summary += f"\n| {i} | {r.test_name} | {r.database} | {category} | {async_marker} | {r.ops_per_second:,.0f} | {r.p95_latency_ms:.2f} |"
         
         return summary
     
@@ -240,42 +283,68 @@ Netzwerk-Overhead minimal. In einer produktiven Umgebung können die
 Latenzen höher sein."""
     
     def _generate_results_section(self) -> str:
-        """Generiert den Ergebnisbereich, gruppiert nach Datenbank UND Operationstyp."""
+        """Generiert den Ergebnisbereich, gruppiert nach Kategorie, Datenbank UND Operationstyp."""
         if not self.results:
             return ""
         
-        # Nach Datenbank gruppieren
-        by_database: dict[str, list[TestResult]] = {}
+        # Nach Kategorie gruppieren
+        by_category: dict[str, dict[str, list[TestResult]]] = {}
         for r in self.results:
-            if r.database not in by_database:
-                by_database[r.database] = []
-            by_database[r.database].append(r)
+            category = getattr(r, 'category', 'Other')
+            if category not in by_category:
+                by_category[category] = {}
+            if r.database not in by_category[category]:
+                by_category[category][r.database] = []
+            by_category[category][r.database].append(r)
         
         sections = ["## Detaillierte Ergebnisse"]
         
-        for db_name in sorted(by_database.keys()):
-            results = by_database[db_name]
-            sections.append(f"\n### {db_name}")
-            
-            # Innerhalb der DB nach Operationstyp gruppieren
-            by_op_type: dict[str, list[TestResult]] = {}
-            for r in results:
-                op_type = r.operation_type or "other"
-                if op_type not in by_op_type:
-                    by_op_type[op_type] = []
-                by_op_type[op_type].append(r)
-            
-            for op_type in sorted(by_op_type.keys()):
-                op_results = by_op_type[op_type]
-                op_label = {
-                    "write": "Schreib-Operationen (Write)",
-                    "read": "Lese-Operationen (Read)",
-                    "vector_search": "Vektorsuche",
-                    "other": "Sonstige"
-                }.get(op_type, op_type.capitalize())
+        # Definiere Reihenfolge der Kategorien
+        category_order = [
+            "SQL", "NoSQL/Document", "NoSQL/Vector", "Vector Search",
+            "E2E/Ingest", "E2E/Storage", "E2E/Vector Search", "Other"
+        ]
+        
+        # Füge alle gefundenen Kategorien hinzu, die nicht in der Ordnung sind
+        all_categories = set(by_category.keys())
+        for cat in all_categories:
+            if cat not in category_order:
+                category_order.append(cat)
+        
+        for category in category_order:
+            if category not in by_category:
+                continue
                 
-                sections.append(f"\n#### {op_label}\n")
-                sections.append(self._generate_results_table(op_results))
+            sections.append(f"\n### Kategorie: {category}")
+            
+            for db_name in sorted(by_category[category].keys()):
+                results = by_category[category][db_name]
+                sections.append(f"\n#### {db_name}")
+                
+                # Innerhalb der DB nach Operationstyp gruppieren
+                by_op_type: dict[str, list[TestResult]] = {}
+                for r in results:
+                    op_type = r.operation_type or "other"
+                    if op_type not in by_op_type:
+                        by_op_type[op_type] = []
+                    by_op_type[op_type].append(r)
+                
+                for op_type in ["write", "read", "vector_search", "parse", "chunk", "embed", "other"]:
+                    if op_type not in by_op_type:
+                        continue
+                    op_results = by_op_type[op_type]
+                    op_label = {
+                        "write": "📝 Schreib-Operationen (Write)",
+                        "read": "📖 Lese-Operationen (Read)",
+                        "vector_search": "🔍 Vektorsuche",
+                        "parse": "📄 Datei-Parsing",
+                        "chunk": "✂️ Chunking",
+                        "embed": "🧠 Embedding-Generierung",
+                        "other": "📦 Sonstige"
+                    }.get(op_type, op_type.capitalize())
+                    
+                    sections.append(f"\n##### {op_label}\n")
+                    sections.append(self._generate_results_table(op_results))
         
         return "\n".join(sections)
     
@@ -292,34 +361,115 @@ Latenzen höher sein."""
         return table
     
     def _generate_comparisons_section(self) -> str:
-        """Generiert den Vergleichsbereich."""
+        """Generiert den Vergleichsbereich, gruppiert nach Kategorie."""
         if not self.comparisons:
             return ""
         
         sections = ["## Vergleiche"]
         
+        # Vergleiche nach Kategorie gruppieren
+        comparison_groups = {
+            "Intra-Datenbank (innerhalb einer DB)": [],
+            "SQL-Datenbanken": [],
+            "NoSQL-Datenbanken": [],
+            "Cross-Category (SQL vs. NoSQL)": [],
+            "Vector Search": [],
+            "E2E (End-to-End)": [],
+            "Sonstige": []
+        }
+        
         for comp in self.comparisons:
             title = comp["title"]
-            data = comp["data"]
             
-            speedup = data.get("speedup_factor")
-            ops_improvement = data.get("ops_improvement")
+            # Kategorisierung basierend auf Titel
+            if "Cross-Category" in title:
+                comparison_groups["Cross-Category (SQL vs. NoSQL)"].append(comp)
+            elif "SQL Batch" in title or "SQL Single" in title:
+                comparison_groups["SQL-Datenbanken"].append(comp)
+            elif "NoSQL Bulk" in title or "NoSQL Single" in title:
+                comparison_groups["NoSQL-Datenbanken"].append(comp)
+            elif "Vector" in title or "pgvector" in title:
+                comparison_groups["Vector Search"].append(comp)
+            elif "E2E" in title:
+                comparison_groups["E2E (End-to-End)"].append(comp)
+            elif any(db in title for db in ["Redis:", "MongoDB:", "PostgreSQL:", "MySQL:", "MariaDB:", "MSSQL:", "CouchDB:"]):
+                comparison_groups["Intra-Datenbank (innerhalb einer DB)"].append(comp)
+            else:
+                comparison_groups["Sonstige"].append(comp)
+        
+        # Gruppen in definierter Reihenfolge ausgeben
+        group_order = [
+            "Intra-Datenbank (innerhalb einer DB)",
+            "SQL-Datenbanken",
+            "NoSQL-Datenbanken",
+            "Cross-Category (SQL vs. NoSQL)",
+            "Vector Search",
+            "E2E (End-to-End)",
+            "Sonstige"
+        ]
+        
+        for group_name in group_order:
+            comps = comparison_groups.get(group_name, [])
+            if not comps:
+                continue
             
-            sections.append(f"""
-### {title}
+            sections.append(f"\n### {group_name}\n")
+            
+            for comp in comps:
+                title = comp["title"]
+                data = comp["data"]
+                
+                speedup = data.get("speedup_factor")
+                ops_improvement = data.get("ops_improvement")
+                
+                if speedup and speedup > 0:
+                    # Bestimme die Richtung des Vergleichs
+                    if speedup >= 1:
+                        speed_text = f"{speedup:.1f}x schneller"
+                    else:
+                        speed_text = f"{1/speedup:.1f}x langsamer"
+                    
+                    if ops_improvement and ops_improvement >= 1:
+                        ops_text = f"{ops_improvement:.1f}x mehr"
+                    elif ops_improvement:
+                        ops_text = f"{1/ops_improvement:.1f}x weniger"
+                    else:
+                        ops_text = "N/A"
+                    
+                    p95_imp = data.get('p95_improvement', 0)
+                    p99_imp = data.get('p99_improvement', 0)
+                    
+                    if p95_imp and p95_imp >= 1:
+                        p95_text = f"{p95_imp:.1f}x besser"
+                    elif p95_imp:
+                        p95_text = f"{1/p95_imp:.1f}x schlechter"
+                    else:
+                        p95_text = "N/A"
+                    
+                    if p99_imp and p99_imp >= 1:
+                        p99_text = f"{p99_imp:.1f}x besser"
+                    elif p99_imp:
+                        p99_text = f"{1/p99_imp:.1f}x schlechter"
+                    else:
+                        p99_text = "N/A"
+                    
+                    sections.append(f"""#### {title}
 
 | Metrik | Verbesserungsfaktor |
 |--------|---------------------|
-| Geschwindigkeit | {speedup:.1f}x schneller |
-| Ops/s | {ops_improvement:.1f}x mehr |
-| P95 Latenz | {data.get('p95_improvement', 0):.1f}x besser |
-| P99 Latenz | {data.get('p99_improvement', 0):.1f}x besser |
+| Geschwindigkeit | {speed_text} |
+| Ops/s | {ops_text} |
+| P95 Latenz | {p95_text} |
+| P99 Latenz | {p99_text} |
 
 **Baseline:** {data.get('baseline', 'N/A')}  
-**Optimiert:** {data.get('comparison', 'N/A')}""" if speedup else f"""
-### {title}
+**Optimiert:** {data.get('comparison', 'N/A')}
+""")
+                else:
+                    sections.append(f"""#### {title}
 
-*Vergleichsdaten nicht verfügbar.*""")
+*Vergleichsdaten nicht verfügbar.*
+""")
         
         return "\n".join(sections)
     
@@ -343,6 +493,48 @@ Gemäß Modul 7 ist das kritische Budget für die Vektorsuche ≤50ms (P95).
             sections.append(
                 f"| {r.test_name} | {r.slo_target_ms:.0f} | {r.p95_latency_ms:.2f} | {status} |"
             )
+        
+        return "\n".join(sections)
+    
+    def _generate_test_durations_section(self) -> str:
+        """Generiert die Sektion mit den Testlaufzeiten."""
+        if not self.test_durations:
+            return ""
+        
+        sections = ["""## Testlaufzeiten
+
+Die folgende Tabelle zeigt die Laufzeit jedes einzelnen Tests.
+
+| Test | Laufzeit |
+|------|----------|"""]
+        
+        # Sortiere nach Laufzeit (längste zuerst)
+        sorted_durations = sorted(
+            self.test_durations.items(), 
+            key=lambda x: x[1], 
+            reverse=True
+        )
+        
+        for test_name, duration in sorted_durations:
+            # Formatiere die Laufzeit sinnvoll
+            if duration >= 60:
+                minutes = int(duration // 60)
+                seconds = duration % 60
+                duration_str = f"{minutes}m {seconds:.1f}s"
+            else:
+                duration_str = f"{duration:.2f}s"
+            
+            sections.append(f"| {test_name} | {duration_str} |")
+        
+        # Gesamtlaufzeit
+        if self.total_duration >= 60:
+            total_minutes = int(self.total_duration // 60)
+            total_seconds = self.total_duration % 60
+            total_str = f"{total_minutes}m {total_seconds:.1f}s"
+        else:
+            total_str = f"{self.total_duration:.2f}s"
+        
+        sections.append(f"\n**Gesamtlaufzeit:** {total_str}")
         
         return "\n".join(sections)
     

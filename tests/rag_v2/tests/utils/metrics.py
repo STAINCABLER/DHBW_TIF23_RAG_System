@@ -45,6 +45,9 @@ class TestResult:
     total_operations: int
     total_duration_ms: float
     
+    # Datenbank-Kategorie (SQL, NoSQL/Document, NoSQL/Vector, etc.)
+    category: str = "Other"
+    
     # Berechnete Metriken (werden automatisch gefüllt)
     ops_per_second: float = 0.0
     mean_latency_ms: float = 0.0
@@ -115,7 +118,8 @@ class MetricsCalculator:
         concurrent_clients: int = 1,
         error_count: int = 0,
         slo_target_ms: Optional[float] = None,
-        notes: str = ""
+        notes: str = "",
+        category: str = "Other"
     ) -> TestResult:
         """
         Berechnet alle Metriken aus den Latenzmessungen.
@@ -146,6 +150,7 @@ class MetricsCalculator:
                 operation_type=operation_type,
                 total_operations=total_operations,
                 total_duration_ms=total_duration_ms or 0,
+                category=category,
                 error_count=error_count,
                 notes="Keine Messwerte verfügbar"
             )
@@ -191,6 +196,7 @@ class MetricsCalculator:
             operation_type=operation_type,
             total_operations=total_operations,
             total_duration_ms=total_duration_ms,
+            category=category,
             ops_per_second=ops_per_second,
             mean_latency_ms=mean_latency,
             median_latency_ms=median_latency,
@@ -237,6 +243,123 @@ class MetricsCalculator:
         d1 = sorted_data[c] * (k - f)
         
         return d0 + d1
+    
+    def calculate_from_latencies(
+        self,
+        test_name: str,
+        database: str,
+        category: str,
+        operation_type: str,
+        latencies_ns: list[int],
+        batch_size: Optional[int] = None,
+        is_async: bool = False,
+        concurrent_clients: int = 1,
+        error_count: int = 0,
+        slo_target_ms: Optional[float] = None,
+        notes: str = ""
+    ) -> TestResult:
+        """
+        Berechnet Metriken aus Nanosekunden-Latenzwerten.
+        
+        Convenience-Methode, die Nanosekunden in Millisekunden konvertiert
+        und dann calculate() aufruft.
+        
+        Args:
+            test_name: Name des Tests
+            database: Datenbankname
+            category: Datenbank-Kategorie (SQL, NoSQL/Document, etc.)
+            operation_type: Art der Operation
+            latencies_ns: Liste der Latenzwerte in Nanosekunden
+            ... weitere Parameter wie bei calculate()
+        
+        Returns:
+            TestResult mit allen Metriken
+        """
+        # Konvertiere Nanosekunden zu Millisekunden
+        latencies_ms = [ns_to_ms(ns) for ns in latencies_ns]
+        
+        return self.calculate(
+            test_name=test_name,
+            database=database,
+            operation_type=operation_type,
+            latencies_ms=latencies_ms,
+            total_operations=len(latencies_ns),
+            batch_size=batch_size,
+            is_async=is_async,
+            concurrent_clients=concurrent_clients,
+            error_count=error_count,
+            slo_target_ms=slo_target_ms,
+            notes=notes,
+            category=category
+        )
+    
+    def calculate_from_total_time(
+        self,
+        test_name: str,
+        database: str,
+        category: str,
+        operation_type: str,
+        total_operations: int,
+        total_time_ns: int,
+        batch_size: Optional[int] = None,
+        is_async: bool = False,
+        concurrent_clients: int = 1,
+        error_count: int = 0,
+        slo_target_ms: Optional[float] = None,
+        notes: str = ""
+    ) -> TestResult:
+        """
+        Berechnet Metriken aus Gesamtzeit (für Batch-Operationen).
+        
+        Bei Batch-Operationen wie executemany() haben wir nur die Gesamtzeit,
+        nicht einzelne Latenzwerte. Diese Methode berechnet daraus
+        durchschnittliche Latenz.
+        
+        Args:
+            test_name: Name des Tests
+            database: Datenbankname
+            category: Datenbank-Kategorie
+            operation_type: Art der Operation
+            total_operations: Anzahl der Operationen
+            total_time_ns: Gesamtzeit in Nanosekunden
+            ... weitere Parameter
+        
+        Returns:
+            TestResult mit durchschnittlichen Metriken
+        """
+        total_time_ms = ns_to_ms(total_time_ns)
+        
+        # Durchschnittliche Latenz berechnen
+        if total_operations > 0:
+            avg_latency_ms = total_time_ms / total_operations
+            ops_per_second = (total_operations / total_time_ms) * 1000
+        else:
+            avg_latency_ms = 0.0
+            ops_per_second = 0.0
+        
+        return TestResult(
+            test_name=test_name,
+            database=database,
+            operation_type=operation_type,
+            total_operations=total_operations,
+            total_duration_ms=total_time_ms,
+            category=category,
+            ops_per_second=ops_per_second,
+            mean_latency_ms=avg_latency_ms,
+            median_latency_ms=avg_latency_ms,
+            min_latency_ms=avg_latency_ms,
+            max_latency_ms=avg_latency_ms,
+            p95_latency_ms=avg_latency_ms,
+            p99_latency_ms=avg_latency_ms,
+            std_dev_ms=0.0,
+            batch_size=batch_size,
+            is_async=is_async,
+            concurrent_clients=concurrent_clients,
+            error_count=error_count,
+            slo_target_ms=slo_target_ms,
+            slo_met=avg_latency_ms <= slo_target_ms if slo_target_ms else None,
+            notes=notes + " (Nur Gesamtzeit verfügbar)"
+        )
     
     def compare_results(
         self, 

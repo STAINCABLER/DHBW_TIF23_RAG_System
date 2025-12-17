@@ -265,6 +265,8 @@ class DataGenerator:
                     ),
                     "is_active": random.choice([True, True, True, False]),
                     "role": random.choice(["user", "user", "admin", "moderator"]),
+                    # Feld ohne Index für Full Table Scan Tests
+                    "unindexed_field": f"field_{i % 1000}",
                 }
             else:
                 user = {
@@ -275,6 +277,8 @@ class DataGenerator:
                     "created_at": datetime.utcnow(),
                     "is_active": True,
                     "role": "user",
+                    # Feld ohne Index für Full Table Scan Tests
+                    "unindexed_field": f"field_{i % 1000}",
                 }
             
             yield user

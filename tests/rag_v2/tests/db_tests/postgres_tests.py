@@ -78,6 +78,7 @@ class PostgresPerformanceTest(BasePerformanceTest):
     """
     
     DATABASE_NAME = "PostgreSQL"
+    DATABASE_CATEGORY = "SQL"
     
     TEST_DESCRIPTION = """
     PostgreSQL Relationale Datenbank Performance Tests
@@ -620,9 +621,9 @@ class PostgresPerformanceTest(BasePerformanceTest):
                     password=self.password,
                     min_size=2,
                     max_size=self.concurrent_clients,
-                    command_timeout=30,
+                    command_timeout=60,  # 60 Sekunden Timeout für Befehle
                 ),
-                timeout=30.0  # 30 Sekunden Timeout für Pool-Erstellung
+                timeout=60.0  # 60 Sekunden Timeout für Pool-Erstellung
             )
         except asyncio.TimeoutError:
             logger.warning(
@@ -637,7 +638,13 @@ class PostgresPerformanceTest(BasePerformanceTest):
         try:
             # Tabelle leeren und neu befüllen
             async with self.async_pool.acquire() as conn:
-                await conn.execute("TRUNCATE test_users CASCADE")
+                # Prüfe ob Tabelle existiert, dann leeren
+                # Verwende längeren Timeout für TRUNCATE (kann bei großen Tabellen dauern)
+                exists = await conn.fetchval(
+                    "SELECT EXISTS (SELECT FROM pg_tables WHERE tablename = 'test_users')"
+                )
+                if exists:
+                    await conn.execute("TRUNCATE test_users CASCADE", timeout=60.0)
             
             # Async Write-Test
             await self._test_async_inserts()

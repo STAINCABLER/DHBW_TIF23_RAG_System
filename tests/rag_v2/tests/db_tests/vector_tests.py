@@ -97,6 +97,7 @@ class VectorPerformanceTest(BasePerformanceTest):
     """
     
     DATABASE_NAME = "Vector Search"
+    DATABASE_CATEGORY = "NoSQL/Vector"
     
     TEST_DESCRIPTION = """
     Vektorsuche Performance Tests (pgvector & MongoDB)

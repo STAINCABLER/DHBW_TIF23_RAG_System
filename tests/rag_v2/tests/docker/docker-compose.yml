@@ -167,6 +167,103 @@ services:
     networks:
       - rag_test_network
 
+  # ---------------------------------------------------------------------------
+  # MariaDB - MySQL-kompatibler SQL-Server
+  # ---------------------------------------------------------------------------
+  # Verwendungszweck: Alternative SQL-Datenbank, MySQL-kompatibel
+  # Modul-Referenz: Modul 4 (Query Paths), Modul 8 (Performance-Myth-Busting)
+  mariadb:
+    image: mariadb:11
+    container_name: rag_test_mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: rag_performance_test
+      MARIADB_USER: testuser
+      MARIADB_PASSWORD: testpass
+    command: >
+      --innodb-buffer-pool-size=256M
+      --max-connections=100
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - rag_test_network
+
+  # ---------------------------------------------------------------------------
+  # MySQL - Klassische SQL-Datenbank
+  # ---------------------------------------------------------------------------
+  # Verwendungszweck: Relationale Daten, ACID-Transaktionen
+  # Modul-Referenz: Modul 4 (Query Paths), Modul 8 (Performance-Myth-Busting)
+  mysql:
+    image: mysql:8
+    container_name: rag_test_mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: rag_performance_test
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testpass
+    command: >
+      --innodb-buffer-pool-size=256M
+      --max-connections=100
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - rag_test_network
+
+  # ---------------------------------------------------------------------------
+  # Microsoft SQL Server - Enterprise SQL-Datenbank
+  # ---------------------------------------------------------------------------
+  # Verwendungszweck: Enterprise-Grade SQL, ACID-Transaktionen
+  # Modul-Referenz: Modul 4 (Query Paths), Modul 8 (Performance-Myth-Busting)
+  # HINWEIS: MSSQL benötigt min. 2GB RAM und EULA-Akzeptanz
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: rag_test_mssql
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "TestPassword123!"
+      MSSQL_PID: "Developer"
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P TestPassword123! -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - rag_test_network
+
+  # ---------------------------------------------------------------------------
+  # CouchDB - Document Store (NoSQL)
+  # ---------------------------------------------------------------------------
+  # Verwendungszweck: Document Store, RESTful API
+  # Modul-Referenz: Modul 5 (Datenmodellierung), Modul 6 (Chunking)
+  couchdb:
+    image: couchdb:3
+    container_name: rag_test_couchdb
+    ports:
+      - "5984:5984"
+    environment:
+      COUCHDB_USER: admin
+      COUCHDB_PASSWORD: admin
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5984/_up"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - rag_test_network
+
 # -----------------------------------------------------------------------------
 # Netzwerk
 # -----------------------------------------------------------------------------
