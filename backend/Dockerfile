@@ -1,5 +1,7 @@
 FROM python:3.12
 EXPOSE 4000
+ENV PORT=4000
+ENV FLASK_DEBUG=0
 WORKDIR /python-docker
 
 ENV POSTGRES_HOST="db-postgres"

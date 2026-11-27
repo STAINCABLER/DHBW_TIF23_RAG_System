@@ -1,3 +1,4 @@
+import os
 import sys
 sys.dont_write_bytecode = True
 import flask
@@ -118,4 +119,5 @@ def get_health() -> tuple[str, int]:
     return "", 200
 
 
-app.run("0.0.0.0", 8001, True)
+# Lokal: Port 8001 + Debug (Default). Im Container setzt das Dockerfile PORT=4000 und FLASK_DEBUG=0.
+app.run("0.0.0.0", int(os.environ.get("PORT", "8001")), os.environ.get("FLASK_DEBUG", "1") == "1")
